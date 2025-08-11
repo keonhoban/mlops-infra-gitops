@@ -20,7 +20,7 @@ ingresses:
       issuerName: selfsigned-issuer
 
 env:
-  MLFLOW_TRACKING_URI: "http://mlflow-prod-service.mlflow.svc.cluster.local:5000"
+  MLFLOW_TRACKING_URI: "http://mlflow-prod-service.mlflow-prod.svc.cluster.local:5000"
   MODEL_NAME: "best_model"
   DEFAULT_ALIAS: "B"
   ALIAS_SELECTION_MODE: "blue_green"
