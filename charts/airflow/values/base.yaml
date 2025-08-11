@@ -6,10 +6,14 @@ airflow:
       repository: hoizz/airflow-custom
       pullPolicy: IfNotPresent
   
-  postgresql:
-    enabled: false
-  
   config:
     AIRFLOW__CORE__LOAD_EXAMPLES: { value: "False" }
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: { value: "False" }
     AIRFLOW__WEBSERVER__EXPOSE_CONFIG: { value: "True" }
+
+  postgresql:
+    enabled: false
+
+  logs:
+    persistence:
+      enabled: false
