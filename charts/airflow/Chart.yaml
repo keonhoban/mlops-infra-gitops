@@ -3,8 +3,3 @@ name: airflow-stack
 description: Thin wrapper for Apache Airflow Helm chart
 type: application
 version: 0.1.0
-
-dependencies:
-  - name: airflow
-    version: 1.18.0           # 사용 중인 버전으로 고정
-    repository: https://airflow.apache.org
