@@ -8,6 +8,8 @@ spec:
   sourceRepos:
     - 'https://github.com/keonhoban/mlops-infra-gitops'
   destinations:
+    - namespace: argocd
+      server: https://kubernetes.default.svc
     - namespace: '*-dev'
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:

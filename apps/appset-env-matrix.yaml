@@ -5,66 +5,51 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - list:
-        elements:
-          - env: dev
-            project: dev
-            values_suffix: dev
-            ns_mlflow: mlflow-dev
-            ns_airflow: airflow-dev
-            ns_fastapi: fastapi-dev
-          - env: prod
-            project: prod
-            values_suffix: prod
-            ns_mlflow: mlflow-prod
-            ns_airflow: airflow-prod
-            ns_fastapi: fastapi-prod
-
+    - matrix:
+        generators:
+          # ① 환경 목록
+          - list:
+              elements:
+                - env: dev
+                  project: dev
+                  values_suffix: dev
+                - env: prod
+                  project: prod
+                  values_suffix: prod
+          # ② 서비스 목록
+          - list:
+              elements:
+                - service: mlflow
+                  path: charts/mlflow
+                - service: airflow
+                  path: charts/airflow
+                - service: fastapi
+                  path: charts/fastapi
   template:
     metadata:
-      name: '{{name}}'
+      # 예: mlflow-dev, airflow-prod ...
+      name: '{{service}}-{{env}}'
       annotations:
-        # sealed-secrets(0) 다음, 서비스 앱(1) 배포
+        # sealed-secrets(0) 이후에 배포
         argocd.argoproj.io/sync-wave: "1"
     spec:
       project: '{{project}}'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{namespace}}'
+        namespace: '{{service}}-{{env}}'
       source:
         repoURL: 'https://github.com/keonhoban/mlops-infra-gitops'
         targetRevision: main
         path: '{{path}}'
         helm:
-          releaseName: '{{release}}'
+          # releaseName도 동일 규칙
+          releaseName: '{{service}}-{{env}}'
           valueFiles:
             - 'values/base.yaml'
-            - 'values/{{values_suffix}}.yaml'
+            - 'values/{{values_suffix}}.yaml'   # charts/<svc>/values/dev.yaml|prod.yaml
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
-
-  templates:
-    # MLflow
-    - name: 'mlflow-{{env}}'
-      project: '{{project}}'
-      namespace: '{{ns_mlflow}}'
-      path: 'charts/mlflow'
-      release: 'mlflow-{{env}}'
-
-    # Airflow
-    - name: 'airflow-{{env}}'
-      project: '{{project}}'
-      namespace: '{{ns_airflow}}'
-      path: 'charts/airflow'
-      release: 'airflow-{{env}}'
-
-    # FastAPI (모델 서빙 등)
-    - name: 'fastapi-{{env}}'
-      project: '{{project}}'
-      namespace: '{{ns_fastapi}}'
-      path: 'charts/fastapi'
-      release: 'fastapi-{{env}}'
