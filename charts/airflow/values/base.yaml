@@ -14,6 +14,6 @@ airflow:
   postgresql:
     enabled: false
 
-  logs:
+  triggerer:
     persistence:
       enabled: false
