@@ -1,0 +1,55 @@
+image:
+  tag: latest
+
+service:
+  name: fastapi-prod-service
+  port: 80
+  type: ClusterIP
+
+ingresses:
+  - name: fastapi-prod
+    host: fastapi.prod
+    className: nginx
+    whitelist: 0.0.0.0/0
+    paths:
+      - path: /
+        pathType: Prefix
+    tls:
+      enabled: true
+      secretName: fastapi-prod-tls
+      issuerName: selfsigned-issuer
+
+env:
+  MLFLOW_TRACKING_URI: "http://mlflow-prod-service.mlflow.svc.cluster.local:5000"
+  MODEL_NAME: "best_model"
+  DEFAULT_ALIAS: "B"
+  ALIAS_SELECTION_MODE: "blue_green"
+  CANARY_PERCENT: "10"
+  LOG_TO_STDOUT: "true"
+  LOG_LEVEL: "info"
+
+envFrom:
+  - secretRef:
+      name: aws-credentials-secret
+  - secretRef:
+      name: fastapi-token-prod-secret
+  - secretRef:
+      name: slack-webhook-prod-secret
+
+probes:
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 3

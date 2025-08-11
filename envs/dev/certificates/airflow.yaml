@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: airflow-dev-tls
+  namespace: airflow-dev
+spec:
+  secretName: airflow-dev-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned-issuer
+  dnsNames:
+    - airflow.local

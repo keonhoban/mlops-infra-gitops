@@ -1,0 +1,24 @@
+image:
+  tag: latest
+
+env:
+  defaultArtifactRoot: s3://mlflow-artifacts-keonho/dev
+
+ingress:
+  host: mlflow.local
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-dev
+  tls:
+    enabled: true
+    secretName: mlflow-dev-tls
+    issuerName: selfsigned-issuer
+
+dbConfig:
+  secretName: mlflow-db-dev-secret
+  configMapName: mlflow-db-dev-config
+  dbname: mlflow_dev
+  host: 192.168.18.142
+  port: "5432"

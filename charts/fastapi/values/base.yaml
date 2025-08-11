@@ -1,0 +1,22 @@
+replicaCount: 1
+image:
+  repository: hoizz/fastapi-custom
+  pullPolicy: IfNotPresent
+
+probes:
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    failureThreshold: 5

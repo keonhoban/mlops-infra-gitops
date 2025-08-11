@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: fastapi-dev-tls
+  namespace: fastapi-dev
+spec:
+  secretName: fastapi-dev-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned-issuer
+  dnsNames:
+    - fastapi.local

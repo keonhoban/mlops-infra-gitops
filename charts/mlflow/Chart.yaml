@@ -1,0 +1,6 @@
+# Chart.yaml
+apiVersion: v2
+name: mlflow
+version: 0.1.0
+description: A Helm chart for deploying MLflow on Kubernetes
+appVersion: "2.13.0"

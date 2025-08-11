@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server
+  namespace: argocd
+  annotations:
+    # ── NGINX 기본
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+    # ── (선택) 접근 IP 화이트리스트  ➜ 사내망/집 IP로 제한
+    nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,192.168.0.0/16"
+    # nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,192.168.0.0/16,xxx.xxx.xxx.xxx/32"
+
+    # ── (선택) Basic Auth 보호 (Secret 미리 만들어 두면 좋음)
+    # nginx.ingress.kubernetes.io/auth-type: "basic"
+    # nginx.ingress.kubernetes.io/auth-secret: "argocd-basic-auth"
+    # nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+
+    # ── cert-manager로 TLS 자동 발급
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - argocd.local                # ✅ 너 환경의 FQDN으로 교체 (예: argocd.mydomain.internal)
+      secretName: argocd-tls          # 미리/자동 생성될 TLS Secret 이름
+  rules:
+    - host: argocd.local              # ✅ 위와 동일하게 맞춰
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server   # Helm 설치하면 기본으로 생기는 서비스명
+                port:
+                  number: 443

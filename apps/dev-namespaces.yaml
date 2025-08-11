@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-namespaces
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  source:
+    repoURL: https://github.com/keonhoban/mlops-infra-gitops
+    targetRevision: main
+    path: envs/dev
+    directory:
+      recurse: true
+      include: "namespaces.yaml"   # envs/dev/namespaces.yaml만 적용
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }

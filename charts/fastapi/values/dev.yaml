@@ -1,0 +1,55 @@
+image:
+  tag: latest
+
+service:
+  name: fastapi-dev-service
+  port: 80
+  type: ClusterIP
+
+ingresses:
+  - name: fastapi-local
+    host: fastapi.local
+    className: nginx
+    whitelist: 192.168.18.0/24
+    paths:
+      - path: /
+        pathType: Prefix
+    tls:
+      enabled: true
+      secretName: fastapi-dev-tls
+      issuerName: selfsigned-issuer
+
+env:
+  MLFLOW_TRACKING_URI: "http://mlflow-dev-service.mlflow.svc.cluster.local:5000"
+  MODEL_NAME: "best_model"
+  DEFAULT_ALIAS: "A"
+  ALIAS_SELECTION_MODE: "blue_green"
+  CANARY_PERCENT: "10"
+  LOG_TO_STDOUT: "true"
+  LOG_LEVEL: "info"
+
+envFrom:
+  - secretRef:
+      name: aws-credentials-secret
+  - secretRef:
+      name: fastapi-token-dev-secret
+  - secretRef:
+      name: slack-webhook-dev-secret
+
+probes:
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 10  
+    periodSeconds: 5
+    failureThreshold: 5
+    successThreshold: 1
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 30  
+    periodSeconds: 10
+    failureThreshold: 5

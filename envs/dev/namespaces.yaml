@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlflow-dev
+  labels: { env: dev, app: mlflow-dev, team: ml-platform }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: airflow-dev
+  labels: { env: dev, app: airflow-dev, team: ml-platform }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fastapi-dev
+  labels: { env: dev, app: fastapi-dev, team: ml-platform }
