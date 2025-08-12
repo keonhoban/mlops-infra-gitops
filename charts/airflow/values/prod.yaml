@@ -25,8 +25,8 @@ airflow:
     AIRFLOW__WEBSERVER__WEB_SERVER_BASE_URL:
       value: "http://airflow.prod"  # ⬅️ global.airflowHost 기준값 수동 복붙
 
-  apiSecretKeySecretName: airflow-dev-api-secret-key
-  jwtSecretName:          airflow-dev-jwt-secret
+  apiSecretKeySecretName: airflow-prod-api-secret-key
+  jwtSecretName:          airflow-prod-jwt-secret
   apiSecretKey: ~
   jwtSecret:    ~
   
