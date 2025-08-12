@@ -46,9 +46,9 @@ airflow:
             key: SLACK_WEBHOOK_URL
   
       - name: MLFLOW_TRACKING_URI
-        value: "http://mlflow-prod-service.mlflow.svc.cluster.local:5000"
+        value: "http://mlflow-prod-service.mlflow-prod.svc.cluster.local:5000"
       - name: FASTAPI_RELOAD_URL
-        value: "http://fastapi-prod-service.fastapi.svc.cluster.local"
+        value: "http://fastapi-prod-service.fastapi-prod.svc.cluster.local"
       - name: AIRFLOW__LOGGING__REMOTE_LOGGING
         value: "True"
       - name: AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER
