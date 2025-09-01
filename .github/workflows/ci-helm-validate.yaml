@@ -1,0 +1,140 @@
+name: Helm CI (pro)
+
+on:
+  pull_request:
+    paths:
+      - 'charts/**'
+      - 'apps/**'
+      - 'envs/**'
+      - '.github/workflows/ci-helm-validate.yaml'
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: helm-ci-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  K8S_VERSION: "1.31.13"
+  DEV_NS: "dryrun-dev"
+  PROD_NS: "dryrun-prod"
+
+jobs:
+  yaml-lint:
+    name: YAML Lint (repo-wide, once)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 모든 YAML을 한 번에 검사 (중복 실행 금지)
+      - name: YAML Lint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          file_or_dir: |
+            envs
+            apps
+            charts
+            .github
+          strict: true
+          # 조직 표준이 있으면 .yamllint.yml 추가해서 config_file 지정 권장
+
+  helm-validate:
+    name: Lint & Render & Validate (Helm matrix)
+    needs: yaml-lint   # YAML 통과 못하면 전체 차단
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        chart: [mlflow, airflow, fastapi]
+        env: [dev, prod]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Install kubeconform
+        run: |
+          curl -sSL -o /tmp/kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          sudo tar -xzf /tmp/kubeconform.tar.gz -C /usr/local/bin kubeconform
+          kubeconform -version
+
+      - name: Install yq (debug utilities)
+        run: |
+          sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 -o /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
+
+      - name: Helm dependency build
+        working-directory: charts/${{ matrix.chart }}
+        run: |
+          echo "==> helm dependency build charts/${{ matrix.chart }}"
+          helm dependency build
+
+      - name: Helm Lint (strict)
+        working-directory: charts/${{ matrix.chart }}
+        run: |
+          echo "==> helm lint (strict) charts/${{ matrix.chart }}"
+          # env별 values를 함께 로드하여 레퍼런스 누락/타입 이슈 조기 발견
+          if [ -f "values-${{ matrix.env }}.yaml" ]; then
+            helm lint . --strict --values values-${{ matrix.env }}.yaml
+          else
+            echo "::error ::Missing values file: charts/${{ matrix.chart }}/values-${{ matrix.env }}.yaml"
+            exit 1
+          fi
+
+      - name: Render Helm template (${{ matrix.chart }} / ${{ matrix.env }})
+        run: |
+          set -euo pipefail
+          RELEASE="${{ matrix.chart }}-${{ matrix.env }}"
+          CHART_PATH="charts/${{ matrix.chart }}"
+          VALUES_FILE="${CHART_PATH}/values-${{ matrix.env }}.yaml"
+          NS="${{ matrix.env == 'dev' && env.DEV_NS || env.PROD_NS }}"
+
+          test -f "${VALUES_FILE}" || { echo "::error ::Missing values file: ${VALUES_FILE}"; exit 1; }
+
+          mkdir -p ./rendered/${{ matrix.chart }}/${{ matrix.env }}
+          OUT="./rendered/${{ matrix.chart }}/${{ matrix.env }}/rendered.yaml"
+
+          echo "==> helm template ${RELEASE} ${CHART_PATH} -f ${VALUES_FILE} --namespace ${NS}"
+          helm template "${RELEASE}" "${CHART_PATH}" \
+            -f "${VALUES_FILE}" \
+            --namespace "${NS}" \
+            > "${OUT}"
+
+          if [ ! -s "${OUT}" ]; then
+            echo "::error ::Rendered manifest is empty for ${RELEASE}"
+            exit 1
+          fi
+
+          echo "Rendered manifest saved to ${OUT}"
+          echo "First 20 lines:"
+          head -n 20 "${OUT}" || true
+
+      - name: Validate manifests with kubeconform (${{ matrix.chart }} / ${{ matrix.env }})
+        run: |
+          MANIFEST="./rendered/${{ matrix.chart }}/${{ matrix.env }}/rendered.yaml"
+          echo "==> kubeconform -strict -ignore-missing-schemas -kubernetes-version ${K8S_VERSION}"
+          kubeconform \
+            -strict \
+            -ignore-missing-schemas \
+            -kubernetes-version "${K8S_VERSION}" \
+            -schema-location default \
+            -summary \
+            "${MANIFEST}"
+
+      - name: Upload rendered manifests (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-${{ matrix.chart }}-${{ matrix.env }}
+          path: rendered/${{ matrix.chart }}/${{ matrix.env }}/rendered.yaml
+          if-no-files-found: error
