@@ -84,7 +84,16 @@ airflow:
   
   # Ingress 설정
   ingress:
-    enabled: true
+    web:
+      enabled: true
+      ingressClassName: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      hosts:
+        - name: airflow.prod
+          tls:
+            enabled: true
+            secretName: airflow-prod-tls   # <-- cert-manager가 만든 Secret
     apiServer:
       enabled: true
       ingressClassName: nginx
@@ -92,3 +101,4 @@ airflow:
         - name: airflow.prod # ⬅️ global.airflowHost 기준값
       tls:
         enabled: true
+        secretName: airflow-dev-tls
