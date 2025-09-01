@@ -36,5 +36,4 @@ until kubectl -n $NS get secret argocd-initial-admin-secret &> /dev/null; do
   WAITED=$((WAITED + WAIT_INTERVAL))
 done
 
-echo "[INFO] Admin PW:"
-kubectl -n $NS get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+echo "[INFO] Check Admin PW CMD"

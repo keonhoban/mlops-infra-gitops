@@ -10,11 +10,9 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 10m
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-dev
   tls:
     enabled: true
     secretName: mlflow-dev-tls
-    issuerName: selfsigned-issuer
 
 dbConfig:
   secretName: mlflow-db-dev-secret

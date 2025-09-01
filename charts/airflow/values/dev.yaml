@@ -23,7 +23,7 @@ airflow:
   # Airflow config 직접 정의 (공식 Helm Chart의 config 블록)
   config:
     AIRFLOW__WEBSERVER__WEB_SERVER_BASE_URL:
-      value: "http://airflow.local"  # ⬅️ global.airflowHost 기준값 수동 복붙
+      value: "http://airflow.local"  # ⬅️ global.airflowHost 기준값
 
   apiSecretKeySecretName: airflow-dev-api-secret-key
   jwtSecretName:          airflow-dev-jwt-secret
@@ -91,6 +91,6 @@ airflow:
       enabled: true
       ingressClassName: nginx
       hosts:
-        - name: airflow.local  # ⬅️ global.airflowHost 기준 수동 복붙
+        - name: airflow.local  # ⬅️ global.airflowHost 기준값
       tls:
         enabled: false

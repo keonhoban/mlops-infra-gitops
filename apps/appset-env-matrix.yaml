@@ -7,7 +7,7 @@ spec:
   generators:
     - matrix:
         generators:
-          # ① 환경 목록
+          #  환경 목록
           - list:
               elements:
                 - env: dev
@@ -16,7 +16,7 @@ spec:
                 - env: prod
                   project: prod
                   values_suffix: prod
-          # ② 서비스 목록
+          #  서비스 목록
           - list:
               elements:
                 - service: mlflow
@@ -27,7 +27,6 @@ spec:
                   path: charts/fastapi
   template:
     metadata:
-      # 예: mlflow-dev, airflow-prod ...
       name: '{{service}}-{{env}}'
       annotations:
         # sealed-secrets(0) 이후에 배포
@@ -42,7 +41,6 @@ spec:
         targetRevision: main
         path: '{{path}}'
         helm:
-          # releaseName도 동일 규칙
           releaseName: '{{service}}-{{env}}'
           valueFiles:
             - 'values/base.yaml'
