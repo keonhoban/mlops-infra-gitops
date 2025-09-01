@@ -35,6 +35,9 @@ airflow:
   
   data:
     metadataSecretName: airflow-db-dev-secret
+
+  webserver:
+    enabled: true
   
   # Scheduler 설정 (Anchor 정의)
   scheduler: &dev_scheduler
