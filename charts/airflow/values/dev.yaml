@@ -96,11 +96,3 @@ airflow:
           tls:
             enabled: true
             secretName: airflow-dev-tls   # <-- cert-manager가 만든 Secret
-    apiServer:
-      enabled: true
-      ingressClassName: nginx
-      hosts:
-        - name: airflow.local  # ⬅️ global.airflowHost 기준값
-      tls:
-        enabled: true
-        secretName: airflow-dev-tls
