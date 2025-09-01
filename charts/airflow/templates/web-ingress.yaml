@@ -1,0 +1,26 @@
+{{- if .Values.manualIngress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: {{ default "nginx" .Values.manualIngress.ingressClassName }}
+  rules:
+    - host: {{ .Values.manualIngress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # 기본: "<release>-api-server" 로 추정. 필요 시 값으로 override.
+                name: {{ .Values.manualIngress.serviceName | default (printf "%s-api-server" .Release.Name) }}
+                port:
+                  number: {{ .Values.manualIngress.servicePort | default 8080 }}
+  tls:
+    - hosts: [{{ .Values.manualIngress.host | quote }}]
+      secretName: {{ .Values.manualIngress.tlsSecret }}
+{{- end }}
+

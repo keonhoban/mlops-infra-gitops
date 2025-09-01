@@ -87,10 +87,9 @@ airflow:
   # Ingress 설정
   ingress:
     enabled: true
-    apiServer:
-      enabled: true
-      ingressClassName: nginx
-      hosts:
-        - name: airflow.local  # ⬅️ global.airflowHost 기준값
-      tls:
-        enabled: false
+
+manualIngress:
+  enabled: true
+  host: airflow.local
+  tlsSecret: airflow-dev-tls
+  ingressClassName: nginx
