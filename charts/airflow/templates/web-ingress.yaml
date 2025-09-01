@@ -15,7 +15,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                # 기본: "<release>-api-server" 로 추정. 필요 시 값으로 override.
+                # <release>-api-server
                 name: {{ .Values.manualIngress.serviceName | default (printf "%s-api-server" .Release.Name) }}
                 port:
                   number: {{ .Values.manualIngress.servicePort | default 8080 }}
