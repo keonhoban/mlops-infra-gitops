@@ -86,6 +86,7 @@ airflow:
   
   # Ingress 설정
   ingress:
+    enabled: true
     web:
       enabled: true
       ingressClassName: nginx
