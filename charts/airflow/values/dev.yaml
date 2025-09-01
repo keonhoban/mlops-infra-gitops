@@ -84,10 +84,6 @@ airflow:
   workers: *dev_scheduler
   dagProcessor: *dev_scheduler
 
-  # Ingress 설정
-  ingress:
-    enabled: true
-
 manualIngress:
   enabled: true
   host: airflow.local

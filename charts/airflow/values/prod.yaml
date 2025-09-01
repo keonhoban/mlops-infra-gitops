@@ -82,10 +82,6 @@ airflow:
   workers: *prod_scheduler
   dagProcessor: *prod_scheduler
 
-  # Ingress 설정
-  ingress:
-    enabled: true
-
 manualIngress:
   enabled: true
   host: airflow.prod
