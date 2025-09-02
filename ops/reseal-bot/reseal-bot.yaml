@@ -1,0 +1,144 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ops
+---
+# sealed-secrets 컨트롤러로 프록시 통신 권한(최소)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sealed-secrets-proxy-user
+  namespace: kube-system
+rules:
+  - apiGroups: [""]
+    resources: ["services/proxy"]
+    resourceNames: ["sealed-secrets", "http:sealed-secrets:8080", "https:sealed-secrets:8080"]
+    verbs: ["get", "create"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reseal-bot
+  namespace: ops
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: reseal-bot-proxy
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sealed-secrets-proxy-user
+subjects:
+  - kind: ServiceAccount
+    name: reseal-bot
+    namespace: ops
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reseal-script
+  namespace: ops
+data:
+  run.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+    : "${REPO_URL:?}"; : "${BASE_BRANCH:?}"; : "${GIT_USERNAME:?}"; : "${GIT_EMAIL:?}"; : "${GIT_TOKEN:?}"
+
+    # kubeseal 설치
+    KUBESEAL_VER="0.29.0"
+    curl -sSL -o /usr/local/bin/kubeseal \
+      "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VER}/kubeseal-${KUBESEAL_VER}-linux-amd64"
+    chmod +x /usr/local/bin/kubeseal
+    kubeseal --version
+
+    # 컨트롤러 통신 확인
+    kubeseal --controller-namespace kube-system --controller-name sealed-secrets --fetch-cert \
+      | openssl x509 -noout -fingerprint -dates >/dev/null
+
+    # Git 클론
+    mkdir -p /work && cd /work
+    git clone --depth=1 -b "${BASE_BRANCH}" "${REPO_URL}" repo
+    cd repo
+
+    # 대상 파일 찾기
+    mapfile -t FILES < <(git ls-files | grep -E '^envs/(dev|prod)/sealed-secrets/.+\.ya?ml$' || true)
+    [[ ${#FILES[@]} -gt 0 ]] || { echo "[info] no targets"; exit 0; }
+
+    # 안전 reseal 루프 (변경 있을 때만 교체)
+    CHANGED=0
+    for f in "${FILES[@]}"; do
+      tmp=$(mktemp)
+      if kubeseal --controller-namespace kube-system --controller-name sealed-secrets \
+           --re-encrypt < "$f" > "$tmp"; then
+        if [ -s "$tmp" ]; then
+          mv "$tmp" "$f"
+          echo "updated: $f"
+          CHANGED=1
+        else
+          rm -f "$tmp"
+          echo "no change: $f"
+        fi
+      else
+        echo "❌ reseal failed: $f"; rm -f "$tmp"; exit 1
+      fi
+    done
+
+    # 검증
+    for f in "${FILES[@]}"; do
+      kubeseal --controller-namespace kube-system --controller-name sealed-secrets \
+        --validate -f "$f"
+    done
+
+    # 변경 없으면 종료
+    if [ "$CHANGED" -eq 0 ]; then
+      echo "[done] no changes"; exit 0; fi
+
+    # 커밋 → main에 직접 푸시(간결)
+    git config user.name  "${GIT_USERNAME}"
+    git config user.email "${GIT_EMAIL}"
+    git add envs/dev/sealed-secrets envs/prod/sealed-secrets
+    git commit -m "chore(secrets): monthly reseal with current controller key"
+    push_url="$(echo "${REPO_URL}" | sed -E "s#https://#https://${GIT_USERNAME}:${GIT_TOKEN}@#")"
+    git push "${push_url}" HEAD:"${BASE_BRANCH}"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sealed-secrets-reseal
+  namespace: ops
+spec:
+  schedule: "0 4 2 * *"    # 매월 1일 05:25 UTC = KST 14:25
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: reseal-bot
+          restartPolicy: Never
+          containers:
+            - name: reseal
+              image: alpine:3.20
+              envFrom:
+                - secretRef:
+                    name: reseal-git
+              command: ["/bin/sh","-c"]
+              args:
+                - |
+                  set -e
+                  apk add --no-cache bash git curl jq ca-certificates openssl
+                  mkdir -p /scripts
+                  cat /scripts-src/run.sh > /scripts/run.sh
+                  chmod +x /scripts/run.sh
+                  /scripts/run.sh
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts-src
+          volumes:
+            - name: script
+              configMap:
+                name: reseal-script
+                defaultMode: 0755
