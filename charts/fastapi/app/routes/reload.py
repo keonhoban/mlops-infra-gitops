@@ -7,7 +7,6 @@ import secrets
 router = APIRouter()
 
 @router.post("/variant/{alias}/reload")
-#def reload_model(alias: str, x_token: str = Header(...), request: Request):
 def reload_model(request: Request, alias: str, x_token: str = Header(...)):
     models = getattr(request.app.state, "models", {})
 
