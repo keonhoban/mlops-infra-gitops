@@ -6,7 +6,7 @@ metadata:
 data:
   # Slack 연동 (SealedSecret의 key 이름과 일치: slack-token)
   service.slack: |
-    token: $slack-webhook
+    token: $slack-token
 
   # ───────── Triggers (언제 보낼지) ─────────
   trigger.on-sync-succeeded: |
