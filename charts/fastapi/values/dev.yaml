@@ -38,7 +38,7 @@ envFrom:
 
 volumeMounts:
   - name: fastapi-logs
-    mountPath: /var/log/fastapi
+    mountPath: /app/logs
 
 volumes:
   - name: fastapi-logs
