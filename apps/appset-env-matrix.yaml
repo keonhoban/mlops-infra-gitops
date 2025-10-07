@@ -28,20 +28,9 @@ spec:
   template:
     metadata:
       name: '{{service}}-{{env}}'
-      labels:
-        # ✅ ArgoCD Notifications 트리거 활성화
-        # 필요에 따라 on-outofsync, on-health-degraded 등 추가/제거 가능
-        notifications.argoproj.io/triggers: on-sync-succeeded,on-sync-failed,on-outofsync,on-health-degraded
       annotations:
         # sealed-secrets(0) 이후에 배포
         argocd.argoproj.io/sync-wave: "1"
-
-        # ✅ Slack 채널 구독(이벤트별)
-        # dev → #mlops-dev-events / prod → #mlops-alerts 로 분기
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: '{{ if eq .env "prod" }}#mlops-alerts{{ else }}#mlops-dev-events{{ end }}'
-        notifications.argoproj.io/subscribe.on-sync-failed.slack:    '{{ if eq .env "prod" }}#mlops-alerts{{ else }}#mlops-dev-events{{ end }}'
-        notifications.argoproj.io/subscribe.on-outofsync.slack:      '{{ if eq .env "prod" }}#mlops-alerts{{ else }}#mlops-dev-events{{ end }}'
-        notifications.argoproj.io/subscribe.on-health-degraded.slack:'{{ if eq .env "prod" }}#mlops-alerts{{ else }}#mlops-dev-events{{ end }}'
     spec:
       project: '{{project}}'
       destination:
@@ -62,4 +51,3 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
-
