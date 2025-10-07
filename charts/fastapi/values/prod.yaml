@@ -36,6 +36,15 @@ envFrom:
   - secretRef:
       name: slack-webhook-prod-secret
 
+volumeMounts:
+  - name: fastapi-logs
+    mountPath: /var/log/fastapi
+
+volumes:
+  - name: fastapi-logs
+    persistentVolumeClaim:
+      claimName: fastapi-logs-pvc-prod
+
 probes:
   readinessProbe:
     httpGet:
