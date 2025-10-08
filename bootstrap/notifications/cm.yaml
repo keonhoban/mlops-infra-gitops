@@ -73,5 +73,3 @@ data:
         - on-sync-status-change
         - on-sync-failed
         - on-health-degraded
-
-  testKey: testValue
