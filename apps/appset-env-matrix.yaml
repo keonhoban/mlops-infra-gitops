@@ -32,11 +32,6 @@ spec:
         # sealed-secrets(0) 이후에 배포
         argocd.argoproj.io/sync-wave: "1"
 
-        # ✅ Slack 알림 구독 자동 분기
-        notifications.argoproj.io/subscribe.on-sync-succeeded.slack-{{env}}: "#mlops-{{env}}"
-        notifications.argoproj.io/subscribe.on-sync-failed.slack-{{env}}: "#mlops-{{env}}"
-        notifications.argoproj.io/subscribe.on-health-degraded.slack-{{env}}: "#mlops-{{env}}"
-
     spec:
       project: '{{project}}'
       destination:
