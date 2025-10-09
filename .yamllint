@@ -5,14 +5,12 @@ ignore: |
   charts/**/charts/**
   envs/**/sealed-secrets/**
   bootstrap/notifications/secret-sealed.yaml
-  # (선택) 워크플로 전체를 린트 제외하고 싶다면 아래도 추가:
-  # .github/workflows/**
 
 rules:
   braces: disable
   line-length: disable
   document-start: disable
-  truthy: disable                # ← 여기! 경고 자체를 끔
+  truthy: disable
   comments-indentation: disable
   trailing-spaces:
     level: error
