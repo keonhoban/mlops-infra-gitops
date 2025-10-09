@@ -26,9 +26,9 @@ airflow:
       value: "http://airflow.prod"  # ⬅️ global.airflowHost 기준값
 
   apiSecretKeySecretName: airflow-prod-api-secret-key
-  jwtSecretName:          airflow-prod-jwt-secret
+  jwtSecretName: airflow-prod-jwt-secret
   apiSecretKey: ~
-  jwtSecret:    ~
+  jwtSecret: ~
 
   # Fernet Key / Metadata DB 관련 시크릿
   fernetKeySecretName: airflow-fernet-prod-secret

@@ -1,0 +1,18 @@
+extends: default
+
+ignore: |
+  charts/**/templates/**
+  charts/**/charts/**
+  envs/**/sealed-secrets/**
+  bootstrap/notifications/secret-sealed.yaml
+
+rules:
+  braces: disable
+  line-length: disable
+  document-start: disable
+  truthy: disable
+  comments-indentation: disable
+  trailing-spaces:
+    level: error
+  colons:
+    max-spaces-after: 1

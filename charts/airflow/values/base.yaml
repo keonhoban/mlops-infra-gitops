@@ -1,11 +1,11 @@
 airflow:
   executor: KubernetesExecutor
-  
+
   images:
     airflow:
       repository: hoizz/airflow-custom
       pullPolicy: IfNotPresent
-  
+
   config:
     AIRFLOW__CORE__LOAD_EXAMPLES: { value: "False" }
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: { value: "False" }
