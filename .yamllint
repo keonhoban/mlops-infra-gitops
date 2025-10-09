@@ -1,16 +1,22 @@
 extends: default
 
 ignore: |
-  envs/**/sealed-secrets/**
+  charts/**/templates/**          # Helm templates는 YAML 아님 → 제외
+  charts/**/charts/**             # vendor tgz, 서브차트 등
+  envs/**/sealed-secrets/**       # base64/긴 라인/포맷 다양 → 제외
   bootstrap/notifications/secret-sealed.yaml
-  charts/**/charts/**            # vendor된 tgz 내부(혹시 풀려있다면) 무시
-  **/*.tpl                       # 템플릿 파일은 스타일 제외(원하면 유지)
 
 rules:
-  line-length: disable           # base64/주석 길이 등 허용
-  document-start: disable        # --- 강제하지 않음
+  # Helm/inline map 때문에 터지는 규칙 완화
+  braces: disable                 # { a: b } 형태 스페이싱 검사 끔
+  line-length: disable            # base64/주석 긴 라인 허용
+  document-start: disable         # '---' 강제 끔
   truthy:
-    level: warning               # 'yes/no/on/off' 경고로만
-  comments-indentation: disable  # 코멘트 들여쓰기 관대하게
-  indentation:
-    indent-sequences: whatever   # 시퀀스 들여쓰기 유연하게
+    level: warning                # yes/no/on/off는 경고만
+  comments-indentation: disable   # 주석 들여쓰기 관대하게
+
+  # 나머지는 지키자(가독성용)
+  trailing-spaces:
+    level: error
+  colons:
+    max-spaces-after: 1           # 콜론 뒤 공백 1칸
