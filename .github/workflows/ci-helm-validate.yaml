@@ -1,0 +1,154 @@
+name: Helm CI
+
+on:
+  pull_request:
+    paths:
+      - 'charts/**'
+      - 'envs/**'
+      - 'apps/**'
+      - '.github/workflows/ci-helm-validate.yaml'
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: helm-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Lint & Render & Validate (${{ matrix.env }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        env: [dev, prod]
+        chart: [airflow, fastapi, mlflow]
+
+    env:
+      KUBE_VERSION: "1.30.0"
+      # 3rd-party kinds는 스키마 검증에서 스킵(ArgoCD, cert-manager, SealedSecret 등)
+      SKIP_KINDS: "Application,ApplicationSet,AppProject,SealedSecret,Certificate,CertificateRequest,Issuer,ClusterIssuer,Order,Challenge"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.12.3
+
+      - name: Install tools (yamllint, yq, kubeconform)
+        shell: bash
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y yamllint jq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          curl -sSL -o kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          sudo tar -C /usr/local/bin -xzf kubeconform.tar.gz kubeconform
+          kubeconform -v
+
+      - name: YAML style check (repo-wide)
+        run: |
+          # yamllint 기본: 경고도 실패 처리하려면 -f parsable 제거 및 설정 강화 가능
+          yamllint -s .
+
+      - name: Helm lint (strict)
+        working-directory: charts/${{ matrix.chart }}
+        run: |
+          # base + env overlay 조합으로 lint
+          if [[ -f values/base.yaml && -f values/${{ matrix.env }}.yaml ]]; then
+            helm lint . -f values/base.yaml -f values/${{ matrix.env }}.yaml --strict
+          elif [[ -f values/${{ matrix.env }}.yaml ]]; then
+            helm lint . -f values/${{ matrix.env }}.yaml --strict
+          else
+            helm lint . --strict
+          fi
+
+      - name: Render manifests with helm template
+        id: render
+        run: |
+          mkdir -p /tmp/rendered
+          CHART="charts/${{ matrix.chart }}"
+          OUT="/tmp/rendered/${{ matrix.chart }}-${{ matrix.env }}.yaml"
+
+          # namespace는 실제 배포 네임스페이스 컨벤션에 맞게 필요시 수정
+          NS="${{ matrix.chart }}-${{ matrix.env }}"
+
+          if [[ -f "$CHART/values/base.yaml" && -f "$CHART/values/${{ matrix.env }}.yaml" ]]; then
+            helm template ${{ matrix.chart }} "$CHART" \
+              -n "$NS" \
+              -f "$CHART/values/base.yaml" \
+              -f "$CHART/values/${{ matrix.env }}.yaml" > "$OUT"
+          elif [[ -f "$CHART/values/${{ matrix.env }}.yaml" ]]; then
+            helm template ${{ matrix.chart }} "$CHART" \
+              -n "$NS" \
+              -f "$CHART/values/${{ matrix.env }}.yaml" > "$OUT"
+          else
+            helm template ${{ matrix.chart }} "$CHART" -n "$NS" > "$OUT"
+          fi
+
+          echo "out=$OUT" >> $GITHUB_OUTPUT
+          echo "Rendered: $OUT"
+          test -s "$OUT"
+
+      - name: kubeconform (core K8s kinds only)
+        run: |
+          # 3rd-party kinds 스킵. core 리소스만 스키마 검증.
+          kubeconform \
+            -kubernetes-version "${KUBE_VERSION}" \
+            -ignore-missing-schemas \
+            -skip "${SKIP_KINDS}" \
+            -summary \
+            "${{ steps.render.outputs.out }}"
+
+      - name: Validate env raw manifests (envs/${{ matrix.env }})
+        if: ${{ always() }}
+        run: |
+          shopt -s nullglob
+          FILES=(envs/${{ matrix.env }}/**/*.yaml envs/${{ matrix.env }}/*.yaml)
+          if (( ${#FILES[@]} )); then
+            echo "Validating ${#FILES[@]} files under envs/${{ matrix.env }}"
+            # 스타일 체크
+            yamllint -s "${FILES[@]}"
+
+            # 스키마 검증(3rd-party kinds 스킵)
+            kubeconform \
+              -kubernetes-version "${KUBE_VERSION}" \
+              -ignore-missing-schemas \
+              -skip "${SKIP_KINDS}" \
+              -summary \
+              "${FILES[@]}"
+          else
+            echo "No env files found under envs/${{ matrix.env }}"
+          fi
+
+      - name: Validate apps/ (Argo CD objects etc.)
+        if: ${{ always() }}
+        run: |
+          shopt -s nullglob
+          FILES=(apps/*.yaml)
+          if (( ${#FILES[@]} )); then
+            echo "Validating ${#FILES[@]} files under apps/"
+            yamllint -s "${FILES[@]}"
+            # apps/는 대부분 ArgoCD kinds → 스키마 스킵 필수
+            kubeconform \
+              -kubernetes-version "${KUBE_VERSION}" \
+              -ignore-missing-schemas \
+              -skip "${SKIP_KINDS}" \
+              -summary \
+              "${FILES[@]}"
+          else
+            echo "No files under apps/"
+          fi
+
+      - name: Upload rendered manifests
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-${{ matrix.chart }}-${{ matrix.env }}
+          path: /tmp/rendered/${{ matrix.chart }}-${{ matrix.env }}.yaml
+          if-no-files-found: warn
