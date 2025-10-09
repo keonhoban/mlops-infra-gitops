@@ -60,14 +60,7 @@ jobs:
             ':!:charts/**/charts/**' \
             ':!:envs/**/sealed-secrets/**' \
             ':!:bootstrap/notifications/secret-sealed.yaml' \
-          | { read -r -d '' first || true; if [ -n "${first:-}" ]; then
-                printf '%s\0' "$first" $(git ls-files -z '*.yml' '*.yaml' \
-                  ':!:charts/**/templates/**' ':!:charts/**/charts/**' \
-                  ':!:envs/**/sealed-secrets/**' ':!:bootstrap/notifications/secret-sealed.yaml') \
-                | xargs -0 yamllint -s ;
-              else
-                echo "No YAML files to lint";
-              fi; }
+          | xargs -0 -r yamllint -s
 
       - name: Helm lint (strict)
         working-directory: charts/${{ matrix.chart }}
@@ -121,8 +114,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          shopt -s nullglob
-          FILES=(envs/${{ matrix.env }}/**/*.yaml envs/${{ matrix.env }}/*.yaml)
+          # sealed-secrets는 제외하고 env/*.yaml만 검사
+          mapfile -t FILES < <(find "envs/${{ matrix.env }}" -type f -name '*.yaml' ! -path "*/sealed-secrets/*")
           if (( ${#FILES[@]} )); then
             echo "Validating ${#FILES[@]} files under envs/${{ matrix.env }}"
             yamllint -s "${FILES[@]}"
