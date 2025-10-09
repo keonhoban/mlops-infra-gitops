@@ -7,10 +7,6 @@ on:
       - 'envs/**'
       - 'apps/**'
       - '.github/workflows/ci-helm-validate.yaml'
-    paths-ignore:
-      - '**/*.md'
-      - 'README*'
-      - 'docs/**'
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch: {}
 
