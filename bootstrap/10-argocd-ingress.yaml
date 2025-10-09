@@ -4,7 +4,7 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
-    # NGINX 
+    # NGINX
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
@@ -18,7 +18,7 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - argocd.local                # FQDN으로 교체 
+        - argocd.local                # FQDN으로 교체
       secretName: argocd-tls          # 생성될 TLS Secret 이름
   rules:
     - host: argocd.local              # 위와 동일

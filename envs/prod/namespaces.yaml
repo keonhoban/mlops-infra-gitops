@@ -15,4 +15,3 @@ kind: Namespace
 metadata:
   name: fastapi-prod
   labels: { env: prod, app: fastapi-prod, team: ml-platform }
-

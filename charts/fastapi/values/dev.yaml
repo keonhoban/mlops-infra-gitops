@@ -50,7 +50,7 @@ probes:
     httpGet:
       path: /health
       port: 8000
-    initialDelaySeconds: 10  
+    initialDelaySeconds: 10
     periodSeconds: 5
     failureThreshold: 5
     successThreshold: 1
@@ -59,7 +59,7 @@ probes:
     httpGet:
       path: /health
       port: 8000
-    initialDelaySeconds: 30  
+    initialDelaySeconds: 30
     periodSeconds: 10
     failureThreshold: 5
 # ci-smoke: 2025-10-09-09:26:56

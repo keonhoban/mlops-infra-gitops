@@ -26,9 +26,9 @@ airflow:
       value: "http://airflow.local"  # ⬅️ global.airflowHost 기준값
 
   apiSecretKeySecretName: airflow-dev-api-secret-key
-  jwtSecretName:          airflow-dev-jwt-secret
+  jwtSecretName: airflow-dev-jwt-secret
   apiSecretKey: ~
-  jwtSecret:    ~
+  jwtSecret: ~
 
   # Fernet Key / Metadata DB 관련 시크릿
   fernetKeySecretName: airflow-fernet-dev-secret

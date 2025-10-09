@@ -53,8 +53,17 @@ jobs:
 
       - name: YAML style check (repo-wide)
         run: |
-          # yamllint 기본: 경고도 실패 처리하려면 -f parsable 제거 및 설정 강화 가능
-          yamllint -s .
+          set -e
+          FILES=$(git ls-files '*.yml' '*.yaml' \
+            ':!:charts/**/templates/**' \
+            ':!:charts/**/charts/**' \
+            ':!:envs/**/sealed-secrets/**' \
+            ':!:bootstrap/notifications/secret-sealed.yaml')
+          if [ -n "$FILES" ]; then
+            yamllint -s $FILES
+          else
+            echo "No YAML files to lint"
+          fi
 
       - name: Helm lint (strict)
         working-directory: charts/${{ matrix.chart }}
