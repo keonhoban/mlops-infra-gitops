@@ -13,6 +13,7 @@ ingress:
   tls:
     enabled: true
     secretName: mlflow-dev-tls
+    issuerName: selfsigned-issuer
 
 dbConfig:
   secretName: mlflow-db-dev-secret
