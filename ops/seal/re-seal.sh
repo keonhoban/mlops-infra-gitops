@@ -2,56 +2,84 @@
 set -euo pipefail
 
 # 사용법:
-#   DRY_RUN=1 bash ops/seal/reseal-all.sh dev   # 변경만 확인
-#   bash ops/seal/reseal-all.sh dev             # 실제 반영 (prod도 동일)
+#   bash ops/seal/re-seal.sh dev --dry-run
+#   DRY_RUN=1 bash ops/seal/re-seal.sh dev
+#   bash ops/seal/re-seal.sh dev
 
-ENV="${1:-dev}"   # dev | prod
+ENV="${1:-dev}"
+DRY_RUN="${DRY_RUN:-0}"
+if [[ "${2:-}" == "--dry-run" ]]; then DRY_RUN=1; fi
+
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 OUT_BASE="$ROOT/envs/$ENV/sealed-secrets"
-
 : "${SS_CTL:=sealed-secrets}"
 : "${SS_NS:=kube-system}"
 
 need(){ command -v "$1" >/dev/null 2>&1 || { echo "❌ need $1"; exit 1; }; }
-need kubeseal; need yq; need git; command -v openssl >/dev/null 2>&1 || true
+need kubeseal; need git; command -v openssl >/dev/null 2>&1 || true
 
 echo "🔑 controller cert fingerprint:"
 kubeseal --controller-name "$SS_CTL" --controller-namespace "$SS_NS" --fetch-cert \
 | openssl x509 -noout -fingerprint -sha256 || true
 
 changed=0
+processed=0
+shopt -s nullglob
 for appdir in "$OUT_BASE"/*; do
-  [ -d "$appdir" ] || continue
+  [[ -d "$appdir" ]] || continue
   for f in "$appdir"/*.yaml; do
-    [ -f "$f" ] || continue
-    tmp="$(mktemp)"
+    [[ -f "$f" ]] || continue
+    processed=$((processed+1))
 
-    # 1) 최신 공개키로 재암호화(값 불변, scope/메타 보존)
-    kubeseal --controller-name "$SS_CTL" --controller-namespace "$SS_NS" \
-             --re-encrypt < "$f" > "$tmp"
+    tmpdir="$(mktemp -d)"
+    tmp_reenc="$tmpdir/$(basename "$f").reenc"
 
-    # 2) Secret이 앱보다 먼저 적용되도록 권장 애노테이션
-    yq -i '.metadata.annotations."argocd.argoproj.io/sync-wave" = "-1"' "$tmp" || true
-
-    # 3) 바뀐 경우만 교체
-    if ! cmp -s "$f" "$tmp"; then
-      mv "$tmp" "$f"
-      echo "🔁 re-encrypted: $f"
-      changed=1
-    else
-      rm -f "$tmp"
-      echo "⏭️  unchanged:   $f"
+    # 1) 최신 공개키로 재암호화만 수행 (정규화/주석 편집 없음)
+    if ! kubeseal --controller-name "$SS_CTL" --controller-namespace "$SS_NS" \
+                  --re-encrypt < "$f" > "$tmp_reenc" 2>/dev/null; then
+      echo "❌ kubeseal --re-encrypt 실패: $f"
+      rm -rf "$tmpdir"; continue
     fi
+
+    # 2) 드라이런: 비교만
+    if [[ "$DRY_RUN" -eq 1 ]]; then
+      if cmp -s "$f" "$tmp_reenc"; then
+        echo "⏭️  unchanged:   $f"
+      else
+        echo "🧪 would re-encrypt: $f"
+        command -v diff >/dev/null 2>&1 && diff -u --label "old:$f" --label "new:$f" "$f" "$tmp_reenc" | sed -n '1,80p' || true
+      fi
+      rm -rf "$tmpdir"
+      continue
+    fi
+
+    # 3) 실제 적용: 원자적 교체
+    if cmp -s "$f" "$tmp_reenc"; then
+      echo "⏭️  unchanged:   $f"
+      rm -rf "$tmpdir"; continue
+    fi
+
+    # 퍼미션 유지하며 원자 교체
+    perms=$(stat -c '%a' "$f" 2>/dev/null || echo 644)
+    install -m "$perms" "$tmp_reenc" "$f"
+    rm -rf "$tmpdir"
+    echo "🔁 re-encrypted: $f"
+    changed=1
   done
 done
+shopt -u nullglob
 
 # 4) 커밋/푸시
-if [[ "${DRY_RUN:-0}" -eq 0 && "$changed" -eq 1 ]]; then
+if [[ "$DRY_RUN" -eq 1 ]]; then
+  echo "✅ dry-run 완료 (검사 파일 수=$processed). 변경사항 미적용."
+  exit 0
+fi
+
+if [[ "$changed" -eq 1 ]]; then
   git add "$OUT_BASE"
   git commit -m "reseal(${ENV}): re-encrypt all SealedSecrets with current controller key"
   git push
-  # 필요 시 수동 동기화:
-  # argocd app sync "${ENV}-secrets" --prune --grpc-web || true
+  echo "🚀 pushed resealed secrets."
+else
+  echo "✅ 변경 없음 (검사 파일 수=$processed)."
 fi
-
-echo "✅ done (env=$ENV, changed=$changed)"
