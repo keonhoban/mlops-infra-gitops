@@ -46,6 +46,7 @@ spec:
           valueFiles:
             - 'values/base.yaml'
             - 'values/{{values_suffix}}.yaml'   # charts/<svc>/values/dev.yaml|prod.yaml
+
       syncPolicy:
         automated:
           prune: true

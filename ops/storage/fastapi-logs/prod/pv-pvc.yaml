@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fastapi-logs-pv-prod
+  labels:
+    pv: fastapi-logs-prod
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes: [ReadWriteMany]
+  nfs:
+    server: 192.168.18.141
+    path: /mnt/nfs_share/mlops/fastapi/logs/prod
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fastapi-logs-pvc-prod
+  namespace: fastapi-prod
+spec:
+  storageClassName: ""
+  selector:
+    matchLabels:
+      pv: fastapi-logs-prod
+  accessModes: [ReadWriteMany]
+  resources:
+    requests:
+      storage: 5Gi

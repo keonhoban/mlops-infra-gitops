@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fastapi-logs-pv-dev
+  labels:
+    pv: fastapi-logs-dev
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes: [ReadWriteMany]
+  nfs:
+    server: 192.168.18.141
+    path: /mnt/nfs_share/mlops/fastapi/logs/dev
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fastapi-logs-pvc-dev
+  namespace: fastapi-dev
+spec:
+  storageClassName: ""        # NFS 직접 바인딩이므로 비움
+  selector:
+    matchLabels:
+      pv: fastapi-logs-dev
+  accessModes: [ReadWriteMany]
+  resources:
+    requests:
+      storage: 5Gi

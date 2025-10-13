@@ -1,151 +1,156 @@
 #!/usr/bin/env bash
 # ops/seal/rotate-controller-key.sh
-# Bitnami Sealed Secrets 컨트롤러 공개키 "추가" + "백업" + "검증" + "자동 롤백"
-# - 새 키를 추가해 컨트롤러가 새 키로 암호화하도록 유도(구키는 계속 복호화 가능)
-# - 기존 키는 삭제하지 않고 전량 백업. 문제 시 자동/수동 롤백 경로 제공
-# - 라벨키 2종(하이픈 유무) 모두 처리하여 배포/버전 차이 안전 대응
+# 사용법:
+#   bash ops/seal/rotate-controller-key.sh
+# 옵션:
+#   INCLUDE_BOOTSTRAP=1  # notifications 같이 re-seal
+#   DRY_RUN=1            # 실제 패치/봉인/커밋 없이 흐름만
+# 주의:
+#   구키를 먼저 삭제하지 말 것! (복호화 실패 발생)
 
 set -euo pipefail
 
-# ===== 사용자/환경 설정 =====
-SS_NS="${SS_NS:-kube-system}"                 # 컨트롤러 네임스페이스
-SS_DEPLOY="${SS_DEPLOY:-sealed-secrets}"      # 컨트롤러 Deployment 이름
-SS_CTL="${SS_CTL:-sealed-secrets}"            # kubeseal --controller-name
-LABEL_KEYS=("sealed-secrets.bitnami.com/sealed-secrets-key" "sealedsecrets.bitnami.com/sealed-secrets-key")
-LABEL_VALUE="active"
-
-TS="$(date +%F-%H%M%S)"
-BACKUP_DIR="${BACKUP_DIR:-/root/backup/sealed-secrets-keys/$TS}"
-mkdir -p "$BACKUP_DIR"
+SS_NS="${SS_NS:-kube-system}"
+DEPLOY="${DEPLOY:-sealed-secrets}"
+RENEW_SHORT="${RENEW_SHORT:-1m}"   # 임시 단축 주기
+RENEW_NORMAL="${RENEW_NORMAL:-720h}"  # 원복 주기(30일)
+INCLUDE_BOOTSTRAP="${INCLUDE_BOOTSTRAP:-0}"
+DRY_RUN="${DRY_RUN:-0}"
+TIMEOUT="${TIMEOUT:-420}"  # 신키 추가 대기(초)
 
 need(){ command -v "$1" >/dev/null 2>&1 || { echo "❌ need $1"; exit 1; }; }
-need kubectl; need openssl; need kubeseal; need sed; need awk
+need kubectl; need yq; command -v argocd >/dev/null 2>&1 || true
 
-info(){ echo "[$(date +%H:%M:%S)] $*"; }
+say(){ echo -e "$*"; }
 
-# ===== 0) 배포체 확인 =====
-if ! kubectl -n "$SS_NS" get deploy/"$SS_DEPLOY" >/dev/null 2>&1; then
-  echo "❌ 컨트롤러 배포체가 없습니다: ns=$SS_NS deploy=$SS_DEPLOY"
-  echo "   예: SS_DEPLOY=sealed-secrets-controller 로 다시 실행해 보세요."
-  exit 1
-fi
-info "컨트롤러 배포체: $SS_DEPLOY (ns=$SS_NS)"
-
-# ===== 1) 구키 백업 =====
-info "백업 디렉터리: $BACKUP_DIR"
-mapfile -t ALL_KEYS < <(kubectl -n "$SS_NS" get secret -l "${LABEL_KEYS[0]},${LABEL_KEYS[1]}" \
-  -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' 2>/dev/null || true)
-
-if (( ${#ALL_KEYS[@]} == 0 )); then
-  # 레이블 없는 기존 키까지 포함해 모두 백업
-  mapfile -t ALL_KEYS < <(kubectl -n "$SS_NS" get secret -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' \
-    | grep -E '^sealed-secrets-key' || true)
-fi
-for s in "${ALL_KEYS[@]:-}"; do
-  kubectl -n "$SS_NS" get secret "$s" -o yaml > "$BACKUP_DIR/$s.yaml" && \
-  info "백업 완료: $BACKUP_DIR/$s.yaml"
-done
-
-# 현재 active 라벨 붙은 키 목록 저장(롤백 대비)
-mapfile -t OLD_ACTIVE < <(kubectl -n "$SS_NS" get secret \
-  -l "${LABEL_KEYS[0]}=$LABEL_VALUE" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' 2>/dev/null || true)
-if (( ${#OLD_ACTIVE[@]} == 0 )); then
-  mapfile -t OLD_ACTIVE < <(kubectl -n "$SS_NS" get secret \
-    -l "${LABEL_KEYS[1]}=$LABEL_VALUE" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' 2>/dev/null || true)
-fi
-PREV_ACTIVE="${OLD_ACTIVE[0]:-}"
-
-# ===== 2) 현재 컨트롤러 공개키 Fingerprint =====
-info "컨트롤러 공개키 Fingerprint (회전 전):"
-OLD_FPR_CTRL="$(kubeseal --controller-name "$SS_CTL" --controller-namespace "$SS_NS" --fetch-cert \
-  | openssl x509 -noout -fingerprint -sha256 | awk -F= '{print $2}')"
-echo "${OLD_FPR_CTRL:-<unknown>}"
-
-# ===== 3) 새 키 생성 및 Secret YAML 준비 =====
-NEW_NAME="sealed-secrets-key-${TS}"
-TMP_KEY="/tmp/${NEW_NAME}.key"
-TMP_CRT="/tmp/${NEW_NAME}.crt"
-info "새 공개키/개인키 생성: $NEW_NAME"
-
-openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
-  -subj "/CN=sealed-secrets/O=sealedsecrets" \
-  -keyout "$TMP_KEY" -out "$TMP_CRT" >/dev/null 2>&1
-
-# Secret 매니페스트 생성 및 백업 저장
-cat > "$BACKUP_DIR/$NEW_NAME.yaml" <<EOF
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ${NEW_NAME}
-  namespace: ${SS_NS}
-  labels:
-    ${LABEL_KEYS[0]}: ${LABEL_VALUE}
-    ${LABEL_KEYS[1]}: ${LABEL_VALUE}
-type: kubernetes.io/tls
-data:
-  tls.crt: $(base64 -w0 < "$TMP_CRT")
-  tls.key: $(base64 -w0 < "$TMP_KEY")
-EOF
-info "새 키 yaml 백업: $BACKUP_DIR/$NEW_NAME.yaml"
-
-# 보안상 로컬 키 파일 제거
-shred -u "$TMP_KEY" || true
-rm -f "$TMP_CRT" || true
-
-# 적용
-kubectl apply -f "$BACKUP_DIR/$NEW_NAME.yaml" >/dev/null
-
-# ===== 4) 기존 active 라벨 제거(두 라벨키 모두) =====
-if (( ${#OLD_ACTIVE[@]} > 0 )); then
-  for s in "${OLD_ACTIVE[@]}"; do
-    for LK in "${LABEL_KEYS[@]}"; do
-      kubectl -n "$SS_NS" label secret "$s" "$LK"- --overwrite 2>/dev/null || true
-    done
-  done
-fi
-
-# ===== 5) 컨트롤러 재시작 & 대기 =====
-info "컨트롤러 롤아웃 재시작: $SS_DEPLOY"
-kubectl -n "$SS_NS" rollout restart "deploy/$SS_DEPLOY"
-kubectl -n "$SS_NS" rollout status  "deploy/$SS_DEPLOY" --timeout=180s
-
-# ===== 6) Fingerprint 비교 (검증) =====
-info "컨트롤러 공개키 Fingerprint (회전 후):"
-NEW_FPR_CTRL="$(kubeseal --controller-name "$SS_CTL" --controller-namespace "$SS_NS" --fetch-cert \
-  | openssl x509 -noout -fingerprint -sha256 | awk -F= '{print $2}')"
-echo "${NEW_FPR_CTRL:-<unknown>}"
-
-NEW_FPR_SECRET="$(kubectl -n "$SS_NS" get secret "$NEW_NAME" -o jsonpath='{.data.tls\.crt}' \
-  | base64 -d | openssl x509 -noout -fingerprint -sha256 | awk -F= '{print $2}')"
-
-echo "controller: ${NEW_FPR_CTRL:-<unknown>}"
-echo " new cert : ${NEW_FPR_SECRET:-<unknown>}"
-
-rollback_labels() {
-  info "❌ 지문 불일치 또는 추출 실패 → 라벨 롤백"
-  # 새 키 active 라벨 제거(두 라벨키 모두)
-  for LK in "${LABEL_KEYS[@]}"; do
-    kubectl -n "$SS_NS" label secret "$NEW_NAME" "$LK"- --overwrite 2>/dev/null || true
-  done
-  # 이전 active 키 복귀
-  if [[ -n "${PREV_ACTIVE:-}" ]]; then
-    for LK in "${LABEL_KEYS[@]}"; do
-      kubectl -n "$SS_NS" label secret "$PREV_ACTIVE" "$LK=$LABEL_VALUE" --overwrite 2>/dev/null || true
-    done
+backup_keys () {
+  mkdir -p /root/backup
+  local out="/root/backup/sealed-secrets-keys-$(date +%F-%H%M%S).yaml"
+  say "[1/6] 기존 키 백업 → $out"
+  if [[ "$DRY_RUN" != "1" ]]; then
+    kubectl -n "$SS_NS" get secret -l sealedsecrets.bitnami.com/sealed-secrets-key -o yaml > "$out"
   fi
-  # 컨트롤러 재시작
-  kubectl -n "$SS_NS" rollout restart "deploy/$SS_DEPLOY"
-  kubectl -n "$SS_NS" rollout status  "deploy/$SS_DEPLOY" --timeout=180s
 }
 
-if [[ -z "${NEW_FPR_CTRL:-}" || -z "${NEW_FPR_SECRET:-}" || "$NEW_FPR_CTRL" != "$NEW_FPR_SECRET" ]]; then
-  rollback_labels
-  echo "↩︎ 롤백 완료. 현재 컨트롤러 지문:"
-  kubeseal --controller-name "$SS_CTL" --controller-namespace "$SS_NS" --fetch-cert \
-  | openssl x509 -noout -fingerprint -sha256
-  exit 1
-fi
+get_key_count () {
+  kubectl -n "$SS_NS" get secret -l sealedsecrets.bitnami.com/sealed-secrets-key -o json \
+    | yq '.items | length'
+}
 
-info "✅ 새 공개키 적용 완료 (구키는 유지 중, 복호화 가능)."
-info "👉 다음 단계: DRY_RUN=1 bash ops/seal/re-seal.sh <env> 로 변경 여부 확인 후, 문제 없으면 reseal 실행"
-info "   필요시 이전 키로 되돌리려면 백업 yaml을 적용하고( $BACKUP_DIR ), 이전 키에 두 라벨키 모두 active 부여 후 재시작하세요."
+patch_args_temp_short () {
+  say "[2/6] 컨트롤러에 신키 추가 유도(renew period 임시 단축: $RENEW_SHORT)"
+  if [[ "$DRY_RUN" == "1" ]]; then
+    say "  (dry-run) patch args to --key-renew-period=$RENEW_SHORT"
+    return 0
+  fi
+
+  # 현재 args 백업(원복용)
+  kubectl -n "$SS_NS" get deploy "$DEPLOY" -o json | yq '.spec.template.spec.containers[0].args' > /tmp/ss-args-backup.json
+
+  # args가 없거나 기존에 renew arg가 없으면 추가, 있으면 교체
+  if yq -e '.[0]' /tmp/ss-args-backup.json >/dev/null 2>&1; then
+    # 배열 존재 → renew 인자 교체/추가
+    if yq -e 'map(select(test("^--key-renew-period="))) | length > 0' /tmp/ss-args-backup.json >/dev/null 2>&1; then
+      NEW_ARGS=$(yq "(map(if test(\"^--key-renew-period=\") then \"--key-renew-period=$RENEW_SHORT\" else . end))" /tmp/ss-args-backup.json -o=json)
+    else
+      NEW_ARGS=$(yq ". + [\"--key-renew-period=$RENEW_SHORT\"]" /tmp/ss-args-backup.json -o=json)
+    fi
+  else
+    # args가 비어있음 → 새 배열 생성
+    NEW_ARGS=$(printf '["--key-renew-period=%s"]' "$RENEW_SHORT")
+  fi
+
+  kubectl -n "$SS_NS" patch deploy "$DEPLOY" \
+    --type='json' \
+    -p="[ {\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/args\",\"value\": $NEW_ARGS } ]"
+
+  # 신키 생성 대기: 기존 키 개수 대비 +1
+  local before after waited=0
+  before=$(get_key_count)
+  say "  현재 키 개수: $before → 새 키 생성 대기..."
+  until [[ $waited -ge $TIMEOUT ]]; do
+    sleep 6; waited=$(( waited + 6 ))
+    after=$(get_key_count)
+    if (( after > before )); then
+      say "  ✅ 새 키 감지: $before → $after (경과 ${waited}s)"
+      return 0
+    fi
+    say "  ...대기중(${waited}s) (키 개수 $after)"
+  done
+  say "⚠️  제한 시간 초과: 새 키 생성 확인 실패. (컨트롤러 로그/설정 확인 필요)"
+  exit 1
+}
+
+reseal_all () {
+  say "[3/6] dev re-seal (검증)"
+  local cmd="SHOW_DIFF=1 INCLUDE_BOOTSTRAP=${INCLUDE_BOOTSTRAP} bash ops/seal/re-seal.sh dev"
+  if [[ "$DRY_RUN" == "1" ]]; then
+    say "  (dry-run) $cmd"
+  else
+    eval "$cmd"
+    git push || true
+  fi
+
+  # (있으면) argocd로 빠르게 상태 점검
+  if command -v argocd >/dev/null 2>&1; then
+    argocd app get dev-secrets || true
+    [[ "$INCLUDE_BOOTSTRAP" == "1" ]] && argocd app get notifications || true
+  fi
+
+  say "[4/6] prod re-seal (반영)"
+  cmd="SHOW_DIFF=1 INCLUDE_BOOTSTRAP=${INCLUDE_BOOTSTRAP} bash ops/seal/re-seal.sh prod"
+  if [[ "$DRY_RUN" == "1" ]]; then
+    say "  (dry-run) $cmd"
+  else
+    eval "$cmd"
+    git push || true
+  fi
+
+  if command -v argocd >/dev/null 2>&1; then
+    argocd app get prod-secrets || true
+  fi
+}
+
+restore_args_normal () {
+  say "[5/6] renew period 원복: $RENEW_NORMAL"
+  if [[ "$DRY_RUN" == "1" ]]; then
+    say "  (dry-run) restore args to $RENEW_NORMAL"
+    return 0
+  fi
+  if [[ -s /tmp/ss-args-backup.json ]]; then
+    # 백업 args에서 renew 인자 교체/추가해 원복
+    if yq -e '.[0]' /tmp/ss-args-backup.json >/dev/null 2>&1; then
+      if yq -e 'map(select(test("^--key-renew-period="))) | length > 0' /tmp/ss-args-backup.json >/dev/null 2>&1; then
+        NEW_ARGS=$(yq "(map(if test(\"^--key-renew-period=\") then \"--key-renew-period=$RENEW_NORMAL\" else . end))" /tmp/ss-args-backup.json -o=json)
+      else
+        NEW_ARGS=$(yq ". + [\"--key-renew-period=$RENEW_NORMAL\"]" /tmp/ss-args-backup.json -o=json)
+      fi
+    else
+      NEW_ARGS=$(printf '["--key-renew-period=%s"]' "$RENEW_NORMAL")
+    fi
+
+    kubectl -n "$SS_NS" patch deploy "$DEPLOY" \
+      --type='json' \
+      -p="[ {\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/args\",\"value\": $NEW_ARGS } ]"
+  else
+    echo "⚠️  /tmp/ss-args-backup.json 없음(원복 스킵). 수동 확인 권장."
+  fi
+}
+
+final_check () {
+  say "[6/6] 최종 점검"
+  if command -v argocd >/dev/null 2>&1; then
+    argocd app get dev-secrets || true
+    argocd app get prod-secrets || true
+    [[ "$INCLUDE_BOOTSTRAP" == "1" ]] && argocd app get notifications || true
+  fi
+  say "✅ 키 회전 & re-seal 절차 완료"
+  say "ℹ️ (선택) 구키 정리는 전환경 Healthy + 여러 배포 사이클 통과 후에 수행 권장"
+}
+
+# 실행 플로우
+backup_keys
+patch_args_temp_short
+reseal_all
+restore_args_normal
+final_check
