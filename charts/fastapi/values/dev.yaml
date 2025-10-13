@@ -21,7 +21,7 @@ env:
   MODEL_NAME: "best_model"
   DEFAULT_ALIAS: "A"
   ALIAS_SELECTION_MODE: "blue_green" # ab_test, canary, blue_green
-  CANARY_PERCENT: "20"
+  CANARY_PERCENT: "30"
   LOG_TO_STDOUT: "true"
   LOG_LEVEL: "info"
 envFrom:
