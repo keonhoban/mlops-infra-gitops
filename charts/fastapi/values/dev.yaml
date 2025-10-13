@@ -19,9 +19,9 @@ ingresses:
 env:
   MLFLOW_TRACKING_URI: "http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000"
   MODEL_NAME: "best_model"
-  DEFAULT_ALIAS: "A"
+  DEFAULT_ALIAS: "B"
   ALIAS_SELECTION_MODE: "blue_green"
-  CANARY_PERCENT: "30"
+  CANARY_PERCENT: "20"
   LOG_TO_STDOUT: "true"
   LOG_LEVEL: "info"
 envFrom:
