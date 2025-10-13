@@ -1,0 +1,17 @@
+{{- range .Values.ingresses }}
+{{- if and .tls .tls.enabled .tls.secretName .tls.issuerName }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $.Release.Name }}-tls
+  namespace: {{ $.Release.Namespace }}
+spec:
+  secretName: {{ .tls.secretName }}
+  issuerRef:
+    name: {{ .tls.issuerName }}
+    kind: ClusterIssuer
+  dnsNames:
+    - {{ .host }}
+{{- end }}
+{{- end }}

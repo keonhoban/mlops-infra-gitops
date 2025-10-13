@@ -86,4 +86,5 @@ manualIngress:
   enabled: true
   host: airflow.prod
   tlsSecret: airflow-prod-tls
+  tlsIssuerName: selfsigned-issuer
   ingressClassName: nginx
