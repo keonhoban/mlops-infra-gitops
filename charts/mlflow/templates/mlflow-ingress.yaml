@@ -7,7 +7,6 @@
      nginx.ingress.kubernetes.io/use-regex: "true"
      nginx.ingress.kubernetes.io/rewrite-target: /
      {{- if and .Values.ingress.tls .Values.ingress.tls.enabled .Values.ingress.tls.issuerName }}
-     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.issuerName | quote }}
      {{- end }}
      {{- range $key, $value := .Values.ingress.annotations }}
      {{ $key }}: {{ $value | quote }}

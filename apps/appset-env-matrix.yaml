@@ -47,19 +47,6 @@ spec:
             - 'values/base.yaml'
             - 'values/{{values_suffix}}.yaml'   # charts/<svc>/values/dev.yaml|prod.yaml
 
-      # 추가: cert-manager가 만드는 TLS 리소스는 고아에서 제외
-      orphanedResources:
-        warn: true
-        ignore:
-          - group: ""
-            kind: Secret
-            name: ".*-tls"
-            namespace: "{{service}}-{{env}}"
-          - group: cert-manager.io
-            kind: Certificate
-            name: ".*-tls"
-            namespace: "{{service}}-{{env}}"
-
       syncPolicy:
         automated:
           prune: true
