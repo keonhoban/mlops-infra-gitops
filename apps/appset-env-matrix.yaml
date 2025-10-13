@@ -53,11 +53,11 @@ spec:
         ignore:
           - group: ""
             kind: Secret
-            name: "*-tls"
+            name: ".*-tls"
             namespace: "{{service}}-{{env}}"
           - group: cert-manager.io
             kind: Certificate
-            name: "*-tls"
+            name: ".*-tls"
             namespace: "{{service}}-{{env}}"
 
       syncPolicy:
