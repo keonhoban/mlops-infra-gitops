@@ -1,11 +1,9 @@
 image:
   tag: latest
-
 service:
   name: fastapi-dev-service
   port: 80
   type: ClusterIP
-
 ingresses:
   - name: fastapi-local
     host: fastapi.local
@@ -18,18 +16,16 @@ ingresses:
       enabled: true
       secretName: fastapi-dev-tls
       issuerName: selfsigned-issuer
-
 env:
   MLFLOW_TRACKING_URI: "http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000"
   MODEL_NAME: "best_model"
   DEFAULT_ALIAS: "A"
   ALIAS_SELECTION_MODE: "ab_test"
-# ALIAS_SELECTION_MODE: "canary"
-# ALIAS_SELECTION_MODE: "blue_green"
+  # ALIAS_SELECTION_MODE: "canary"
+  # ALIAS_SELECTION_MODE: "blue_green"
   CANARY_PERCENT: "10"
   LOG_TO_STDOUT: "true"
   LOG_LEVEL: "info"
-
 envFrom:
   - secretRef:
       name: aws-credentials-secret
@@ -37,16 +33,13 @@ envFrom:
       name: fastapi-token-dev-secret
   - secretRef:
       name: slack-webhook-dev-secret
-
 volumeMounts:
   - name: fastapi-logs
     mountPath: /app/logs
-
 volumes:
   - name: fastapi-logs
     persistentVolumeClaim:
       claimName: fastapi-logs-pvc-dev
-
 probes:
   readinessProbe:
     httpGet:
@@ -56,7 +49,6 @@ probes:
     periodSeconds: 5
     failureThreshold: 5
     successThreshold: 1
-
   livenessProbe:
     httpGet:
       path: /health
