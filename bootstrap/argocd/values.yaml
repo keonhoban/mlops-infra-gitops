@@ -7,6 +7,8 @@ configsParams:
 
 controller:
   enableStatefulSet: true
+crds:
+  install: true
 repoServer:
   replicas: 2
 applicationSet:

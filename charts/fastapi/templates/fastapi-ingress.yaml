@@ -7,9 +7,6 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/whitelist-source-range: "{{ .whitelist }}"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-{{- if .tls }}
-    cert-manager.io/cluster-issuer: {{ .tls.issuerName | quote }}
-{{- end }}
 spec:
   ingressClassName: {{ $.className | default "nginx"}}
   rules:
