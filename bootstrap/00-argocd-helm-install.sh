@@ -2,28 +2,20 @@
 set -euo pipefail
 
 NS=argocd
-MAX_WAIT=120  # 최대 대기 시간 (초)
+MAX_WAIT=120
 WAIT_INTERVAL=5
 WAITED=0
 
 echo "[INFO] Adding Argo Helm repo..."
 helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update
 
 echo "[INFO] Creating namespace '$NS' if not exists..."
 kubectl create ns $NS || true
 
-echo "[INFO] Installing Argo CD via Helm..."
+echo "[INFO] Installing Argo CD via Helm (GitOps values)..."
 helm upgrade --install argocd argo/argo-cd -n $NS \
-  --set global.image.tag=v2.12.3 \
-  --set configs.params."server\.insecure"=false \
-  --set server.service.type=ClusterIP \
-  --set dex.enabled=false \
-  --set redis.enabled=true \
-  --set controller.enableStatefulSet=true \
-  --set repoServer.replicas=2 \
-  --set controller.replicas=2 \
-  --set server.replicas=2 \
-  --set configs.cm.url="https://argocd.local"
+  -f bootstrap/argocd/values.yaml
 
 echo "[INFO] Waiting for Argo CD admin secret to be created (max ${MAX_WAIT}s)..."
 until kubectl -n $NS get secret argocd-initial-admin-secret &> /dev/null; do
