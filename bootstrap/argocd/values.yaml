@@ -1,0 +1,49 @@
+configs:
+  cm:
+    # Argo CD가 고아로 보지 않게 할 대상(=전역 제외)
+    resource.exclusions: |
+      - apiGroups: [""]
+        kinds: ["Secret","ConfigMap","Service","Pod","ServiceAccount","Endpoints","PersistentVolumeClaim"]
+        clusters: ["*"]
+        namespaces: ["argocd"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment","StatefulSet","ReplicaSet"]
+        clusters: ["*"]
+        namespaces: ["argocd"]
+      - apiGroups: ["networking.k8s.io"]
+        kinds: ["Ingress","NetworkPolicy"]
+        clusters: ["*"]
+        namespaces: ["argocd"]
+      - apiGroups: ["rbac.authorization.k8s.io"]
+        kinds: ["Role","RoleBinding"]
+        clusters: ["*"]
+        namespaces: ["argocd"]
+      - apiGroups: ["argoproj.io"]
+        kinds: ["Application","AppProject","ApplicationSet"]
+        clusters: ["*"]
+        namespaces: ["argocd"]
+
+    # (이미 쓰고 있던 URL도 values로 고정)
+    url: https://argocd.local
+
+configsParams:
+  # 설치 스크립트에서 넘기던 server.insecure=false 등도 여기로 옮길 수 있어요.
+  server.insecure: "false"
+
+controller:
+  enableStatefulSet: true
+repoServer:
+  replicas: 2
+applicationSet:
+  replicaCount: 1
+server:
+  replicas: 2
+  service:
+    type: ClusterIP
+dex:
+  enabled: false
+redis:
+  enabled: true
+global:
+  image:
+    tag: v2.12.3
