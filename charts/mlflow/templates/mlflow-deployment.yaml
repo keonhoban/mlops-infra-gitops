@@ -53,6 +53,7 @@ spec:
                 configMapKeyRef:
                   name: {{ .Values.dbConfig.configMapName }}
                   key: dbname
+
           envFrom:
             - secretRef:
                 name: aws-credentials-secret
