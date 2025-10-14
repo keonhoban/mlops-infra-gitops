@@ -91,7 +91,7 @@ else
 fi
 
 # ===== SealedSecret 생성/갱신 =====
-AF_FILE="$APP_GIT_PATH/airflow/sealed-aws-credentials-${ENV}-secret.yaml"
+AF_FILE="$APP_GIT_PATH/airflow/sealed-aws-credentials-secret.yaml"
 cat > /tmp/aws.ini <<EOF_INI
 [default]
 aws_access_key_id = ${NEW_ID}
@@ -104,14 +104,14 @@ kubectl -n "airflow-${ENV}" create secret generic aws-credentials-secret \
 | kubeseal --controller-name "$SS_CTL" --controller-namespace "$SS_NS" --scope namespace-wide -o yaml \
 > "$AF_FILE"
 
-FA_FILE="$APP_GIT_PATH/fastapi/sealed-aws-credentials-${ENV}-secret.yaml"
+FA_FILE="$APP_GIT_PATH/fastapi/sealed-aws-credentials-secret.yaml"
 kubectl -n "fastapi-${ENV}" create secret generic aws-credentials-secret \
   --from-literal=AWS_ACCESS_KEY_ID="$NEW_ID" \
   --from-literal=AWS_SECRET_ACCESS_KEY="$NEW_SECRET" \
   --from-literal=AWS_DEFAULT_REGION="$REGION" \
   --dry-run=client -o yaml | kseal > "$FA_FILE"
 
-MF_FILE="$APP_GIT_PATH/mlflow/sealed-aws-credentials-${ENV}-secret.yaml"
+MF_FILE="$APP_GIT_PATH/mlflow/sealed-aws-credentials-secret.yaml"
 kubectl -n "mlflow-${ENV}" create secret generic aws-credentials-secret \
   --from-literal=AWS_ACCESS_KEY_ID="$NEW_ID" \
   --from-literal=AWS_SECRET_ACCESS_KEY="$NEW_SECRET" \
