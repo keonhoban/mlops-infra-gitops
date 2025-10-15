@@ -14,6 +14,13 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      # 🔒 NFS(root_squash) 대비: Pod 레벨 Security Context
+      securityContext:
+        runAsUser: {{ default 2001 .Values.podSecurityContext.runAsUser }}
+        runAsGroup: {{ default 2001 .Values.podSecurityContext.runAsGroup }}
+        fsGroup: {{ default 2001 .Values.podSecurityContext.fsGroup }}
+        fsGroupChangePolicy: {{ default "OnRootMismatch" .Values.podSecurityContext.fsGroupChangePolicy }}
+
       containers:
         - name: fastapi
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}

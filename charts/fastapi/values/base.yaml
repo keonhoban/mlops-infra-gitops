@@ -3,6 +3,12 @@ image:
   repository: hoizz/fastapi-custom
   pullPolicy: IfNotPresent
 
+podSecurityContext:
+  runAsUser: 2001
+  runAsGroup: 2001
+  fsGroup: 2001
+  fsGroupChangePolicy: OnRootMismatch
+
 probes:
   readinessProbe:
     httpGet:

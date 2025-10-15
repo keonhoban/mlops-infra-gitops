@@ -1,4 +1,4 @@
-# dags/utils/slack_alerts.py
+# charts/fastapi/app/utils/slack_alerts.py
 
 import requests
 import os
