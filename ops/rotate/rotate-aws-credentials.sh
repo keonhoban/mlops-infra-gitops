@@ -123,18 +123,18 @@ git add "$AF_FILE" "$FA_FILE" "$MF_FILE"
 git commit -m "feat(${ENV}): rotate AWS credentials across airflow/fastapi/mlflow"
 git push
 
-# ===== ArgoCD 동기화 (선택) =====
-if command -v argocd >/dev/null 2>&1; then
-  if [[ -n "${ARGOCD_HOST:-}" && -n "${ARGOCD_USERNAME:-}" && -n "${ARGOCD_PASSWORD:-}" ]]; then
-    argocd login "$ARGOCD_HOST" \
-      --username "$ARGOCD_USERNAME" --password "$ARGOCD_PASSWORD" \
-      --insecure --grpc-web || true
-  fi
-  argocd app sync "$ARGO_APP" --grpc-web || {
-    echo "HINT: 'argocd login <HOST> --username ... --password ... --insecure --grpc-web' 후"
-    echo "      'argocd app sync ${ARGO_APP} --grpc-web' 실행하세요."
-  }
-fi
+## ===== ArgoCD 동기화 (선택) =====
+#if command -v argocd >/dev/null 2>&1; then
+#  if [[ -n "${ARGOCD_HOST:-}" && -n "${ARGOCD_USERNAME:-}" && -n "${ARGOCD_PASSWORD:-}" ]]; then
+#    argocd login "$ARGOCD_HOST" \
+#      --username "$ARGOCD_USERNAME" --password "$ARGOCD_PASSWORD" \
+#      --insecure --grpc-web || true
+#  fi
+#  argocd app sync "$ARGO_APP" --grpc-web || {
+#    echo "HINT: 'argocd login <HOST> --username ... --password ... --insecure --grpc-web' 후"
+#    echo "      'argocd app sync ${ARGO_APP} --grpc-web' 실행하세요."
+#  }
+#fi
 
 # ===== 로컬 AWS credentials 업데이트(선택) =====
 : "${UPDATE_LOCAL:=1}"   # 1=업데이트 수행, 0=건너뜀
