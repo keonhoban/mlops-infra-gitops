@@ -20,7 +20,7 @@ env:
   MLFLOW_TRACKING_URI: "http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000"
   MODEL_NAME: "best_model"
   DEFAULT_ALIAS: "B"
-  ALIAS_SELECTION_MODE: "blur_green"
+  ALIAS_SELECTION_MODE: "canary"
   CANARY_PERCENT: "20"
   LOG_TO_STDOUT: "true"
   LOG_LEVEL: "info"
