@@ -2,15 +2,20 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "fastapi.fullname" . }}
+  name: {{ .Release.Name }}-sm
+  namespace: {{ .Release.Namespace }}
   labels:
     release: prometheus
 spec:
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      app: {{ include "fastapi.name" . }}
+      app: {{ .Release.Name }}     # dev: fastapi-dev, prod: fastapi-prod과 일치
   endpoints:
-    - path: /metrics
-      port: http
-      interval: 30s
+    - targetPort: 80               # 서비스 포트 명이 없으므로 숫자 포트로 지정
+      path: /metrics
+      interval: {{ .Values.serviceMonitor.interval | default "30s" }}
+      scheme: http
 {{- end }}
