@@ -17,3 +17,11 @@ airflow:
   triggerer:
     persistence:
       enabled: false
+
+  metrics:
+    enabled: true
+    prometheus:
+      port: 8793
+  serviceMonitor:
+    enabled: true
+    interval: 30s

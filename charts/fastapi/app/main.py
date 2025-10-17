@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from core.config import settings
 from core.startup import register_startup_event
 from utils.logger import setup_logger
-from routes import predict, reload, health, root, models
+from routes import predict, reload, health, root, models, metrics
 
 setup_logger()
 
@@ -15,3 +15,4 @@ app.include_router(reload.router)
 app.include_router(health.router)
 app.include_router(root.router)
 app.include_router(models.router)
+app.include_router(metrics.router)
