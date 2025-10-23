@@ -80,15 +80,21 @@ spec:
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
 
-            serviceMonitorSelector: {}
+            serviceMonitorSelector:
+              matchLabels:
+                release: monitoring-dev
             serviceMonitorNamespaceSelector:
               matchNames: [monitoring-dev, fastapi-dev]
 
-            podMonitorSelector: {}
+            podMonitorSelector:
+              matchLabels:
+                release: monitoring-dev
             podMonitorNamespaceSelector:
               matchNames: [monitoring-dev, fastapi-dev]
 
-            ruleSelector: {}
+            ruleSelector:
+              matchLabels:
+                release: monitoring-dev
             ruleNamespaceSelector:
               matchNames: [monitoring-dev]
 
