@@ -56,14 +56,15 @@ spec:
             tls:
               - hosts: [alert-dev.local]
                 secretName: alertmanager-tls
-          storage:
-            volumeClaimTemplate:
-              spec:
-                storageClassName: nfs-monitoring
-                accessModes: ["ReadWriteMany"]
-                resources:
-                  requests:
-                    storage: 50Gi
+          alertmanagerSpec:          # <= 여기!
+            storage:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: nfs-monitoring
+                  accessModes: ["ReadWriteMany"]
+                  resources:
+                    requests:
+                      storage: 50Gi
         prometheus:
           prometheusSpec:
             serviceMonitorSelectorNilUsesHelmValues: false
