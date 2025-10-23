@@ -19,6 +19,7 @@ spec:
       values: |
         global:
           imageRegistry: ""
+
         grafana:
           image:
             repository: grafana/grafana
@@ -45,6 +46,7 @@ spec:
             type: pvc
             storageClassName: nfs-monitoring
             size: 10Gi
+
         alertmanager:
           configFromSecret: alertmanager-config-prod
           ingress:
@@ -65,6 +67,19 @@ spec:
                   resources:
                     requests:
                       storage: 50Gi
+
+        # ✅ 중복 타깃 방지: prod도 동일 원리
+        kubelet:
+          service:
+            labels:
+              stack: prod
+          serviceMonitor:
+            namespaceSelector:
+              matchNames: [kube-system]
+            selector:
+              matchLabels:
+                stack: prod
+
         prometheus:
           ingress:
             enabled: true
@@ -80,6 +95,7 @@ spec:
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
 
+            # ✅ prod 릴리스에서 생성된 리소스만 선택
             serviceMonitorSelector:
               matchLabels:
                 release: monitoring-prod
@@ -106,10 +122,10 @@ spec:
                   resources:
                     requests:
                       storage: 50Gi
-            retention: 15d           # 예: 15일
-            retentionSize: 30Gi      # 또는 용량 기준
+            retention: 15d
+            retentionSize: 30Gi
 
-        # kube-system 모니터링 비활성화
+        # kube-system 일부 컴포넌트 비활성화
         kubeEtcd:
           enabled: false
         kubeControllerManager:
@@ -120,6 +136,7 @@ spec:
           enabled: false
         coreDns:
           enabled: false
+
         prometheus-node-exporter:
           enabled: true
           hostNetwork: false
@@ -133,4 +150,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-
