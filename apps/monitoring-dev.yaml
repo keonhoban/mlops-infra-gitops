@@ -21,11 +21,11 @@ spec:
           imageRegistry: ""
         grafana:
           image:
-            repository: docker.io/grafana/grafana
+            repository: grafana/grafana
             tag: "11.2.2-security-01"
           sidecar:
             image:
-              repository: docker.io/kiwigrid/k8s-sidecar
+              repository: kiwigrid/k8s-sidecar
               tag: "1.28.0"
           admin:
             existingSecret: grafana-admin-secret-dev
