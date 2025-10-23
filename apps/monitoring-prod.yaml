@@ -78,7 +78,7 @@ spec:
               tls:
                 - hosts: [prometheus-prod.local]
                   secretName: prometheus-tls
-            storage:
+            storageSpec:
               volumeClaimTemplate:
                 spec:
                   storageClassName: nfs-monitoring
