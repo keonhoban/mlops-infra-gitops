@@ -1,5 +1,5 @@
 image:
-  tag: latest
+  tag: v1.3.1
 service:
   name: fastapi-dev-service
   port: 80

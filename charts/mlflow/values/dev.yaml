@@ -1,5 +1,5 @@
 image:
-  tag: latest
+  tag: v1.3.0
 
 env:
   defaultArtifactRoot: s3://mlflow-artifacts-keonho/dev

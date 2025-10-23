@@ -61,7 +61,7 @@ spec:
               volumeClaimTemplate:
                 spec:
                   storageClassName: nfs-monitoring
-                  accessModes: ["ReadWriteMany"]
+                  accessModes: ["ReadWriteOnce"]
                   resources:
                     requests:
                       storage: 50Gi
@@ -82,10 +82,12 @@ spec:
               volumeClaimTemplate:
                 spec:
                   storageClassName: nfs-monitoring
-                  accessModes: ["ReadWriteMany"]
+                  accessModes: ["ReadWriteOnce"]
                   resources:
                     requests:
                       storage: 50Gi
+            retention: 15d           # 예: 15일
+            retentionSize: 30Gi      # 또는 용량 기준
         # kube-system 모니터링 비활성화
         kubeEtcd:
           enabled: false

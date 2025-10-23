@@ -26,3 +26,9 @@ probes:
     initialDelaySeconds: 15
     periodSeconds: 10
     failureThreshold: 5
+
+metrics:
+  enabled: true
+  path: /metrics
+  interval: 15s
+  scrapeTimeout: 10s
