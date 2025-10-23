@@ -66,18 +66,19 @@ spec:
                     requests:
                       storage: 50Gi
         prometheus:
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts: [prometheus-prod.local]
+            path: /
+            pathType: Prefix
+            tls:
+              - hosts: [prometheus-prod.local]
+                secretName: prometheus-tls
           prometheusSpec:
+            externalUrl: "https://prometheus-prod.local"
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
-            ingress:
-              enabled: true
-              ingressClassName: nginx
-              hosts: [prometheus-prod.local]
-              path: /
-              pathType: Prefix
-              tls:
-                - hosts: [prometheus-prod.local]
-                  secretName: prometheus-tls
             storageSpec:
               volumeClaimTemplate:
                 spec:
