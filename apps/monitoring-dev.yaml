@@ -17,6 +17,8 @@ spec:
     helm:
       skipCrds: true
       values: |
+        global:
+          imageRegistry: ""
         grafana:
           image:
             repository: docker.io/grafana/grafana
