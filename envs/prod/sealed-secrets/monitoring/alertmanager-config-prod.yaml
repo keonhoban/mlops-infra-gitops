@@ -1,0 +1,15 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: alertmanager-config-prod
+  namespace: monitoring-prod
+spec:
+  encryptedData:
+    alertmanager.yaml: AgBKPqi5+PLPoceT3HcluiG7j0Qnkc5aLVcgKcNQ2J04rkhWcW1eNDEE/OfyPEub3QSxUexYHxb0F/502jFRjQvXJ4pZ4VMLSoJjKs953ZhBHtM0HhOrYbY91dYbyBiWSwPklGqk00sCIlMKe6HQIgdiO0kLP/8y2bkLKCo2tzGxq0M2tszt80ifJ19K5KYy0cOBBKEjeNWg7qjfaIikUv0AXb1Y1YaDwQrQsBJwR7d7+cwKiKK2UuKgWZ8QP2CYCjYEngVyUg7XatxtLR5C/Qvk02XWteLCLyqV7BFLes56QvPtws4gXNulo3z6otCn/DXe+ANe8VlAlKaIN+CeW/qDDwajZOOjM2WCpJUmYLU0rW3Ury2SxmWJUfjkLwiCPJgz/bVX+2zLY2ba4pD+0Tn2VAkM2zQSHnGevC39RsduyEePMB2zJzKDqCs8iAzouw94u+R+86ge03lm2x4+Gy9/EaGrPiQwUNyjnnVmYNEwJoAU4lsE3p0wyU8FRSoVdshA0Q1QTBcciiP+5qXqNlUK6i4RHqFwA4Z6i5IhcNLMrn3OSx9czVCSze/2IN//CS+V8E6KN63vkYt3UdKrhLbazAcnz9jmpGb9bXTWoowXkYfLdU19EkROcb4dwJRilbSNBpjOUu3sf8uiRIvF+ebYGWBBA/kRRRjsW78oRuS/lWfUB4h3LrDBfDg7e65WNKIsZHI20+ffa4iEicT/CqW1sPJu9gPbVRDesQdTDBwvUaVr8Y1INGnO6585pF77soXnsrJeibZ2xaX15SsweP4nZj+d2uJleL+RxxGxfYD6CLVpRPPOKnuGoKRCf6IiclmxSNKpAH9SV4uXSdTd5X++PP3owM+tVt5+wcHbZaWvRbAPPfKNojBh9npYM0dvcm1ETyLEsfNirzhNdeXEfZ+ktZBhMVQmmCIYw7QEAXMj8dmnEV1DAEInKSiij2NJk+4z0AvDpPUUQDw6FVowEOaNN4cmP4yNRh1VxoCBVDwQbGg8aqwPQdjmNte6Bnx1Er2qaOSTHE+so4PRLGiuU/jeNic1Msd4jvdUmNWP
+  template:
+    metadata:
+      creationTimestamp: null
+      name: alertmanager-config-prod
+      namespace: monitoring-prod

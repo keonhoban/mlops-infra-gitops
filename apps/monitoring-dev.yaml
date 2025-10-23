@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring-dev
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true,PruneLast=true,ServerSideApply=true
+spec:
+  project: dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring-dev
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 65.5.0
+    helm:
+      skipCrds: true
+      values: |
+        grafana:
+          admin:
+            existingSecret: grafana-admin-secret-dev
+            userKey: admin-user
+            passwordKey: admin-password
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts: [grafana-dev.local]
+            path: /
+            pathType: Prefix
+        alertmanager:
+          configFromSecret: alertmanager-config-dev
+        prometheus:
+          prometheusSpec:
+            serviceMonitorSelectorNilUsesHelmValues: false
+            podMonitorSelectorNilUsesHelmValues: false
+        prometheus-node-exporter:
+          enabled: true
+          hostNetwork: false
+          hostPID: false
+          service:
+            hostPort: false
+            type: ClusterIP
+            port: 9100
+            targetPort: 9100
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
