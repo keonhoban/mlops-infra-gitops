@@ -40,17 +40,30 @@ spec:
             tls:
               - hosts: [grafana-prod.local]
                 secretName: grafana-tls
+          persistence:
+            enabled: true
+            type: pvc
+            storageClassName: nfs-monitoring
+            size: 10Gi
         alertmanager:
           configFromSecret: alertmanager-config-prod
           ingress:
             enabled: true
             ingressClassName: nginx
             hosts: [alert-prod.local]
-            paths: ["/"]
+            path: /
             pathType: Prefix
             tls:
               - hosts: [alert-prod.local]
                 secretName: alertmanager-tls
+          storage:
+            volumeClaimTemplate:
+              spec:
+                storageClassName: nfs-monitoring
+                accessModes: ["ReadWriteMany"]
+                resources:
+                  requests:
+                    storage: 50Gi
         prometheus:
           prometheusSpec:
             serviceMonitorSelectorNilUsesHelmValues: false
@@ -59,11 +72,19 @@ spec:
             enabled: true
             ingressClassName: nginx
             hosts: [prometheus-prod.local]
-            paths: ["/"]
+            path: /
             pathType: Prefix
             tls:
               - hosts: [prometheus-prod.local]
                 secretName: prometheus-tls
+          storageSpec:
+            volumeClaimTemplate:
+              spec:
+                storageClassName: nfs-monitoring
+                accessModes: ["ReadWriteMany"]
+                resources:
+                  requests:
+                    storage: 50Gi
         # kube-system 모니터링 비활성화
         kubeEtcd:
           enabled: false

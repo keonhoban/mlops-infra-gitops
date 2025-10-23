@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-monitoring-dev
+  labels:
+    app: monitoring-dev
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.18.141
+    path: /mnt/nfs_share/mlops/monitoring/dev/data
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-monitoring
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-monitoring-dev
+  namespace: monitoring-dev
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: nfs-monitoring
