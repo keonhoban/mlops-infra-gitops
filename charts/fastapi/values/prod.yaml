@@ -18,7 +18,7 @@ ingresses:
       enabled: true
       secretName: fastapi-prod-tls
       issuerName: selfsigned-issuer
-    blockMetrics: true
+    excludeMetrics: true
 
 env:
   MLFLOW_TRACKING_URI: "http://mlflow-prod-service.mlflow-prod.svc.cluster.local:5000"

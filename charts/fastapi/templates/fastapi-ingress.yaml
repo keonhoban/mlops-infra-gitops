@@ -1,38 +1,37 @@
-{{- range .Values.ingresses }}
+{{- range $ing := .Values.ingresses }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $.Release.Name }}-{{ .name }}
+  name: {{ $.Release.Name }}-{{ $ing.name }}
   annotations:
-    nginx.ingress.kubernetes.io/whitelist-source-range: "{{ .whitelist }}"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "{{ $ing.whitelist }}"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-{{- if and .tls .tls.enabled .tls.issuerName }}
-    cert-manager.io/cluster-issuer: "{{ .tls.issuerName }}"
+{{- if and $ing.tls $ing.tls.enabled $ing.tls.issuerName }}
+    cert-manager.io/cluster-issuer: "{{ $ing.tls.issuerName }}"
 {{- end }}
-{{- if .blockMetrics }}
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      if ($request_uri = "/metrics") { return 403; }
+{{- if $ing.excludeMetrics }}
+    nginx.ingress.kubernetes.io/use-regex: "true"    # ✅ 정규식 경로 사용
 {{- end }}
 spec:
-  ingressClassName: {{ $.className | default "nginx"}}
+  ingressClassName: {{ $ing.className | default "nginx" }}   # ✅ $.className → $ing.className
   rules:
-    - host: {{ .host }}
+    - host: {{ $ing.host }}
       http:
         paths:
-{{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
+{{- range $p := $ing.paths }}
+          - path: {{ if and $ing.excludeMetrics (eq $p.path "/") }}^/(?!metrics$).*{{ else }}{{ $p.path }}{{ end }}
+            pathType: {{ if and $ing.excludeMetrics (eq $p.path "/") }}ImplementationSpecific{{ else }}{{ $p.pathType }}{{ end }}
             backend:
               service:
                 name: {{ $.Values.service.name }}
                 port:
                   number: {{ $.Values.service.port }}
 {{- end }}
-{{- if .tls }}
+{{- if $ing.tls }}
   tls:
     - hosts:
-        - {{ .host }}
-      secretName: {{ .tls.secretName }}
+        - {{ $ing.host }}
+      secretName: {{ $ing.tls.secretName }}
 {{- end }}
 {{- end }}
