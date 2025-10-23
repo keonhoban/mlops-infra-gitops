@@ -56,7 +56,7 @@ spec:
             tls:
               - hosts: [alert-prod.local]
                 secretName: alertmanager-tls
-          alertmanagerSpec:          # <= 여기!
+          alertmanagerSpec:
             storage:
               volumeClaimTemplate:
                 spec:
@@ -78,7 +78,7 @@ spec:
             tls:
               - hosts: [prometheus-prod.local]
                 secretName: prometheus-tls
-          storageSpec:
+          storage:
             volumeClaimTemplate:
               spec:
                 storageClassName: nfs-monitoring
