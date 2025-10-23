@@ -10,18 +10,26 @@ metadata:
 {{- if and $ing.tls $ing.tls.enabled $ing.tls.issuerName }}
     cert-manager.io/cluster-issuer: "{{ $ing.tls.issuerName }}"
 {{- end }}
-{{- if $ing.excludeMetrics }}
-    nginx.ingress.kubernetes.io/use-regex: "true"    # ✅ 정규식 경로 사용
-{{- end }}
 spec:
-  ingressClassName: {{ $ing.className | default "nginx" }}   # ✅ $.className → $ing.className
+  ingressClassName: {{ $ing.className | default "nginx" }}
   rules:
     - host: {{ $ing.host }}
       http:
         paths:
+{{- if $ing.excludeMetrics }}
+          # Block /metrics explicitly (API-safe, no regex/snippet)
+          - path: /metrics
+            pathType: Exact
+            backend:
+              service:
+                name: {{ $.Values.service.name }}
+                # 존재하지 않는 포트로 라우팅 → 외부 502/404
+                port:
+                  number: 65535
+{{- end }}
 {{- range $p := $ing.paths }}
-          - path: {{ if and $ing.excludeMetrics (eq $p.path "/") }}^/(?!metrics$).*{{ else }}{{ $p.path }}{{ end }}
-            pathType: {{ if and $ing.excludeMetrics (eq $p.path "/") }}ImplementationSpecific{{ else }}{{ $p.pathType }}{{ end }}
+          - path: {{ $p.path }}
+            pathType: {{ $p.pathType }}
             backend:
               service:
                 name: {{ $.Values.service.name }}
