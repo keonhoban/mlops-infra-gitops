@@ -5,6 +5,8 @@ from mlflow.tracking import MlflowClient
 import mlflow, os, sys
 from loguru import logger
 from utils.slack_alerts import send_slack_alert
+from prometheus_fastapi_instrumentator import Instrumentator
+
 
 def register_startup_event(app: FastAPI):
     @app.on_event("startup")
@@ -16,6 +18,11 @@ def register_startup_event(app: FastAPI):
             logger.error("❌ 환경변수 누락: MLFLOW_TRACKING_URI / MODEL_NAME")
             send_slack_alert("❌ [FastAPI] 환경변수 누락으로 모델 로딩 실패")
             app.state.models = {}
+            # ✅ 모델이 없어도 /metrics는 노출되게 두는 편이 운영상 유리
+            try:
+                Instrumentator().instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
+            except Exception as e:
+                logger.warning(f"⚠️ /metrics expose 실패(환경변수 누락 케이스): {e}")
             return
 
         app.state.models = {}
@@ -49,7 +56,15 @@ def register_startup_event(app: FastAPI):
         if not loaded:
             logger.error("🔥 [FastAPI] 모델 전부 로딩 실패")
             send_slack_alert("🔥 [FastAPI] 전 모델 로딩 실패")
-            sys.exit(1)
+            # ✅ 모델이 없어도 /metrics는 살아있게 두고 프로세스 종료는 피하는 쪽을 권장
+            try:
+                Instrumentator().instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
+            except Exception as e:
+                logger.warning(f"⚠️ /metrics expose 실패(모델 전부 로딩 실패 케이스): {e}")
+            # 필요시 종료 유지하려면 다음 라인 주석 해제
+            # sys.exit(1)
         else:
             logger.info(f"✅ 초기 로딩된 모델: {loaded}")
             send_slack_alert(f"✅ [FastAPI] 모델 초기 로딩 완료: {loaded}")
+            # 전 엔드포인트 자동 계측 + /metrics 노출
+            Instrumentator().instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)

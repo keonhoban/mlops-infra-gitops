@@ -10,6 +10,10 @@ metadata:
 {{- if and .tls .tls.enabled .tls.issuerName }}
     cert-manager.io/cluster-issuer: "{{ .tls.issuerName }}"
 {{- end }}
+{{- if .blockMetrics }}
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      if ($request_uri = "/metrics") { return 403; }
+{{- end }}
 spec:
   ingressClassName: {{ $.className | default "nginx"}}
   rules:
