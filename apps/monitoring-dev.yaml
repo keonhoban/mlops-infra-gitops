@@ -37,12 +37,33 @@ spec:
             hosts: [grafana-dev.local]
             path: /
             pathType: Prefix
+            tls:
+              - hosts: [grafana-dev.local]
+                secretName: grafana-tls
         alertmanager:
           configFromSecret: alertmanager-config-dev
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts: [alert-dev.local]
+            paths: ["/"]
+            pathType: Prefix
+            tls:
+              - hosts: [alert-dev.local]
+                secretName: alertmanager-tls
         prometheus:
           prometheusSpec:
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts: [prometheus-dev.local]
+            paths: ["/"]
+            pathType: Prefix
+            tls:
+              - hosts: [prometheus-dev.local]
+                secretName: prometheus-tls
         # kube-system 모니터링 비활성화
         kubeEtcd:
           enabled: false
