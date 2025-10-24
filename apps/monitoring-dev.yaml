@@ -123,7 +123,7 @@ spec:
                     requests:
                       storage: 50Gi
             retention: 15d
-            retentionSize: 30Gi
+            retentionSize: 30GiB
 
         # kube-system 일부 컴포넌트 비활성화
         kubeEtcd:
