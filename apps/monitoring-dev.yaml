@@ -48,7 +48,8 @@ spec:
             size: 10Gi
 
         alertmanager:
-          configSecret: alertmanager-config-dev
+          alertmanagerSpec:
+            configSecret: alertmanager-config-dev
           ingress:
             enabled: true
             ingressClassName: nginx
