@@ -50,6 +50,14 @@ spec:
         alertmanager:
           alertmanagerSpec:
             configSecret: alertmanager-config-prod
+            storage:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: nfs-monitoring
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 50Gi
           ingress:
             enabled: true
             ingressClassName: nginx
@@ -59,15 +67,6 @@ spec:
             tls:
               - hosts: [alert-prod.local]
                 secretName: alertmanager-tls
-          alertmanagerSpec:
-            storage:
-              volumeClaimTemplate:
-                spec:
-                  storageClassName: nfs-monitoring
-                  accessModes: ["ReadWriteOnce"]
-                  resources:
-                    requests:
-                      storage: 50Gi
 
         # ✅ 중복 타깃 방지: prod도 동일 원리
         kubelet:
