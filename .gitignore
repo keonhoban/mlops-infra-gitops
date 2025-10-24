@@ -1,3 +1,5 @@
 ab_test_result.log
 ab_test_result_*.log
 capture_test.sh
+envs/dev/monitoring/alertmanager-config.yaml
+envs/prod/monitoring/alertmanager-config.yaml
