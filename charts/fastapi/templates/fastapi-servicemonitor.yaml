@@ -5,6 +5,7 @@ metadata:
   name: {{ .Release.Name }}-sm
   labels:
     app: {{ .Release.Name }}
+    release: {{ .Values.monitoring.releaseLabel | quote }}
 spec:
   namespaceSelector:
     matchNames:

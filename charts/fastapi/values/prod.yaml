@@ -63,3 +63,5 @@ probes:
     initialDelaySeconds: 10
     periodSeconds: 10
     failureThreshold: 3
+monitoring:
+  releaseLabel: monitoring-prod
