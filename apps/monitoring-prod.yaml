@@ -81,6 +81,15 @@ spec:
                 stack: prod
 
         prometheus:
+          prometheus:
+            monitor:
+              enabled: true
+              additionalLabels:
+                release: monitoring-prod
+              metricRelabelings:
+                - action: keep
+                  sourceLabels: [namespace]
+                  regex: '.*-prod|monitoring-prod|kube-system'
           ingress:
             enabled: true
             ingressClassName: nginx
