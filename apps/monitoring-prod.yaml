@@ -68,28 +68,7 @@ spec:
               - hosts: [alert-prod.local]
                 secretName: alertmanager-tls
 
-        # ✅ 중복 타깃 방지: prod도 동일 원리
-        kubelet:
-          service:
-            labels:
-              stack: prod
-          serviceMonitor:
-            namespaceSelector:
-              matchNames: [kube-system]
-            selector:
-              matchLabels:
-                stack: prod
-
         prometheus:
-          prometheus:
-            monitor:
-              enabled: true
-              additionalLabels:
-                release: monitoring-prod
-              metricRelabelings:
-                - action: keep
-                  sourceLabels: [namespace]
-                  regex: '.*-prod|monitoring-prod|kube-system'
           ingress:
             enabled: true
             ingressClassName: nginx
@@ -101,32 +80,21 @@ spec:
                 secretName: prometheus-tls
           prometheusSpec:
             externalUrl: "https://prometheus-prod.local"
-
-            # 오퍼레이터 기본값과 충돌 피하기
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
-
-            # 라벨 기반으로만 선택
             serviceMonitorSelector:
               matchLabels:
                 release: monitoring-prod
-
             podMonitorSelector:
               matchLabels:
                 release: monitoring-prod
-
             ruleSelector:
               matchLabels:
                 release: monitoring-prod
-
-            # 네임스페이스 제한은 빈 객체로(오퍼레이터와 동일 표현)
             serviceMonitorNamespaceSelector: {}
             podMonitorNamespaceSelector: {}
             ruleNamespaceSelector: {}
-        
-            # 오퍼레이터가 넣는 기본값을 명시해 드리프트 방지
             routePrefix: "/"
-
             storageSpec:
               volumeClaimTemplate:
                 spec:
@@ -152,13 +120,7 @@ spec:
 
         prometheus-node-exporter:
           enabled: true
-          hostNetwork: false
-          hostPID: false
-          service:
-            hostPort: false
-            type: ClusterIP
-            port: 9100
-            targetPort: 9100
+
   syncPolicy:
     automated:
       prune: true
