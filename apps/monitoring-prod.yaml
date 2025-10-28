@@ -68,28 +68,14 @@ spec:
               - hosts: [alert-prod.local]
                 secretName: alertmanager-tls
 
-        # ✅ 중복 타깃 방지: prod도 동일 원리
+        # ✅ kubelet 메트릭 수집 활성화 (ServiceMonitor를 kube-system에 생성)
         kubelet:
-          service:
-            labels:
-              stack: prod
+          enabled: true
           serviceMonitor:
-            namespaceSelector:
-              matchNames: [kube-system]
-            selector:
-              matchLabels:
-                stack: prod
+            enabled: true
+            namespace: kube-system
 
         prometheus:
-          prometheus:
-            monitor:
-              enabled: true
-              additionalLabels:
-                release: monitoring-prod
-              metricRelabelings:
-                - action: keep
-                  sourceLabels: [namespace]
-                  regex: '.*-prod|monitoring-prod|kube-system'
           ingress:
             enabled: true
             ingressClassName: nginx
@@ -102,29 +88,23 @@ spec:
           prometheusSpec:
             externalUrl: "https://prometheus-prod.local"
 
-            # 오퍼레이터 기본값과 충돌 피하기
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
 
-            # 라벨 기반으로만 선택
             serviceMonitorSelector:
               matchLabels:
                 release: monitoring-prod
-
             podMonitorSelector:
               matchLabels:
                 release: monitoring-prod
-
             ruleSelector:
               matchLabels:
                 release: monitoring-prod
 
-            # 네임스페이스 제한은 빈 객체로(오퍼레이터와 동일 표현)
             serviceMonitorNamespaceSelector: {}
             podMonitorNamespaceSelector: {}
             ruleNamespaceSelector: {}
-        
-            # 오퍼레이터가 넣는 기본값을 명시해 드리프트 방지
+
             routePrefix: "/"
 
             storageSpec:
@@ -138,7 +118,6 @@ spec:
             retention: 15d
             retentionSize: 30GiB
 
-        # kube-system 일부 컴포넌트 비활성화
         kubeEtcd:
           enabled: false
         kubeControllerManager:

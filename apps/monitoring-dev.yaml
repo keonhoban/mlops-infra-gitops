@@ -68,29 +68,14 @@ spec:
               - hosts: [alert-dev.local]
                 secretName: alertmanager-tls
 
-
-        # ✅ 중복 타깃 방지: kubelet Service에 stack 라벨 부여 + ServiceMonitor가 해당 라벨만 매칭
+        # ✅ kubelet 메트릭 수집 활성화 (ServiceMonitor를 kube-system에 생성)
         kubelet:
-          service:
-            labels:
-              stack: dev
+          enabled: true
           serviceMonitor:
-            namespaceSelector:
-              matchNames: [kube-system]
-            selector:
-              matchLabels:
-                stack: dev
+            enabled: true
+            namespace: kube-system
 
         prometheus:
-          monitor:
-            enabled: true
-            additionalLabels:
-              release: monitoring-dev
-            metricRelabelings:
-              # dev만 남기고 나머지 네임스페이스 드랍
-              - action: keep
-                sourceLabels: [namespace]
-                regex: '.*-dev|monitoring-dev|kube-system'
           ingress:
             enabled: true
             ingressClassName: nginx
@@ -103,29 +88,27 @@ spec:
           prometheusSpec:
             externalUrl: "https://prometheus-dev.local"
 
-            # 오퍼레이터 기본값과 충돌 피하기
+            # 오퍼레이터 기본값과 충돌 방지
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
 
-            # 라벨 기반으로만 선택
+            # env 라벨 기반 선택(네가 만든 ServiceMonitor만 긁음)
             serviceMonitorSelector:
               matchLabels:
                 release: monitoring-dev
-
             podMonitorSelector:
               matchLabels:
                 release: monitoring-dev
-
             ruleSelector:
               matchLabels:
                 release: monitoring-dev
 
-            #  네임스페이스 제한은 빈 객체로(오퍼레이터와 동일 표현)
+            # 네임스페이스 범위는 기본(빈 객체)로 유지
             serviceMonitorNamespaceSelector: {}
             podMonitorNamespaceSelector: {}
             ruleNamespaceSelector: {}
-        
-            # 오퍼레이터가 넣는 기본값을 명시해 드리프트 방지
+
+            # 드리프트 방지용 명시
             routePrefix: "/"
 
             storageSpec:
@@ -139,7 +122,7 @@ spec:
             retention: 15d
             retentionSize: 30GiB
 
-        # kube-system 일부 컴포넌트 비활성화
+        # kube-system 일부 컴포넌트 비활성화(로컬 클러스터에서 필요 없음)
         kubeEtcd:
           enabled: false
         kubeControllerManager:
