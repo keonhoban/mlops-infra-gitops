@@ -138,6 +138,11 @@ spec:
             type: ClusterIP
             port: 9100
             targetPort: 9100
+            
+        kube-state-metrics:
+          extraArgs:
+            - --namespaces=airflow-prod,fastapi-prod,monitoring-prod,kube-system
+
   syncPolicy:
     automated:
       prune: true
