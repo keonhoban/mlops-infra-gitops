@@ -87,6 +87,8 @@ spec:
                 secretName: prometheus-tls
           prometheusSpec:
             externalUrl: "https://prometheus-dev.local"
+            externalLabels:
+              cluster: dev
 
             # 오퍼레이터 기본값과 충돌 방지
             serviceMonitorSelectorNilUsesHelmValues: false
@@ -103,10 +105,17 @@ spec:
               matchLabels:
                 release: monitoring-dev
 
-            # 네임스페이스 범위는 기본(빈 객체)로 유지
-            serviceMonitorNamespaceSelector: {}
-            podMonitorNamespaceSelector: {}
-            ruleNamespaceSelector: {}
+            serviceMonitorNamespaceSelector:
+              matchNames: ["monitoring-dev","airflow-dev","fastapi-dev","kube-system"]
+            podMonitorNamespaceSelector:
+              matchNames: ["monitoring-dev","airflow-dev","fastapi-dev","kube-system"]
+            ruleNamespaceSelector:
+              matchNames: ["monitoring-dev"]
+
+                #            # 네임스페이스 범위는 기본(빈 객체)로 유지
+                #            serviceMonitorNamespaceSelector: {}
+                #            podMonitorNamespaceSelector: {}
+                #            ruleNamespaceSelector: {}
 
             # 드리프트 방지용 명시
             routePrefix: "/"
@@ -143,10 +152,6 @@ spec:
             type: ClusterIP
             port: 9100
             targetPort: 9100
-
-        kube-state-metrics:
-          extraArgs:
-            - --namespaces=airflow-dev,fastapi-dev,monitoring-dev,kube-system
 
   syncPolicy:
     automated:

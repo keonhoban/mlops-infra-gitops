@@ -87,6 +87,8 @@ spec:
                 secretName: prometheus-tls
           prometheusSpec:
             externalUrl: "https://prometheus-prod.local"
+            externalLabels:
+              cluster: prod
 
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
@@ -101,9 +103,16 @@ spec:
               matchLabels:
                 release: monitoring-prod
 
-            serviceMonitorNamespaceSelector: {}
-            podMonitorNamespaceSelector: {}
-            ruleNamespaceSelector: {}
+            serviceMonitorNamespaceSelector:
+              matchNames: ["monitoring-prod","airflow-prod","fastapi-prod","kube-system"]
+            podMonitorNamespaceSelector:
+              matchNames: ["monitoring-prod","airflow-prod","fastapi-prod","kube-system"]
+            ruleNamespaceSelector:
+              matchNames: ["monitoring-prod"]
+
+                #            serviceMonitorNamespaceSelector: {}
+                #            podMonitorNamespaceSelector: {}
+                #            ruleNamespaceSelector: {}
 
             routePrefix: "/"
 
@@ -139,10 +148,6 @@ spec:
             port: 9100
             targetPort: 9100
             
-        kube-state-metrics:
-          extraArgs:
-            - --namespaces=airflow-prod,fastapi-prod,monitoring-prod,kube-system
-
   syncPolicy:
     automated:
       prune: true
