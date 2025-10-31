@@ -103,16 +103,9 @@ spec:
               matchLabels:
                 release: monitoring-prod
 
-            serviceMonitorNamespaceSelector:
-              matchNames: ["monitoring-prod","airflow-prod","fastapi-prod","kube-system"]
-            podMonitorNamespaceSelector:
-              matchNames: ["monitoring-prod","airflow-prod","fastapi-prod","kube-system"]
-            ruleNamespaceSelector:
-              matchNames: ["monitoring-prod"]
-
-                #            serviceMonitorNamespaceSelector: {}
-                #            podMonitorNamespaceSelector: {}
-                #            ruleNamespaceSelector: {}
+            serviceMonitorNamespaceSelector: {}
+            podMonitorNamespaceSelector: {}
+            ruleNamespaceSelector: {}
 
             routePrefix: "/"
 

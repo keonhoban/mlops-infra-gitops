@@ -105,17 +105,10 @@ spec:
               matchLabels:
                 release: monitoring-dev
 
-            serviceMonitorNamespaceSelector:
-              matchNames: ["monitoring-dev","airflow-dev","fastapi-dev","kube-system"]
-            podMonitorNamespaceSelector:
-              matchNames: ["monitoring-dev","airflow-dev","fastapi-dev","kube-system"]
-            ruleNamespaceSelector:
-              matchNames: ["monitoring-dev"]
-
-                #            # 네임스페이스 범위는 기본(빈 객체)로 유지
-                #            serviceMonitorNamespaceSelector: {}
-                #            podMonitorNamespaceSelector: {}
-                #            ruleNamespaceSelector: {}
+            # 네임스페이스 범위는 기본(빈 객체)로 유지
+            serviceMonitorNamespaceSelector: {}
+            podMonitorNamespaceSelector: {}
+            ruleNamespaceSelector: {}
 
             # 드리프트 방지용 명시
             routePrefix: "/"
