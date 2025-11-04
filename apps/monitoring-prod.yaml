@@ -79,6 +79,10 @@ spec:
             selector:
               matchLabels:
                 stack: prod
+            metricRelabelings:
+              - action: keep
+                sourceLabels: [namespace]
+                regex: '.*-prod|monitoring-prod|kube-system'
 
         kube-state-metrics:
           prometheus:
