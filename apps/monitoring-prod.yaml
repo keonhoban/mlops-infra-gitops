@@ -83,6 +83,10 @@ spec:
               - action: keep
                 sourceLabels: [namespace]
                 regex: '.*-prod|monitoring-prod|kube-system'
+            cAdvisorMetricRelabelings:
+              - action: keep
+                sourceLabels: [namespace]
+                regex: '.*-prod|monitoring-prod|kube-system'
 
         kube-state-metrics:
           prometheus:
