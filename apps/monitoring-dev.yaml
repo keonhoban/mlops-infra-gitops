@@ -81,16 +81,23 @@ spec:
               matchLabels:
                 stack: dev
 
+        kube-state-metrics:
+          prometheus:
+            monitor:
+              enabled: true
+              additionalLabels:
+                release: monitoring-dev
+              metricRelabelings:
+                # dev만 남기고 나머지 네임스페이스 드랍
+                - action: keep
+                  sourceLabels: [namespace]
+                  regex: '.*-dev|monitoring-dev|kube-system'
+
         prometheus:
           monitor:
             enabled: true
             additionalLabels:
               release: monitoring-dev
-            metricRelabelings:
-              # dev만 남기고 나머지 네임스페이스 드랍
-              - action: keep
-                sourceLabels: [namespace]
-                regex: '.*-dev|monitoring-dev|kube-system'
           ingress:
             enabled: true
             ingressClassName: nginx

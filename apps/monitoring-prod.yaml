@@ -80,7 +80,7 @@ spec:
               matchLabels:
                 stack: prod
 
-        prometheus:
+        kube-state-metrics:
           prometheus:
             monitor:
               enabled: true
@@ -90,6 +90,12 @@ spec:
                 - action: keep
                   sourceLabels: [namespace]
                   regex: '.*-prod|monitoring-prod|kube-system'
+
+        prometheus:
+          monitor:
+            enabled: true
+            additionalLabels:
+              release: monitoring-dev
           ingress:
             enabled: true
             ingressClassName: nginx
