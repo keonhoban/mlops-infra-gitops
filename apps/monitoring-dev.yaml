@@ -141,7 +141,7 @@ spec:
             storageSpec:
               volumeClaimTemplate:
                 spec:
-                  storageClassName: nfs-monitoring
+                  storageClassName: local-path
                   accessModes: ["ReadWriteOnce"]
                   resources:
                     requests:
