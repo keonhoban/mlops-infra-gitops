@@ -5,7 +5,7 @@ singleBinary:
   persistence:
     enabled: true
     size: 100Gi
-    storageClassName: nfs-observability
+    storageClass: nfs-observability
     accessModes:
       - ReadWriteMany
 
