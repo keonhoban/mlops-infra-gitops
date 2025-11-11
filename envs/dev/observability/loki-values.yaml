@@ -36,6 +36,10 @@ gateway:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hosts: [ "loki-dev.local" ]
+    hosts:
+      - host: loki-dev.local
+        paths:
+          - path: /
+            pathType: Prefix
     # self-signed면 tls 생략 가능
     tls: []
