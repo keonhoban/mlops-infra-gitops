@@ -1,7 +1,7 @@
 config:
   # Loki 엔드포인트는 차트가 만드는 서비스명 기준 (아래는 기본값 예)
   clients:
-    - url: http://loki:3100/loki/api/v1/push
+    - url: http://loki-prod:3100/loki/api/v1/push
   positions:
     filename: /run/promtail/positions.yaml
   logLevel: info
