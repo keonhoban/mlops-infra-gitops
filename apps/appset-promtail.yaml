@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: promtail-env-matrix
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+            ns: observability-dev
+            project: dev
+            valuesPath: envs/dev/observability/promtail-values.yaml
+          - env: prod
+            ns: observability-prod
+            project: prod
+            valuesPath: envs/prod/observability/promtail-values.yaml
+  template:
+    metadata:
+      name: 'promtail-{{env}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: "1"
+    spec:
+      project: '{{project}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{ns}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+      sources:
+        - repoURL: 'https://grafana.github.io/helm-charts'
+          chart: promtail
+          targetRevision: '6.*'
+          helm:
+            valueFiles:
+              - '$values/{{valuesPath}}'
+        - repoURL: 'https://github.com/keonhoban/mlops-infra-gitops'
+          targetRevision: main
+          ref: values

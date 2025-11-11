@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: loki-env-matrix
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+            ns: observability-dev
+            project: dev
+            valuesPath: envs/dev/observability/loki-values.yaml
+          - env: prod
+            ns: observability-prod
+            project: prod
+            valuesPath: envs/prod/observability/loki-values.yaml
+  template:
+    metadata:
+      name: 'loki-{{env}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: "0"
+    spec:
+      project: '{{project}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{ns}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+      # 🔽 멀티 소스: Helm 차트 + values 파일 레포(ref)
+      sources:
+        - repoURL: 'https://grafana.github.io/helm-charts'
+          chart: loki
+          targetRevision: '6.*'
+          helm:
+            valueFiles:
+              - '$values/{{valuesPath}}'
+        - repoURL: 'https://github.com/keonhoban/mlops-infra-gitops'
+          targetRevision: main
+          ref: values

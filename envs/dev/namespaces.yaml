@@ -21,3 +21,9 @@ kind: Namespace
 metadata:
   name: monitoring-dev
   labels: { env: dev, app: monitoring-dev, team: ml-platform }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observability-dev
+  labels: { env: dev, app: monitoring-dev, team: ml-platform }
