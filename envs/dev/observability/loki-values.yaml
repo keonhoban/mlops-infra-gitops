@@ -10,6 +10,9 @@ singleBinary:
     storageClass: nfs-observability
     accessModes:                      
       - ReadWriteMany
+  podSecurityContext:
+    fsGroup: 10001
+    fsGroupChangePolicy: OnRootMismatch
 
 # === Simple Scalable 타깃 전부 비활성 + replicas=0 못박기 ===
 read:

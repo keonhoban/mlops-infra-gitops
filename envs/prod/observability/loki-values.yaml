@@ -8,6 +8,9 @@ singleBinary:
     storageClass: nfs-observability
     accessModes:
       - ReadWriteMany
+  podSecurityContext:
+    fsGroup: 10001
+    fsGroupChangePolicy: OnRootMismatch
 
 read:
   enabled: false
