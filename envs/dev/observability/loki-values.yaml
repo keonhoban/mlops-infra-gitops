@@ -1,4 +1,25 @@
+# === 모드 고정 ===
 deploymentMode: SingleBinary
+
+# === 단일 바이너리만 1개 ===
+singleBinary:
+  replicas: 1
+  persistence:
+    enabled: true
+    size: 100Gi
+    existingClaim: loki-dev-pvc
+
+# === Simple Scalable 타깃 전부 비활성 + replicas=0 못박기 ===
+read:
+  enabled: false
+  replicas: 0
+write:
+  enabled: false
+  replicas: 0
+backend:
+  enabled: false
+  replicas: 0
+
 loki:
   auth_enabled: false
   commonConfig:
@@ -23,14 +44,6 @@ loki:
       local:
         directory: /data/rules
 
-singleBinary:
-  replicas: 1
-  persistence:
-    enabled: true
-    size: 100Gi
-    existingClaim: loki-dev-pvc
-
-# 게이트웨이(선택): 내부 접근용
 gateway:
   enabled: true
   service:
@@ -43,5 +56,4 @@ gateway:
         paths:
           - path: /
             pathType: Prefix
-    # self-signed면 tls 생략 가능
-    tls: []
+  tls: []

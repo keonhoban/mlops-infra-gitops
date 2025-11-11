@@ -1,10 +1,22 @@
 deploymentMode: SingleBinary
+
+singleBinary:
+  replicas: 1
+  persistence:
+    enabled: true
+    size: 100Gi
+    existingClaim: loki-prod-pvc
+
 read:
   enabled: false
+  replicas: 0
 write:
   enabled: false
+  replicas: 0
 backend:
   enabled: false
+  replicas: 0
+
 loki:
   auth_enabled: false
   commonConfig:
@@ -29,14 +41,6 @@ loki:
       local:
         directory: /data/rules
 
-singleBinary:
-  replicas: 1
-  persistence:
-    enabled: true
-    size: 100Gi
-    existingClaim: loki-prod-pvc
-
-# 게이트웨이(선택): 내부 접근용
 gateway:
   enabled: true
   service:
@@ -45,9 +49,8 @@ gateway:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - host: loki-prod.local     # ← 문자열이 아니라 객체로!
+      - host: loki-prod.local
         paths:
           - path: /
             pathType: Prefix
-    # self-signed면 tls 생략 가능
-    tls: []
+  tls: []
