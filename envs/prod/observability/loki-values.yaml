@@ -46,6 +46,12 @@ loki:
       local:
         directory: /data/rules
 
+chunksCache:
+  enabled: false
+
+resultsCache:
+  enabled: false
+
 gateway:
   enabled: true
   service:
