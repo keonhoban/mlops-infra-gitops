@@ -29,7 +29,7 @@ loki:
   storage:
     type: filesystem
   compactor:
-    working_directory: /data/compactor
+    working_directory: /var/loki/compactor
     compaction_interval: 5m
   schemaConfig:
     configs:
