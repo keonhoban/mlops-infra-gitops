@@ -7,7 +7,9 @@ singleBinary:
   persistence:
     enabled: true
     size: 100Gi
-    existingClaim: loki-dev-pvc
+    storageClass: nfs-observability
+    accessModes:                      
+      - ReadWriteMany
 
 # === Simple Scalable 타깃 전부 비활성 + replicas=0 못박기 ===
 read:

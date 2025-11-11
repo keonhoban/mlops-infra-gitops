@@ -22,4 +22,4 @@ spec:
     requests:
       storage: 100Gi
   volumeName: loki-dev-pv
-  storageClassName: ""               # PV 바인딩(정적)이라 비움
+  storageClassName: "nfs-observability"

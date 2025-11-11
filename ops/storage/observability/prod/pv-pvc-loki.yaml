@@ -22,4 +22,4 @@ spec:
     requests:
       storage: 100Gi
   volumeName: loki-prod-pv
-  storageClassName: ""
+  storageClassName: "nfs-observability"

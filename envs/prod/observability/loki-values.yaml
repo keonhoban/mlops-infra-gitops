@@ -5,7 +5,9 @@ singleBinary:
   persistence:
     enabled: true
     size: 100Gi
-    existingClaim: loki-prod-pvc
+    storageClass: nfs-observability
+    accessModes:
+      - ReadWriteMany
 
 read:
   enabled: false
