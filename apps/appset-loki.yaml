@@ -35,6 +35,9 @@ spec:
           chart: loki
           targetRevision: '6.*'
           helm:
+            parameters:
+              - name: deploymentMode
+                value: SingleBinary
             valueFiles:
               - '$values/{{valuesPath}}'
         - repoURL: 'https://github.com/keonhoban/mlops-infra-gitops'
