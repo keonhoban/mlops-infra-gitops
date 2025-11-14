@@ -1,0 +1,19 @@
+# envs/dev/monitoring/fastapi-dev-sm.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: fastapi-dev-sm
+  namespace: monitoring-dev
+  labels:
+    release: monitoring-dev
+spec:
+  namespaceSelector:
+    matchNames: ["fastapi-dev"]
+  selector:
+    matchLabels:
+      app: fastapi-dev             # ← 서비스 라벨과 동일
+  endpoints:
+    - port: http                   # ← 서비스 포트 name= "http"
+      path: /metrics
+      interval: 15s
+      scheme: http

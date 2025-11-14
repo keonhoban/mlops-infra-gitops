@@ -1,0 +1,18 @@
+# envs/dev/monitoring/fastapi-dev-pm.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: fastapi-dev-pm
+  namespace: monitoring-dev
+  labels: { release: monitoring-dev }
+spec:
+  namespaceSelector:
+    matchNames: ["fastapi-dev"]
+  selector:
+    matchLabels:
+      app: fastapi-dev
+  podMetricsEndpoints:
+    - port: http          # ★ 숫자 대신 '이름' 사용
+      path: /metrics
+      interval: 15s
+      scheme: http

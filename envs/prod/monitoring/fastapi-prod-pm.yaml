@@ -1,0 +1,18 @@
+# envs/prod/monitoring/fastapi-prod-pm.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: fastapi-prod-pm
+  namespace: monitoring-prod
+  labels: { release: monitoring-prod }
+spec:
+  namespaceSelector:
+    matchNames: ["fastapi-prod"]
+  selector:
+    matchLabels:
+      app: fastapi-prod
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      scheme: http

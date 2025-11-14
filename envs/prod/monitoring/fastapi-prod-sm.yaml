@@ -1,0 +1,20 @@
+# envs/prod/monitoring/fastapi-prod-sm.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: fastapi-prod-sm
+  namespace: monitoring-prod
+  labels:
+    release: monitoring-prod
+spec:
+  namespaceSelector:
+    matchNames:
+      - fastapi-prod
+  selector:
+    matchLabels:
+      app: fastapi-prod
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s
+      scheme: http

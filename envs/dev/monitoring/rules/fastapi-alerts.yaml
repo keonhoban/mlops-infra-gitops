@@ -32,3 +32,27 @@ spec:
       annotations:
         summary: "FastAPI p95 latency > 500ms (10m)"
         description: "p95 latency: {{ $value | printf \"%.3f\" }}s"
+
+    - alert: FastAPIHighErrorRate_TEST
+      expr: |
+        (sum(rate(http_requests_total{status=~"5.."}[1m]))
+         / sum(rate(http_requests_total[1m]))) > 0
+      for: 0m
+      labels:
+        severity: warning
+      annotations:
+        summary: "TEST: FastAPI 5xx error rate > 0%"
+        description: "테스트용 알람입니다."
+
+    - alert: FastAPIP95LatencyHigh_TEST
+      expr: |
+        histogram_quantile(
+          0.95,
+          sum by (le) (rate(http_request_duration_seconds_bucket[1m]))
+        ) > 0.01
+      for: 0m
+      labels:
+        severity: warning
+      annotations:
+        summary: "TEST: FastAPI p95 latency > 10ms"
+        description: "테스트용 알람입니다."
