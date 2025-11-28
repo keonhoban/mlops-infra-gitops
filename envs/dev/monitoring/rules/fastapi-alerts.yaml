@@ -35,13 +35,13 @@ spec:
 
     - alert: FastAPIHighErrorRate_TEST
       expr: |
-        (sum(rate(http_requests_total{status=~"5.."}[1m]))
+        (sum(rate(http_requests_total{status!~"2.."}[1m]))
          / sum(rate(http_requests_total[1m]))) > 0
       for: 0m
       labels:
         severity: warning
       annotations:
-        summary: "TEST: FastAPI 5xx error rate > 0%"
+        summary: "TEST: FastAPI non-2xx error rate > 0%"
         description: "테스트용 알람입니다."
 
     - alert: FastAPIP95LatencyHigh_TEST
