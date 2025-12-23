@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: nvcr.io/nvidia/tritonserver
-  tag: "23.10-py3"
+  tag: "24.08-py3"
 
 service:
   type: ClusterIP
