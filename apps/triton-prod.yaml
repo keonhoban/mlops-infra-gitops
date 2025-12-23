@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: triton-prod
+  namespace: argocd
+spec:
+  project: prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: triton-prod
+  source:
+    repoURL: https://github.com/keonhoban/mlops-infra-gitops
+    targetRevision: main
+    path: charts/triton
+    helm:
+      valueFiles:
+        - values/base.yaml
+        - values/prod.yaml
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
