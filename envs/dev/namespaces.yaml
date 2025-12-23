@@ -27,3 +27,9 @@ kind: Namespace
 metadata:
   name: observability-dev
   labels: { env: dev, app: monitoring-dev, team: ml-platform }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: triton-dev
+  labels: { env: dev, app: triton-dev, team: ml-platform }

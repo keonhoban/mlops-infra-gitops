@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: triton
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: triton
+  template:
+    metadata:
+      labels:
+        app: triton
+    spec:
+      containers:
+        - name: triton
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          args:
+            - tritonserver
+            - --model-repository={{ .Values.modelRepository.mountPath }}
+            - --http-port=8000
+            - --grpc-port=8001
+            - --metrics-port=8002
+          ports:
+            - containerPort: 8000
+            - containerPort: 8001
+            - containerPort: 8002
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+            - name: model-repo
+              mountPath: {{ .Values.modelRepository.mountPath }}
+      volumes:
+        - name: model-repo
+          persistentVolumeClaim:
+            claimName: {{ .Values.modelRepository.pvc.name }}

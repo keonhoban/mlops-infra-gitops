@@ -1,0 +1,34 @@
+replicaCount: 1
+
+image:
+  repository: nvcr.io/nvidia/tritonserver
+  tag: "23.10-py3"
+
+service:
+  type: ClusterIP
+  ports:
+    http: 8000
+    grpc: 8001
+    metrics: 8002
+
+resources:
+  requests:
+    cpu: "2"
+    memory: "4Gi"
+  limits:
+    cpu: "4"
+    memory: "8Gi"
+
+modelRepository:
+  mountPath: /models
+  pvc:
+    enabled: true
+    name: triton-model-repo-pvc
+
+gpu:
+  enabled: false    # Week 6 대비 핵심 포인트
+  count: 1
+
+monitoring:
+  enabled: true
+  scrapeInterval: 30s
