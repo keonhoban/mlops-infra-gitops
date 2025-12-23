@@ -18,6 +18,7 @@ spec:
           args:
             - tritonserver
             - --model-repository={{ .Values.modelRepository.mountPath }}
+            - --model-control-mode=explicit
             - --http-port=8000
             - --grpc-port=8001
             - --metrics-port=8002
