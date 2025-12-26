@@ -4,7 +4,4 @@ global:
   env: dev
 
 monitoring:
-  enabled: true
-  # kube-prometheus-stack dev 릴리즈 이름
   releaseLabel: monitoring-dev
-  scrapeInterval: 30s

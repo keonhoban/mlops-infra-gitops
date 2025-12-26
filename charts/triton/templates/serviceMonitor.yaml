@@ -4,9 +4,9 @@ kind: ServiceMonitor
 metadata:
   name: triton
   labels:
-    release: {{ .Values.monitoring.releaseLabel | default "monitoring-dev" | quote }}
+    release: {{ .Values.monitoring.releaseLabel | quote }}
     app: triton
-    env: {{ .Values.global.env | default "dev" | quote }}
+    env: {{ .Values.global.env | quote }}
 spec:
   namespaceSelector:
     matchNames:
@@ -14,6 +14,7 @@ spec:
   selector:
     matchLabels:
       app: triton
+      env: {{ .Values.global.env | quote }}
   endpoints:
     - port: metrics
       interval: {{ .Values.monitoring.scrapeInterval | default "30s" }}

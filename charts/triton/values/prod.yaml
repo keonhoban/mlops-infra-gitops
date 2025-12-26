@@ -4,6 +4,4 @@ global:
   env: prod
 
 monitoring:
-  enabled: true
   releaseLabel: monitoring-prod
-  scrapeInterval: 30s

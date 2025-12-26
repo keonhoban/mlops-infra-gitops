@@ -4,8 +4,8 @@ metadata:
   name: triton
   labels:
     app: triton
-    env: {{ .Values.global.env | default "dev" | quote }}
-    release: {{ .Values.monitoring.releaseLabel | default "monitoring-dev" | quote }}
+    env: {{ .Values.global.env | quote }}
+    release: {{ .Values.monitoring.releaseLabel | quote }}
 spec:
   type: {{ .Values.service.type | default "ClusterIP" }}
   selector:
