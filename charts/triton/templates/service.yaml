@@ -2,16 +2,24 @@ apiVersion: v1
 kind: Service
 metadata:
   name: triton
+  labels:
+    app: triton
+    env: {{ .Values.global.env | default "dev" | quote }}
+    release: {{ .Values.monitoring.releaseLabel | default "monitoring-dev" | quote }}
 spec:
+  type: {{ .Values.service.type | default "ClusterIP" }}
   selector:
     app: triton
   ports:
     - name: http
-      port: 8000
+      port: {{ .Values.service.ports.http | default 8000 }}
       targetPort: 8000
+      protocol: TCP
     - name: grpc
-      port: 8001
+      port: {{ .Values.service.ports.grpc | default 8001 }}
       targetPort: 8001
+      protocol: TCP
     - name: metrics
-      port: 8002
+      port: {{ .Values.service.ports.metrics | default 8002 }}
       targetPort: 8002
+      protocol: TCP

@@ -1,1 +1,9 @@
 replicaCount: 1
+
+global:
+  env: prod
+
+monitoring:
+  enabled: true
+  releaseLabel: monitoring-prod
+  scrapeInterval: 30s
