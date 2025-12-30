@@ -73,10 +73,19 @@ airflow:
       - name: aws-credentials
         secret:
           secretName: aws-credentials-secret
+
+      - name: triton-model-repo
+        persistentVolumeClaim:
+          claimName: triton-model-repo-pvc
+
     extraVolumeMounts:
       - name: aws-credentials
         mountPath: /home/airflow/.aws
         readOnly: true
+
+      - name: triton-model-repo
+        mountPath: /models
+        readOnly: false
 
   # Workers / DAG Processor 에 동일 anchor 사용
   workers: *prod_scheduler

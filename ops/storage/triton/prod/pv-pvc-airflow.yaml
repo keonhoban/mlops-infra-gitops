@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: airflow-triton-model-repo-prod-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes: [ReadWriteMany]
+  nfs:
+    server: 192.168.18.141
+    path: /mnt/nfs_share/mlops/triton/model-repo/prod
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: "nfs-observability"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: triton-model-repo-pvc
+  namespace: airflow-prod
+spec:
+  accessModes: [ReadWriteMany]
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: airflow-triton-model-repo-prod-pv
+  storageClassName: "nfs-observability"
