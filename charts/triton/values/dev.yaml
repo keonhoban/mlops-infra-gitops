@@ -4,4 +4,6 @@ global:
   env: dev
 
 monitoring:
-  releaseLabel: monitoring-dev
+  enabled: true
+  namespace: monitoring-dev
+  releaseLabel: kube-prometheus-stack

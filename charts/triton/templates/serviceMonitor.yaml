@@ -3,9 +3,9 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: triton
-  namespace: monitoring-dev
+  namespace: {{ .Values.monitoring.namespace }}
   labels:
-    release: kube-prometheus-stack
+    release: {{ .Values.monitoring.releaseLabel | quote }}
     app: triton
 spec:
   namespaceSelector:
@@ -17,6 +17,6 @@ spec:
       env: {{ .Values.global.env | quote }}
   endpoints:
     - port: metrics
-      interval: {{ .Values.monitoring.scrapeInterval | default "30s" }}
       path: /metrics
+      interval: {{ .Values.monitoring.scrapeInterval | default "30s" }}
 {{- end }}
