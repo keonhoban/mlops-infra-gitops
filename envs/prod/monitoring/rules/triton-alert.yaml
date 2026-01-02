@@ -4,7 +4,7 @@ metadata:
   name: triton-alerts
   namespace: monitoring-prod
   labels:
-    release: kube-prometheus-stack
+    release: monitoring-prod
 spec:
   groups:
   - name: triton.rules
