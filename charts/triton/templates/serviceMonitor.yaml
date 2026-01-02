@@ -3,14 +3,14 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: triton
+  namespace: monitoring-dev
   labels:
-    release: {{ .Values.monitoring.releaseLabel | quote }}
+    release: kube-prometheus-stack
     app: triton
-    env: {{ .Values.global.env | quote }}
 spec:
   namespaceSelector:
     matchNames:
-      - {{ .Release.Namespace }}
+      - triton-{{ .Values.global.env }}
   selector:
     matchLabels:
       app: triton
