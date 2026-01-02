@@ -6,4 +6,4 @@ global:
 monitoring:
   enabled: true
   namespace: monitoring-prod
-  releaseLabel: kube-prometheus-stack
+  releaseLabel: monitoring-prod
