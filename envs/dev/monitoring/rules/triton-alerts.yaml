@@ -50,3 +50,14 @@ spec:
               Avg latency > 300ms for 5m (estimated).
               value_us={{ $value }}
               job=triton
+
+        - alert: SmokeTestTritonSlack
+          expr: vector(1)
+          for: 1m
+          labels:
+            severity: info
+            service: triton
+            env: dev
+          annotations:
+            summary: "Smoke test for triton slack routing"
+            description: "If you see this in Slack, routing is OK."
