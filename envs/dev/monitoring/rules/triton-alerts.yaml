@@ -4,60 +4,53 @@ metadata:
   name: triton-alerts
   namespace: monitoring-dev
   labels:
-    release: monitoring-dev
+    release: monitoring-dev  # kube-prometheus-stack에서 ruleSelector로 잡히는 라벨(대부분 이 방식)
 spec:
   groups:
-    - name: triton.rules
-      rules:
-        - alert: TritonHighErrorRatio
-          expr: |
-            (
-              sum(increase(nv_inference_request_failure{job="triton"}[5m]))
-              /
-              clamp_min(
-                sum(increase(nv_inference_request_failure{job="triton"}[5m]))
-                + sum(increase(nv_inference_request_success{job="triton"}[5m])),
-                1
-              )
-            ) > 0.01
-          for: 3m
-          labels:
-            severity: warning
-            service: triton
-            env: dev
-          annotations:
-            summary: "Triton error ratio is high (dev)"
-            description: |
-              Triton failure ratio > 1% for 3m.
-              value={{ $value }}
-              job=triton
+  - name: triton.rules
+    rules:
+    - alert: TritonHighErrorRate
+      expr: |
+        (
+          sum(rate(nv_inference_request_failure{job="triton"}[5m]))
+        /
+          clamp_min(
+            sum(rate(nv_inference_request_success{job="triton"}[5m]))
+            +
+            sum(rate(nv_inference_request_failure{job="triton"}[5m])),
+            1e-9
+          )
+        ) * 100 > 5
+      for: 2m
+      labels:
+        severity: warning
+        service: triton
+        namespace: triton-dev
+      annotations:
+        summary: "Triton error rate is high (>{{ $value | printf \"%.2f\" }}%)"
+        description: "Triton 최근 5분 에러율이 임계치 초과. 모델/엔드포인트/리소스 상태 확인 필요."
+        dashboard: "https://grafana-dev.local/d/XXXX/triton"  # 있으면 넣기
+        runbook: "https://keonhoban.github.io/..."            # 매뉴얼 링크로 나중에 연결
 
-        - alert: TritonHighLatencyAvg
-          expr: |
-            (
-              sum(increase(nv_inference_request_duration_us{job="triton"}[5m]))
-              /
-              clamp_min(sum(increase(nv_inference_count{job="triton"}[5m])), 1)
-            ) > 300000
-          for: 5m
-          labels:
-            severity: warning
-            service: triton
-            env: dev
-          annotations:
-            summary: "Triton average latency is high (dev)"
-            description: |
-              Avg latency > 300ms for 5m (estimated).
-              value_us={{ $value }}
-              job=triton
-
-        - alert: SmokeTestTritonSlack
-          expr: vector(1)
-          for: 1m
-          labels:
-            severity: info
-            service: triton
-            env: dev
-          annotations:
-            summary: "Smoke test for triton slack routing"
-            description: "If you see this in Slack, routing is OK."
+    - alert: TritonHighLatency
+      expr: |
+        (
+          sum(rate(nv_inference_request_duration_us{job="triton"}[5m]))
+        /
+          clamp_min(
+            sum(rate(nv_inference_request_success{job="triton"}[5m]))
+            +
+            sum(rate(nv_inference_request_failure{job="triton"}[5m])),
+            1e-9
+          )
+        ) / 1000 > 200
+      for: 5m
+      labels:
+        severity: warning
+        service: triton
+        namespace: triton-dev
+      annotations:
+        summary: "Triton latency is high (avg {{ $value | printf \"%.1f\" }} ms)"
+        description: "Triton 최근 5분 평균 latency가 임계치 초과. CPU 압박/큐 증가/모델 병목 확인."
+        dashboard: "https://grafana-dev.local/d/XXXX/triton"
+        runbook: "https://keonhoban.github.io/..."
