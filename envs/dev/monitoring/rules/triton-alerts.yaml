@@ -1,0 +1,44 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: triton-alerts
+  namespace: monitoring-dev
+  labels:
+    release: monitoring-dev
+spec:
+  groups:
+  - name: triton.rules
+    rules:
+    - alert: TritonHighErrorRate
+      expr: |
+        (
+          sum(rate(nv_inference_request_failure{job="triton"}[5m]))
+        /
+          (sum(rate(nv_inference_request_success{job="triton"}[5m]))
+           + sum(rate(nv_inference_request_failure{job="triton"}[5m])))
+        ) > 0.02
+      for: 2m
+      labels:
+        severity: warning
+        namespace: triton-dev
+        service: triton
+      annotations:
+        summary: "[DEV] Triton error rate high"
+        description: "Triton error rate > 2% (5m). value={{ $value }}"
+
+    - alert: TritonP95LatencyHigh
+      expr: |
+        (
+          histogram_quantile(
+            0.95,
+            sum by (le) (rate(nv_inference_request_duration_us_bucket{job="triton"}[5m]))
+          ) / 1e6
+        ) > 0.5
+      for: 5m
+      labels:
+        severity: warning
+        namespace: triton-dev
+        service: triton
+      annotations:
+        summary: "[DEV] Triton p95 latency high"
+        description: "Triton p95 latency > 0.5s (5m). value={{ $value }}"
