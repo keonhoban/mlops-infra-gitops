@@ -14,8 +14,11 @@ spec:
         (
           sum(rate(nv_inference_request_failure{job="triton"}[5m]))
         /
-          (sum(rate(nv_inference_request_success{job="triton"}[5m]))
-           + sum(rate(nv_inference_request_failure{job="triton"}[5m])))
+          clamp_min(
+            sum(rate(nv_inference_request_success{job="triton"}[5m]))
+          + sum(rate(nv_inference_request_failure{job="triton"}[5m])),
+          1
+          )
         ) > 0.02
       for: 2m
       labels:
@@ -26,19 +29,18 @@ spec:
         summary: "[DEV] Triton error rate high"
         description: "Triton error rate > 2% (5m). value={{ $value }}"
 
-    - alert: TritonP95LatencyHigh
+    - alert: TritonMeanLatencyHigh
       expr: |
         (
-          histogram_quantile(
-            0.95,
-            sum by (le) (rate(nv_inference_request_duration_us_bucket{job="triton"}[5m]))
-          ) / 1e6
-        ) > 0.5
-      for: 5m
+          sum(rate(nv_inference_request_duration_us{job="triton"}[5m]))
+        /
+          clamp_min(sum(rate(nv_inference_count{job="triton"}[5m])), 1)
+        ) / 1e6 > 0.000001
+      for: 10s
       labels:
         severity: warning
         namespace: triton-dev
         service: triton
       annotations:
-        summary: "[DEV] Triton p95 latency high"
-        description: "Triton p95 latency > 0.5s (5m). value={{ $value }}"
+        summary: "[DEV] Triton mean latency high"
+        description: "Triton mean latency > 0.5s (5m). value={{ $value }}"

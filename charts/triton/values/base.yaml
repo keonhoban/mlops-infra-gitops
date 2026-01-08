@@ -26,7 +26,7 @@ modelRepository:
     name: triton-model-repo-pvc
 
 gpu:
-  enabled: false    # Week 6 대비 핵심 포인트
+  enabled: false    # CPU only
   count: 1
 
 monitoring:

@@ -2,9 +2,9 @@
 FROM apache/airflow:3.0.2-python3.12
 
 # requirements 복사
-COPY requirements.txt /tmp/requirements.txt
+COPY requirements.txt requirements.txt
 
 # airflow 권한으로 pip install
 USER airflow
 
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
