@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: feature-store-dev
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: airflow-dev
+  source:
+    repoURL: https://github.com/keonhoban/mlops-infra-gitops
+    targetRevision: main
+    path: envs/dev/feature-store
+    directory:
+      recurse: true
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
