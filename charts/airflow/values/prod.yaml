@@ -78,6 +78,10 @@ airflow:
         persistentVolumeClaim:
           claimName: triton-model-repo-pvc
 
+      - name: feature-store-resources
+        configMap:
+          name: feature-store-resources
+
     extraVolumeMounts:
       - name: aws-credentials
         mountPath: /home/airflow/.aws
@@ -86,6 +90,10 @@ airflow:
       - name: triton-model-repo
         mountPath: /models
         readOnly: false
+
+      - name: feature-store-resources
+        mountPath: /opt/airflow/feature-store
+        readOnly: true
 
   # Workers / DAG Processor 에 동일 anchor 사용
   workers: *prod_scheduler
