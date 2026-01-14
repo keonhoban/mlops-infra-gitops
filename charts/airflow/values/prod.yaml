@@ -3,7 +3,7 @@
 airflow:
   images:
     airflow:
-      tag: v1.3.3
+      tag: v1.3.2
 
   # 기준값: 환경별 airflow 도메인
   global:
