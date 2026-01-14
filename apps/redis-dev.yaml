@@ -5,15 +5,26 @@ metadata:
   namespace: argocd
 spec:
   project: dev
-  source:
-    repoURL: https://github.com/keonhoban/mlops-infra-gitops
-    targetRevision: HEAD
-    path: envs/dev/feature-store/redis
-    kustomize:
-      enableHelm: true
+
   destination:
     server: https://kubernetes.default.svc
     namespace: feature-store-dev
+
+  sources:
+    # 1) Helm chart (Bitnami)
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: redis
+      targetRevision: 19.6.1
+      helm:
+        releaseName: redis-dev
+        valueFiles:
+          - $values/envs/dev/feature-store/redis/values.yaml
+
+    # 2) values.yaml 가져올 Git repo
+    - repoURL: https://github.com/keonhoban/mlops-infra-gitops
+      targetRevision: HEAD
+      ref: values
+
   syncPolicy:
     automated:
       prune: true
