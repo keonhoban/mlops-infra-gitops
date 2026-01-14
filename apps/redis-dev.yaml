@@ -18,7 +18,7 @@ spec:
       helm:
         releaseName: redis-dev
         valueFiles:
-          - $values/envs/dev/feature-store/redis/values.yaml
+          - $values/envs/dev/redis/values.yaml
 
     # 2) values.yaml 가져올 Git repo
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
