@@ -22,7 +22,7 @@ spec:
 
     # 2) values.yaml 가져올 Git repo
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
-      targetRevision: HEAD
+      targetRevision: main
       ref: values
 
   syncPolicy:
