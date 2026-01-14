@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
-    path: envs/dev/feature-store/redis
+    path: envs/dev/feature-store
     directory:
       recurse: true
   syncPolicy:
