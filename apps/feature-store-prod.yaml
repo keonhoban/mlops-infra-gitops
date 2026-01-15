@@ -9,7 +9,7 @@ spec:
   project: prod
   destination:
     server: https://kubernetes.default.svc
-    namespace: feature-store-prod
+    namespace: airflow-prod
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
