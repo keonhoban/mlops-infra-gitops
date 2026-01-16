@@ -1,5 +1,5 @@
 feastServer:
-  image: "<YOUR_DOCKERHUB_ID>/feast-server:0.40.1-s3fs"
+  image: "hoizz/feast-server:0.40.1-s3fs"
   port: 6566
 
 aws:
