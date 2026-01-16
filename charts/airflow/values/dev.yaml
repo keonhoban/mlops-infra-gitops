@@ -61,6 +61,10 @@ airflow:
         value: "s3://mlflow-artifacts-keonho/dev/airflow-logs"
       - name: AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID
         value: "aws_default"
+      - name: AWS_REGION
+        value: ap-northeast-2
+      - name: AWS_DEFAULT_REGION
+        value: ap-northeast-2
 
     resources:
       requests:
