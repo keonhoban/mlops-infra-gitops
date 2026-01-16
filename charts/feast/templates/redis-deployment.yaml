@@ -20,7 +20,7 @@ spec:
             - containerPort: 6379
           args:
             - "--appendonly"
-            - {{ ternary "yes" "no" .Values.redis.persistence }}
+            - "{{ ternary "yes" "no" .Values.redis.persistence }}"
           readinessProbe:
             tcpSocket:
               port: 6379
