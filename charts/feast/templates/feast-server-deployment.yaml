@@ -34,6 +34,9 @@ spec:
               mountPath: /feast-repo/repo.py
               subPath: repo.py
               readOnly: true
+            - name: aws-credentials
+              mountPath: /root/.aws
+              readOnly: true
 
           command:
             - /bin/sh
@@ -41,22 +44,13 @@ spec:
           args:
             - |
               set -euxo pipefail
-              
-              echo "[A] list /feast-repo"
-              ls -al /feast-repo
+          
+              echo "[A] show repo files"
+              ls -al /feast-repo || true
               test -f /feast-repo/feature_store.yaml
               test -f /feast-repo/repo.py
-              
-              rm -rf /tmp/feast-repo
-              mkdir -p /tmp/feast-repo
-              cp -v /feast-repo/* /tmp/feast-repo/
-              
-              echo "[B] list /tmp/feast-repo"
-              ls -al /tmp/feast-repo
-              test -f /tmp/feast-repo/feature_store.yaml
-              test -f /tmp/feast-repo/repo.py
-              
-              cd /tmp/feast-repo
+          
+              cd /feast-repo
               feast apply
               feast serve --host 0.0.0.0 --port 6566
 
