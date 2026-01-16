@@ -1,0 +1,17 @@
+aws:
+  region: ap-northeast-2
+  credentialsSecretName: aws-credentials
+
+s3:
+  bucket: datapipeline-raw-data-keonho
+  featurePrefix: feature-store/user_features
+  registryPrefix: feast
+
+redis:
+  image: redis:7.2-alpine
+  persistence: true
+
+feastServer:
+  image: feastdev/feature-server:0.40.1
+  port: 6566
+  resources: {}

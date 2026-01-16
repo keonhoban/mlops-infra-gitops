@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feast-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feast-server
+  template:
+    metadata:
+      labels:
+        app: feast-server
+    spec:
+      containers:
+        - name: feast-server
+          image: {{ .Values.feastServer.image }}
+          ports:
+            - containerPort: {{ .Values.feastServer.port }}
+          env:
+            - name: AWS_SHARED_CREDENTIALS_FILE
+              value: /root/.aws/credentials
+            - name: AWS_DEFAULT_REGION
+              value: {{ .Values.aws.region }}
+            - name: AWS_REGION
+              value: {{ .Values.aws.region }}
+          volumeMounts:
+            - name: feast-repo
+              mountPath: /feast-repo
+              readOnly: true
+            - name: aws-credentials
+              mountPath: /root/.aws
+              readOnly: true
+          args:
+            - "feast"
+            - "serve"
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "{{ .Values.feastServer.port }}"
+            - "--repo-path"
+            - "/feast-repo"
+      volumes:
+        - name: feast-repo
+          configMap:
+            name: feast-repo
+        - name: aws-credentials
+          secret:
+            secretName: {{ .Values.aws.credentialsSecretName }}
