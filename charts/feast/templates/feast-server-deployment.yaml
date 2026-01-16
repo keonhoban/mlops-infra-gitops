@@ -43,8 +43,8 @@ spec:
             - -c
           args:
             - |
-              set -euxo pipefail
-          
+              set -eux
+
               echo "[A] show repo files"
               ls -al /feast-repo || true
               test -f /feast-repo/feature_store.yaml
