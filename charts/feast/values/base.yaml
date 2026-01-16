@@ -12,6 +12,6 @@ redis:
   persistence: true
 
 feastServer:
-  image: hoizz/feature-server:0.40.1-s3fs
+  image: hoizz/feast-server:0.40.1-s3fs
   port: 6566
   resources: {}
