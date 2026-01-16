@@ -1,7 +1,3 @@
-feastServer:
-  image: "hoizz/feast-server:0.40.1-s3fs"
-  port: 6566
-
 aws:
   region: ap-northeast-2
   credentialsSecretName: aws-credentials
@@ -16,6 +12,6 @@ redis:
   persistence: true
 
 feastServer:
-  image: feastdev/feature-server:0.40.1
+  image: hoizz/feature-server:0.40.1
   port: 6566
   resources: {}
