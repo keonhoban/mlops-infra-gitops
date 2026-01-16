@@ -1,3 +1,7 @@
+feastServer:
+  image: "<YOUR_DOCKERHUB_ID>/feast-server:0.40.1-s3fs"
+  port: 6566
+
 aws:
   region: ap-northeast-2
   credentialsSecretName: aws-credentials
