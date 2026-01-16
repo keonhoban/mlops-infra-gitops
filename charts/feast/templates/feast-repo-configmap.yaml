@@ -19,16 +19,17 @@ data:
       type: redis
       connection_string: redis.{{ .Release.Namespace }}.svc.cluster.local:6379
 
+    entity_key_serialization_version: 2
+
   repo.py: |
     from datetime import timedelta
     from feast import Entity, FeatureView, Field
     from feast.infra.offline_stores.file_source import FileSource
     from feast.types import Int64, Float64
 
-    # Offline Source: "latest" 고정 포인터
     user_features_source = FileSource(
-        path="s3://{{ .Values.s3.bucket }}/{{ .Values.s3.featurePrefix }}/latest/features.csv",
-        timestamp_field=None,
+        path="s3://{{ .Values.s3.bucket }}/{{ .Values.s3.featurePrefix }}/latest/features.parquet",
+        timestamp_field="event_timestamp",
         created_timestamp_column=None,
     )
 
