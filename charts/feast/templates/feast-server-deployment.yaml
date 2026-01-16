@@ -38,8 +38,13 @@ spec:
           args:
             - |
               set -e
-              cd /feast-repo
-              feast serve --host 0.0.0.0 --port {{ .Values.feastServer.port }}
+              rm -rf /tmp/feast-repo
+              mkdir -p /tmp/feast-repo
+              cp -r /feast-repo/* /tmp/feast-repo/
+              cd /tmp/feast-repo
+          
+              feast apply
+              feast serve --host 0.0.0.0 --port 6566
       volumes:
         - name: feast-repo
           configMap:
