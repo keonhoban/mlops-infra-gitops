@@ -20,7 +20,7 @@ resources:
     memory: "8Gi"
 
 modelRepository:
-  mountPath: /models/triton
+  mountPath: /models
   pvc:
     enabled: true
     name: triton-model-repo-pvc
