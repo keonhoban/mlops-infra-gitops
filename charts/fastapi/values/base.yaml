@@ -1,7 +1,8 @@
 replicaCount: 1
 image:
   repository: hoizz/fastapi-custom
-  pullPolicy: IfNotPresent
+    #pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 podSecurityContext:
   runAsUser: 2001
