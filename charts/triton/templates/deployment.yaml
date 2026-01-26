@@ -24,6 +24,8 @@ spec:
             - --http-port=8000
             - --grpc-port=8001
             - --metrics-port=8002
+            - --strict-readiness=true
+            - --strict-model-config=false
           ports:
             - containerPort: 8000
             - containerPort: 8001
