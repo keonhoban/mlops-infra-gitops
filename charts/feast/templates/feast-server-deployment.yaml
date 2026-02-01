@@ -37,23 +37,18 @@ spec:
             - name: aws-credentials
               mountPath: /root/.aws
               readOnly: true
-
-          command:
-            - /bin/sh
-            - -c
+          command: ["/bin/sh","-c"]
           args:
             - |
               set -eux
-
-              echo "[A] show repo files"
-              ls -al /feast-repo || true
+              echo "[A] repo sanity"
+              ls -al /feast-repo
               test -f /feast-repo/feature_store.yaml
               test -f /feast-repo/repo.py
-          
+
               cd /feast-repo
               feast apply
-              feast serve --host 0.0.0.0 --port 6566
-
+              feast serve --host 0.0.0.0 --port {{ .Values.feastServer.port }}
       volumes:
         - name: feast-repo
           configMap:
@@ -61,3 +56,4 @@ spec:
         - name: aws-credentials
           secret:
             secretName: {{ .Values.aws.credentialsSecretName }}
+
