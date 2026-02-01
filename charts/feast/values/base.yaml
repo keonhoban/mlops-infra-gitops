@@ -1,6 +1,6 @@
 aws:
   region: ap-northeast-2
-  credentialsSecretName: aws-credentials-secret   # ✅ 실제 네임과 통일
+  credentialsSecretName: aws-credentials
 
 s3:
   bucket: datapipeline-raw-data-keonho
@@ -15,4 +15,3 @@ feastServer:
   image: hoizz/feast-server:0.40.1-s3fs
   port: 6566
   resources: {}
-

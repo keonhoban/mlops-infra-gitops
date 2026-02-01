@@ -50,4 +50,3 @@ data:
         source=user_features_source,
         online=True,
     )
-
