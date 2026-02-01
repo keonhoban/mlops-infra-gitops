@@ -1,25 +1,10 @@
-from fastapi import APIRouter, Request
-
+from fastapi import APIRouter
 router = APIRouter()
 
 @router.get("/")
-def root(request: Request):
-    models = getattr(request.app.state, "models", {})
-    variants = list(models.keys())
-    endpoints = []
-
-    for alias in variants:
-        endpoints.extend([
-            f"/variant/{alias}/predict",
-            f"/variant/{alias}/reload"
-        ])
-
-    endpoints.append("/predict")
-    endpoints.append("/models")
-    endpoints.append("/health")
-
+def root():
     return {
-        "message": "FastAPI 동작 중",
-        "loaded_variants": variants,
-        "available_endpoints": endpoints
+        "message": "FastAPI Triton Gateway",
+        "endpoints": ["/predict", "/variant/{alias}/predict", "/variant/{alias}/reload", "/models", "/health", "/metrics"],
     }
+

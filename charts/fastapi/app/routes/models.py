@@ -1,11 +1,7 @@
-from fastapi import APIRouter, HTTPException, Request
-
+from fastapi import APIRouter, Request
 router = APIRouter()
 
 @router.get("/models")
-def get_all_model_info(request: Request):
-    models = getattr(request.app.state, "models", {})
-    if not models:
-        raise HTTPException(status_code=503, detail="등록된 모델 없음")
+def models(request: Request):
+    return {"active": getattr(request.app.state, "active", {})}
 
-    return {alias: content["info"] for alias, content in models.items()}

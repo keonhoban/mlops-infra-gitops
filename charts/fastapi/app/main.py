@@ -1,21 +1,21 @@
-# main.py
 from fastapi import FastAPI
-from core.config import settings
-from core.startup import register_startup_event
-from utils.logger import setup_logger
-from routes import predict, reload, health, root, models
 from prometheus_fastapi_instrumentator import Instrumentator
 
-setup_logger()
+from core.config import settings
+from core.startup import init_app_state
+from routes import predict, reload, health, models, root
 
-app = FastAPI()
+app = FastAPI(title="FastAPI Triton Gateway", version="2.0.0")
 
 Instrumentator().instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
 
-register_startup_event(app)
+@app.on_event("startup")
+def _startup():
+    init_app_state(app)
 
-app.include_router(predict.router)
-app.include_router(reload.router)
-app.include_router(health.router)
 app.include_router(root.router)
+app.include_router(health.router)
 app.include_router(models.router)
+app.include_router(reload.router)
+app.include_router(predict.router)
+
