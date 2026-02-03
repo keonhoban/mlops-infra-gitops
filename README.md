@@ -99,11 +99,11 @@ argocd app list
 
 ```bash
 mlops-infra/
-├── charts/# airflow / mlflow / fastapi / triton
-├── apps/# root-app, namespaces, appset-core
-├── envs/# dev / prod 환경 정의
-├── ops/# secret rotation / reseal
-└── dags/# E2E Airflow DAG
+├── charts/            # airflow / mlflow / fastapi / triton
+├── apps/              # root-app, namespaces, appset-core
+├── envs/              # dev / prod 환경 정의
+├── ops/               # secret rotation / reseal
+└── dags/              # E2E Airflow DAG
 
 ```
 
