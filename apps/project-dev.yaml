@@ -20,29 +20,60 @@ spec:
   orphanedResources:
     warn: true
     ignore:
-      # 1) cert-manager / tls 류
+      # cert-manager / tls
       - kind: Secret
         name: .*-tls
       - group: cert-manager.io
         kind: Certificate
         name: .*-tls
   
-      # 2) Airflow-dev (현 출력 기반)
+      # airflow-dev secrets (exact)
       - kind: Secret
-        name: airflow-(db-dev-secret|fernet-dev-secret)
+        name: airflow-db-dev-secret
       - kind: Secret
-        name: airflow-dev-(api-secret-key|jwt-secret)
+        name: airflow-dev-api-secret-key
       - kind: Secret
-        name: (airflow-git-ssh-secret|aws-credentials-secret|fastapi-token-dev-secret|slack-webhook-dev-secret)
+        name: airflow-dev-jwt-secret
+      - kind: Secret
+        name: airflow-fernet-dev-secret
+      - kind: Secret
+        name: airflow-git-ssh-secret
+      - kind: Secret
+        name: aws-credentials-secret
+      - kind: Secret
+        name: fastapi-token-dev-secret
+      - kind: Secret
+        name: slack-webhook-dev-secret
   
-      # 3) Monitoring-dev (현 출력 기반)
-      - kind: Secret
-        name: (alertmanager-config-dev|grafana-admin-secret-dev)
-      - kind: Secret
-        name: (alertmanager-tls|grafana-tls|prometheus-tls)
-      - kind: Secret
-        name: monitoring-dev-kube-promet-admission
-  
-      # 4) Grafana datasource CM
+      # monitoring-dev (exact)
       - kind: ConfigMap
-        name: grafana-ds-.*
+        name: grafana-ds-loki
+      - kind: Secret
+        name: alertmanager-config-dev
+      - kind: Secret
+        name: alertmanager-tls
+      - kind: Secret
+        name: grafana-admin-secret-dev
+      - kind: Secret
+        name: grafana-tls
+      - kind: Secret
+        name: prometheus-tls
+  
+      # monitoring-dev orphaned CRs (exact)
+      - group: monitoring.coreos.com
+        kind: PodMonitor
+        name: fastapi-dev-pm
+      - group: monitoring.coreos.com
+        kind: PrometheusRule
+        name: fastapi-alerts
+      - group: monitoring.coreos.com
+        kind: PrometheusRule
+        name: smoke-slack-dev
+      - group: monitoring.coreos.com
+        kind: PrometheusRule
+        name: triton-alerts
+  
+      # airflow-dev PVC (decide)
+      - kind: PersistentVolumeClaim
+        name: triton-model-repo-pvc
+  

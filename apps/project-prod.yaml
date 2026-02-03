@@ -20,27 +20,60 @@ spec:
   orphanedResources:
     warn: true
     ignore:
+      # cert-manager / tls
       - kind: Secret
         name: .*-tls
       - group: cert-manager.io
         kind: Certificate
         name: .*-tls
   
-      # Airflow-prod (현 출력 기반)
+      # airflow-prod secrets (exact)
       - kind: Secret
-        name: airflow-(db-prod-secret|fernet-prod-secret)
+        name: airflow-db-prod-secret
       - kind: Secret
-        name: airflow-prod-(api-secret-key|jwt-secret)
+        name: airflow-prod-api-secret-key
       - kind: Secret
-        name: (airflow-git-ssh-secret|aws-credentials-secret|fastapi-token-prod-secret|slack-webhook-prod-secret)
+        name: airflow-prod-jwt-secret
+      - kind: Secret
+        name: airflow-fernet-prod-secret
+      - kind: Secret
+        name: airflow-git-ssh-secret
+      - kind: Secret
+        name: aws-credentials-secret
+      - kind: Secret
+        name: fastapi-token-prod-secret
+      - kind: Secret
+        name: slack-webhook-prod-secret
   
-      # Monitoring-prod (현 출력 기반)
-      - kind: Secret
-        name: (alertmanager-config-prod|grafana-admin-secret-prod)
-      - kind: Secret
-        name: (alertmanager-tls|grafana-tls|prometheus-tls)
-      - kind: Secret
-        name: monitoring-prod-kube-prome-admission
-  
+      # monitoring-prod (exact)
       - kind: ConfigMap
-        name: grafana-ds-.*
+        name: grafana-ds-loki
+      - kind: Secret
+        name: alertmanager-config-prod
+      - kind: Secret
+        name: alertmanager-tls
+      - kind: Secret
+        name: grafana-admin-secret-prod
+      - kind: Secret
+        name: grafana-tls
+      - kind: Secret
+        name: prometheus-tls
+  
+      # monitoring-prod orphaned CRs (exact)
+      - group: monitoring.coreos.com
+        kind: PodMonitor
+        name: fastapi-prod-pm
+      - group: monitoring.coreos.com
+        kind: PrometheusRule
+        name: fastapi-alerts
+      - group: monitoring.coreos.com
+        kind: PrometheusRule
+        name: smoke-slack-prod
+      - group: monitoring.coreos.com
+        kind: PrometheusRule
+        name: triton-alerts
+  
+      # airflow-prod PVC (decide)
+      - kind: PersistentVolumeClaim
+        name: triton-model-repo-pvc
+  
