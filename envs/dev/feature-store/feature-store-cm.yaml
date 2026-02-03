@@ -3,6 +3,11 @@ kind: ConfigMap
 metadata:
   name: feature-store-resources
   namespace: airflow-dev
+  labels:
+    app.kubernetes.io/part-of: mlops-platform
+    app.kubernetes.io/component: feature-store-resources
+    mlops.keonho.io/env: dev
+    mlops.keonho.io/owner-app: dev-namespaces
 data:
   user_features.schema.json: |
     {
