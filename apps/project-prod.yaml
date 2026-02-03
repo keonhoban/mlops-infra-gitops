@@ -148,20 +148,3 @@ spec:
       - kind: PersistentVolumeClaim
         name: fastapi-logs-pvc-prod
 
-      # 12) feature-store-prod RBAC (KPO / pod launcher leftovers)
-      - group: rbac.authorization.k8s.io
-        kind: Role
-        name: airflow-prod-pod-launcher-role
-      - group: rbac.authorization.k8s.io
-        kind: Role
-        name: airflow-kpo-launcher
-      - group: rbac.authorization.k8s.io
-        kind: RoleBinding
-        name: airflow-prod-pod-launcher-rolebinding
-      - group: rbac.authorization.k8s.io
-        kind: RoleBinding
-        name: airflow-kpo-launcher
-      - group: rbac.authorization.k8s.io
-        kind: RoleBinding
-        name: airflow-kpo-launcher-binding
-
