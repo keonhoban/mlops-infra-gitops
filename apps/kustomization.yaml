@@ -12,8 +12,3 @@ resources:
 
   # 3) Core AppSet (생성기)
   - appset-core.yaml
-
-  # 4) Feature-store apps (지금처럼 별도 app이 필요하면 유지)
-  - feature-store-dev.yaml
-  - feature-store-prod.yaml
-
