@@ -14,108 +14,150 @@ spec:
       server: https://kubernetes.default.svc
     - namespace: argocd
       server: https://kubernetes.default.svc
+    - namespace: bootstrap-dev
+      server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
   orphanedResources:
     warn: true
     ignore:
-      # 1) cert-manager / tls
+      # 1) cert-manager / tls (auto-generated secrets)
       - kind: Secret
+        namespace: airflow-dev
         name: airflow-dev-tls
+      - kind: Secret
+        namespace: fastapi-dev
+        name: fastapi-dev-tls
+      - kind: Secret
+        namespace: mlflow-dev
+        name: mlflow-dev-tls
 
       # 2) airflow-dev Secrets (exact)
       - kind: Secret
+        namespace: airflow-dev
         name: airflow-db-dev-secret
       - kind: Secret
+        namespace: airflow-dev
         name: airflow-dev-api-secret-key
       - kind: Secret
+        namespace: airflow-dev
         name: airflow-dev-jwt-secret
       - kind: Secret
+        namespace: airflow-dev
         name: airflow-fernet-dev-secret
       - kind: Secret
+        namespace: airflow-dev
         name: airflow-git-ssh-secret
       - kind: Secret
+        namespace: airflow-dev
         name: aws-credentials-secret
       - kind: Secret
+        namespace: airflow-dev
         name: fastapi-token-dev-secret
       - kind: Secret
+        namespace: airflow-dev
         name: slack-webhook-dev-secret
 
       # 3) airflow-dev SealedSecrets (exact)
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-dev
         name: airflow-db-dev-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-dev
         name: airflow-dev-api-secret-key
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-dev
         name: airflow-dev-jwt-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-dev
         name: airflow-fernet-dev-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-dev
         name: airflow-git-ssh-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-dev
         name: aws-credentials-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-dev
         name: fastapi-token-dev-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-dev
         name: slack-webhook-dev-secret
 
       # 4) monitoring-dev (exact)
       - kind: ConfigMap
+        namespace: monitoring-dev
         name: grafana-ds-loki
       - kind: Secret
+        namespace: monitoring-dev
         name: alertmanager-config-dev
       - kind: Secret
+        namespace: monitoring-dev
         name: alertmanager-tls
       - kind: Secret
+        namespace: monitoring-dev
         name: grafana-admin-secret-dev
       - kind: Secret
+        namespace: monitoring-dev
         name: grafana-tls
       - kind: Secret
+        namespace: monitoring-dev
         name: monitoring-dev-kube-promet-admission
       - kind: Secret
+        namespace: monitoring-dev
         name: prometheus-tls
 
       # 5) monitoring-dev SealedSecrets (exact)
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-dev
         name: alertmanager-config-dev
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-dev
         name: alertmanager-tls
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-dev
         name: grafana-admin-secret-dev
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-dev
         name: grafana-tls
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-dev
         name: prometheus-tls
 
       # 6) monitoring-dev orphaned CRs (exact)
       - group: monitoring.coreos.com
         kind: PodMonitor
+        namespace: monitoring-dev
         name: fastapi-dev-pm
       - group: monitoring.coreos.com
         kind: PrometheusRule
+        namespace: monitoring-dev
         name: fastapi-alerts
       - group: monitoring.coreos.com
         kind: PrometheusRule
+        namespace: monitoring-dev
         name: smoke-slack-dev
       - group: monitoring.coreos.com
         kind: PrometheusRule
+        namespace: monitoring-dev
         name: triton-alerts
 
-      # 7) airflow-dev PVC (decide)
+      # 7) PVC (decide)
       - kind: PersistentVolumeClaim
+        namespace: triton-dev
         name: triton-model-repo-pvc
 

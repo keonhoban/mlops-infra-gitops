@@ -9,13 +9,18 @@ spec:
   project: dev
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: bootstrap-dev
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
     path: envs/dev
     directory:
       recurse: true
-      include: "namespaces.yaml"   # envs/dev/namespaces.yaml만 적용
+      include: "namespaces.yaml"
   syncPolicy:
-    automated: { prune: true, selfHeal: true }
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+

@@ -14,108 +14,150 @@ spec:
       server: https://kubernetes.default.svc
     - namespace: argocd
       server: https://kubernetes.default.svc
+    - namespace: bootstrap-prod
+      server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
   orphanedResources:
     warn: true
     ignore:
-      # 1) cert-manager / tls
+      # 1) cert-manager / tls (auto-generated secrets)
       - kind: Secret
+        namespace: airflow-prod
         name: airflow-prod-tls
+      - kind: Secret
+        namespace: fastapi-prod
+        name: fastapi-prod-tls
+      - kind: Secret
+        namespace: mlflow-prod
+        name: mlflow-prod-tls
 
       # 2) airflow-prod Secrets (exact)
       - kind: Secret
+        namespace: airflow-prod
         name: airflow-db-prod-secret
       - kind: Secret
+        namespace: airflow-prod
         name: airflow-prod-api-secret-key
       - kind: Secret
+        namespace: airflow-prod
         name: airflow-prod-jwt-secret
       - kind: Secret
+        namespace: airflow-prod
         name: airflow-fernet-prod-secret
       - kind: Secret
+        namespace: airflow-prod
         name: airflow-git-ssh-secret
       - kind: Secret
+        namespace: airflow-prod
         name: aws-credentials-secret
       - kind: Secret
+        namespace: airflow-prod
         name: fastapi-token-prod-secret
       - kind: Secret
+        namespace: airflow-prod
         name: slack-webhook-prod-secret
 
       # 3) airflow-prod SealedSecrets (exact)
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-prod
         name: airflow-db-prod-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-prod
         name: airflow-prod-api-secret-key
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-prod
         name: airflow-prod-jwt-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-prod
         name: airflow-fernet-prod-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-prod
         name: airflow-git-ssh-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-prod
         name: aws-credentials-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-prod
         name: fastapi-token-prod-secret
       - group: bitnami.com
         kind: SealedSecret
+        namespace: airflow-prod
         name: slack-webhook-prod-secret
 
       # 4) monitoring-prod (exact)
       - kind: ConfigMap
+        namespace: monitoring-prod
         name: grafana-ds-loki
       - kind: Secret
+        namespace: monitoring-prod
         name: alertmanager-config-prod
       - kind: Secret
+        namespace: monitoring-prod
         name: alertmanager-tls
       - kind: Secret
+        namespace: monitoring-prod
         name: grafana-admin-secret-prod
       - kind: Secret
+        namespace: monitoring-prod
         name: grafana-tls
       - kind: Secret
+        namespace: monitoring-prod
         name: monitoring-prod-kube-prome-admission
       - kind: Secret
+        namespace: monitoring-prod
         name: prometheus-tls
 
       # 5) monitoring-prod SealedSecrets (exact)
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-prod
         name: alertmanager-config-prod
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-prod
         name: alertmanager-tls
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-prod
         name: grafana-admin-secret-prod
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-prod
         name: grafana-tls
       - group: bitnami.com
         kind: SealedSecret
+        namespace: monitoring-prod
         name: prometheus-tls
 
       # 6) monitoring-prod orphaned CRs (exact)
       - group: monitoring.coreos.com
         kind: PodMonitor
+        namespace: monitoring-prod
         name: fastapi-prod-pm
       - group: monitoring.coreos.com
         kind: PrometheusRule
+        namespace: monitoring-prod
         name: fastapi-alerts
       - group: monitoring.coreos.com
         kind: PrometheusRule
+        namespace: monitoring-prod
         name: smoke-slack-prod
       - group: monitoring.coreos.com
         kind: PrometheusRule
+        namespace: monitoring-prod
         name: triton-alerts
 
-      # 7) airflow-prod PVC (decide)
+      # 7) PVC (decide)
       - kind: PersistentVolumeClaim
+        namespace: triton-prod
         name: triton-model-repo-pvc
 
