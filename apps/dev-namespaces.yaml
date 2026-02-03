@@ -14,9 +14,7 @@ spec:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
     path: envs/dev
-    directory:
-      recurse: true
-      include: "namespaces.yaml"
+    kustomize: {}
   syncPolicy:
     automated:
       prune: true
