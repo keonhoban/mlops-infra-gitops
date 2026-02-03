@@ -14,7 +14,6 @@ spec:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
     path: envs/prod
-    kustomize: {}
   syncPolicy:
     automated:
       prune: true
