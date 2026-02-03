@@ -22,12 +22,7 @@ spec:
     ignore:
       # 1) cert-manager / tls
       - kind: Secret
-        name: .*-tls
-      - kind: Secret
         name: airflow-prod-tls
-      - group: cert-manager.io
-        kind: Certificate
-        name: .*-tls
 
       # 2) airflow-prod Secrets (exact)
       - kind: Secret
