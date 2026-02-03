@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # 1) ArgoCD Project (먼저)
+  - project-dev.yaml
+  - project-prod.yaml
+
+  # 2) Namespace scaffolding
+  - dev-namespaces.yaml
+  - prod-namespaces.yaml
+
+  # 3) Core AppSet (생성기)
+  - appset-core.yaml
+
+  # 4) Feature-store apps (지금처럼 별도 app이 필요하면 유지)
+  - feature-store-dev.yaml
+  - feature-store-prod.yaml
+
