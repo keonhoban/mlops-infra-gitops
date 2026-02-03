@@ -110,3 +110,31 @@ manualIngress:
   tlsSecret: airflow-dev-tls
   tlsIssuerName: selfsigned-issuer
   ingressClassName: nginx
+
+featureStore:
+  enabled: true
+  userFeaturesSchemaJson: |
+    {
+      "feature_set": "user_features",
+      "version": "v1",
+      "columns": [
+        {"name": "user_id", "type": "int64"},
+        {"name": "f_total_events_7d", "type": "int64"},
+        {"name": "f_avg_session_sec_7d", "type": "float64"},
+        {"name": "f_last_event_age_sec", "type": "int64"}
+      ],
+      "primary_keys": ["user_id"],
+      "description": "User behavior features (7d window)"
+    }
+  metadataJsonJ2: |
+    {
+      "feature_set": "user_features",
+      "version": "{{ version }}",
+      "generated_at": "{{ generated_at }}",
+      "source": "{{ source }}",
+      "pipeline": "{{ pipeline }}",
+      "schema_hash": "{{ schema_hash }}",
+      "feature_uri": "{{ feature_uri }}",
+      "description": "Feature Store-lite generated features for training/inference"
+    }
+
