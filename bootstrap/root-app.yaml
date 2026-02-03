@@ -5,17 +5,14 @@ metadata:
   namespace: argocd
 spec:
   project: default
-
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
     path: apps
     kustomize: {}
-
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
-
   syncPolicy:
     automated:
       prune: true
