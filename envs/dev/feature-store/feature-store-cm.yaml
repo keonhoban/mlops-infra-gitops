@@ -12,13 +12,11 @@ data:
         {"name": "user_id", "type": "int64"},
         {"name": "f_total_events_7d", "type": "int64"},
         {"name": "f_avg_session_sec_7d", "type": "float64"},
-        {"name": "f_last_event_age_sec", "type": "int64"},
-        {"name": "label", "type": "int64"}
+        {"name": "f_last_event_age_sec", "type": "int64"}
       ],
       "primary_keys": ["user_id"],
       "description": "User behavior features (7d window)"
     }
-
   metadata.json.j2: |
     {
       "feature_set": "user_features",
@@ -30,3 +28,4 @@ data:
       "feature_uri": "{{ feature_uri }}",
       "description": "Feature Store-lite generated features for training/inference"
     }
+

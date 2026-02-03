@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: mlops-core
+  namespace: argocd
+spec:
+  generators:
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - env: dev
+                  project: dev
+                - env: prod
+                  project: prod
+          - list:
+              elements:
+                - app: mlflow
+                  path: charts/mlflow
+                  ns: mlflow-{{env}}
+                  valuesFile: values/{{env}}.yaml
+                - app: airflow
+                  path: charts/airflow
+                  ns: airflow-{{env}}
+                  valuesFile: values/{{env}}.yaml
+                - app: fastapi
+                  path: charts/fastapi
+                  ns: fastapi-{{env}}
+                  valuesFile: values/{{env}}.yaml
+                - app: triton
+                  path: charts/triton
+                  ns: triton-{{env}}
+                  valuesFile: values/{{env}}.yaml
+
+  template:
+    metadata:
+      name: "{{app}}-{{env}}"
+      annotations:
+        argocd.argoproj.io/sync-wave: "1"
+    spec:
+      project: "{{project}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ns}}"
+      source:
+        repoURL: https://github.com/keonhoban/mlops-infra-gitops
+        targetRevision: main
+        path: "{{path}}"
+        helm:
+          valueFiles:
+            - values/base.yaml
+            - "{{valuesFile}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+

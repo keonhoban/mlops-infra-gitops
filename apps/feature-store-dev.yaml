@@ -16,7 +16,7 @@ spec:
     path: envs/dev/feature-store
     directory:
       recurse: true
+      include: "feature-store-cm.yaml"
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+    automated: { prune: true, selfHeal: true }
+
