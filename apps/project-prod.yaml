@@ -133,18 +133,35 @@ spec:
         kind: SealedSecret
         name: mlflow-db-prod-secret
 
-      # 9) feature-store-prod secrets owned by prod-secrets (but show as orphan in feast-prod)
+      # 9) feature-store-prod Secrets (exact)
       - kind: Secret
         name: aws-credentials
       - group: bitnami.com
         kind: SealedSecret
         name: aws-credentials
 
-      # 10) feature-store-resources cm created by feature-store-prod app in airflow-prod namespace
+      # 10) airflow-prod feature-store contract CM (exact)
       - kind: ConfigMap
         name: feature-store-resources
 
-      # 11) fastapi logs pvc created by fastapi-logs-storage-prod app (ops/storage)
+      # 11) fastapi-prod logs PVC (exact)
       - kind: PersistentVolumeClaim
         name: fastapi-logs-pvc-prod
+
+      # 12) feature-store-prod RBAC (KPO / pod launcher leftovers)
+      - group: rbac.authorization.k8s.io
+        kind: Role
+        name: airflow-dev-pod-launcher-role
+      - group: rbac.authorization.k8s.io
+        kind: Role
+        name: airflow-kpo-launcher
+      - group: rbac.authorization.k8s.io
+        kind: RoleBinding
+        name: airflow-dev-pod-launcher-rolebinding
+      - group: rbac.authorization.k8s.io
+        kind: RoleBinding
+        name: airflow-kpo-launcher
+      - group: rbac.authorization.k8s.io
+        kind: RoleBinding
+        name: airflow-kpo-launcher-binding
 
