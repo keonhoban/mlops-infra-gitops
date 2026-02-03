@@ -19,3 +19,28 @@ spec:
       kind: '*'
   orphanedResources:
     warn: true
+    ignore:
+      - kind: Secret
+        name: .*-tls
+      - group: cert-manager.io
+        kind: Certificate
+        name: .*-tls
+  
+      # Airflow-prod (현 출력 기반)
+      - kind: Secret
+        name: airflow-(db-prod-secret|fernet-prod-secret)
+      - kind: Secret
+        name: airflow-prod-(api-secret-key|jwt-secret)
+      - kind: Secret
+        name: (airflow-git-ssh-secret|aws-credentials-secret|fastapi-token-prod-secret|slack-webhook-prod-secret)
+  
+      # Monitoring-prod (현 출력 기반)
+      - kind: Secret
+        name: (alertmanager-config-prod|grafana-admin-secret-prod)
+      - kind: Secret
+        name: (alertmanager-tls|grafana-tls|prometheus-tls)
+      - kind: Secret
+        name: monitoring-prod-kube-prome-admission
+  
+      - kind: ConfigMap
+        name: grafana-ds-.*

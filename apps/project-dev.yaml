@@ -19,3 +19,30 @@ spec:
       kind: '*'
   orphanedResources:
     warn: true
+    ignore:
+      # 1) cert-manager / tls 류
+      - kind: Secret
+        name: .*-tls
+      - group: cert-manager.io
+        kind: Certificate
+        name: .*-tls
+  
+      # 2) Airflow-dev (현 출력 기반)
+      - kind: Secret
+        name: airflow-(db-dev-secret|fernet-dev-secret)
+      - kind: Secret
+        name: airflow-dev-(api-secret-key|jwt-secret)
+      - kind: Secret
+        name: (airflow-git-ssh-secret|aws-credentials-secret|fastapi-token-dev-secret|slack-webhook-dev-secret)
+  
+      # 3) Monitoring-dev (현 출력 기반)
+      - kind: Secret
+        name: (alertmanager-config-dev|grafana-admin-secret-dev)
+      - kind: Secret
+        name: (alertmanager-tls|grafana-tls|prometheus-tls)
+      - kind: Secret
+        name: monitoring-dev-kube-promet-admission
+  
+      # 4) Grafana datasource CM
+      - kind: ConfigMap
+        name: grafana-ds-.*

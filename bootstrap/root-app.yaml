@@ -10,8 +10,7 @@ spec:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
     path: apps
-    directory:
-      recurse: true
+    kustomize: {}
 
   destination:
     server: https://kubernetes.default.svc
