@@ -112,7 +112,7 @@ manualIngress:
   ingressClassName: nginx
 
 featureStore:
-  enabled: true
+  enabled: false
   userFeaturesSchemaJson: |
     {
       "feature_set": "user_features",
