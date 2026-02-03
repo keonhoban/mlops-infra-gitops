@@ -20,14 +20,14 @@ spec:
   orphanedResources:
     warn: true
     ignore:
-      # cert-manager / tls
+      # 1) cert-manager / tls
       - kind: Secret
         name: .*-tls
       - group: cert-manager.io
         kind: Certificate
         name: .*-tls
-  
-      # airflow-prod secrets (exact)
+
+      # 2) airflow-prod Secrets (exact)
       - kind: Secret
         name: airflow-db-prod-secret
       - kind: Secret
@@ -44,8 +44,34 @@ spec:
         name: fastapi-token-prod-secret
       - kind: Secret
         name: slack-webhook-prod-secret
-  
-      # monitoring-prod (exact)
+
+      # 3) airflow-prod SealedSecrets (exact)
+      - group: bitnami.com
+        kind: SealedSecret
+        name: airflow-db-prod-secret
+      - group: bitnami.com
+        kind: SealedSecret
+        name: airflow-prod-api-secret-key
+      - group: bitnami.com
+        kind: SealedSecret
+        name: airflow-prod-jwt-secret
+      - group: bitnami.com
+        kind: SealedSecret
+        name: airflow-fernet-prod-secret
+      - group: bitnami.com
+        kind: SealedSecret
+        name: airflow-git-ssh-secret
+      - group: bitnami.com
+        kind: SealedSecret
+        name: aws-credentials-secret
+      - group: bitnami.com
+        kind: SealedSecret
+        name: fastapi-token-prod-secret
+      - group: bitnami.com
+        kind: SealedSecret
+        name: slack-webhook-prod-secret
+
+      # 4) monitoring-prod (exact)
       - kind: ConfigMap
         name: grafana-ds-loki
       - kind: Secret
@@ -57,9 +83,28 @@ spec:
       - kind: Secret
         name: grafana-tls
       - kind: Secret
+        name: monitoring-prod-kube-prome-admission
+      - kind: Secret
         name: prometheus-tls
-  
-      # monitoring-prod orphaned CRs (exact)
+
+      # 5) monitoring-prod SealedSecrets (exact)
+      - group: bitnami.com
+        kind: SealedSecret
+        name: alertmanager-config-prod
+      - group: bitnami.com
+        kind: SealedSecret
+        name: alertmanager-tls
+      - group: bitnami.com
+        kind: SealedSecret
+        name: grafana-admin-secret-prod
+      - group: bitnami.com
+        kind: SealedSecret
+        name: grafana-tls
+      - group: bitnami.com
+        kind: SealedSecret
+        name: prometheus-tls
+
+      # 6) monitoring-prod orphaned CRs (exact)
       - group: monitoring.coreos.com
         kind: PodMonitor
         name: fastapi-prod-pm
@@ -72,8 +117,8 @@ spec:
       - group: monitoring.coreos.com
         kind: PrometheusRule
         name: triton-alerts
-  
-      # airflow-prod PVC (decide)
+
+      # 7) airflow-prod PVC (decide)
       - kind: PersistentVolumeClaim
         name: triton-model-repo-pvc
-  
+
