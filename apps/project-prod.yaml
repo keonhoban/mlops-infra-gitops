@@ -19,6 +19,7 @@ spec:
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
+
   orphanedResources:
     warn: true
     ignore:
@@ -131,4 +132,19 @@ spec:
       - group: bitnami.com
         kind: SealedSecret
         name: mlflow-db-prod-secret
+
+      # 9) feature-store-prod secrets owned by prod-secrets (but show as orphan in feast-prod)
+      - kind: Secret
+        name: aws-credentials
+      - group: bitnami.com
+        kind: SealedSecret
+        name: aws-credentials
+
+      # 10) feature-store-resources cm created by feature-store-prod app in airflow-prod namespace
+      - kind: ConfigMap
+        name: feature-store-resources
+
+      # 11) fastapi logs pvc created by fastapi-logs-storage-prod app (ops/storage)
+      - kind: PersistentVolumeClaim
+        name: fastapi-logs-pvc-prod
 
