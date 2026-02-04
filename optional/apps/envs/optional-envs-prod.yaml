@@ -6,7 +6,7 @@ metadata:
   name: optional-envs-prod
   namespace: argocd
 spec:
-  project: project-prod
+  project: prod
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops.git
     targetRevision: main
