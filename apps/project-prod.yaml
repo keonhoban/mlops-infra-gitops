@@ -23,14 +23,6 @@ spec:
   orphanedResources:
     warn: true
     ignore:
-      # 0) env-owned RBAC (to avoid orphan warnings in namespace-scoped apps like feast)
-      - group: rbac.authorization.k8s.io
-        kind: Role
-        name: airflow-pod-launcher
-      - group: rbac.authorization.k8s.io
-        kind: RoleBinding
-        name: airflow-pod-launcher-binding
-
       # 1) cert-manager / tls (auto-generated secrets)
       - kind: Secret
         name: airflow-prod-tls
