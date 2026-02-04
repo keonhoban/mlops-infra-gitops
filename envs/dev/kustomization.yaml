@@ -4,4 +4,5 @@ resources:
   - namespaces.yaml
   - feature-store/airflow-kpo-rbac.yaml
   - feature-store/feature-store-cm.yaml
+  - sealed-secrets
 
