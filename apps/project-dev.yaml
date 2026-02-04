@@ -30,6 +30,8 @@ spec:
         name: fastapi-dev-tls
       - kind: Secret
         name: mlflow-dev-tls
+      - kind: Secret
+        name: monitoring-dev-kube-prome-admission
 
       # 2) airflow-dev Secrets (exact)
       - kind: Secret
