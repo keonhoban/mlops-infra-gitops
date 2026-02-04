@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: optional-envs-dev
+  namespace: argocd
+spec:
+  project: project-dev
+  source:
+    repoURL: https://github.com/keonhoban/mlops-infra-gitops.git
+    targetRevision: main
+    path: optional/envs/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

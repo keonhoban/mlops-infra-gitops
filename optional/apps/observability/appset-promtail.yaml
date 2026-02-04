@@ -10,11 +10,11 @@ spec:
           - env: dev
             ns: observability-dev
             project: dev
-            valuesPath: envs/dev/observability/promtail-values.yaml
+            valuesPath: optional/envs/dev/observability/promtail-values.yaml
           - env: prod
             ns: observability-prod
             project: prod
-            valuesPath: envs/prod/observability/promtail-values.yaml
+            valuesPath: optional/envs/prod/observability/promtail-values.yaml
   template:
     metadata:
       name: 'promtail-{{env}}'

@@ -1,4 +1,4 @@
-# envs/dev/monitoring/fastapi-dev-sm.yaml
+# optional/envs/dev/monitoring/fastapi-dev-sm.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:

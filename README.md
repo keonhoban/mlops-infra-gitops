@@ -1,5 +1,10 @@
 # 🧱 MLOps Infrastructure – One Commit Flow
 
+## Docs
+- docs/ARCHITECTURE.md
+- docs/CORE_OPTIONAL.md
+- docs/PROOF.md
+
 > **Git 커밋 한 번으로
 학습 → 등록 → 배포 → 실험 전환까지 자동 순환되는
 GitOps 기반 MLOps Core 플랫폼**

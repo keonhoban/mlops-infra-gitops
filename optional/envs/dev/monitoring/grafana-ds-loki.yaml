@@ -1,4 +1,4 @@
-# envs/dev/monitoring/grafana-ds-loki.yaml
+# optional/envs/dev/monitoring/grafana-ds-loki.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:

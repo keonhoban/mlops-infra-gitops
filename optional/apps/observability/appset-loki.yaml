@@ -10,11 +10,11 @@ spec:
           - env: dev
             ns: observability-dev
             project: dev
-            valuesPath: envs/dev/observability/loki-values.yaml
+            valuesPath: optional/envs/dev/observability/loki-values.yaml
           - env: prod
             ns: observability-prod
             project: prod
-            valuesPath: envs/prod/observability/loki-values.yaml
+            valuesPath: optional/envs/prod/observability/loki-values.yaml
   template:
     metadata:
       name: 'loki-{{env}}'

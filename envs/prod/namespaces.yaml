@@ -19,18 +19,6 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: monitoring-prod
-  labels: { env: prod, app: monitoring-prod, team: ml-platform }
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: observability-prod
-  labels: { env: prod, app: monitoring-prod, team: ml-platform }
----
-apiVersion: v1
-kind: Namespace
-metadata:
   name: triton-prod
   labels: { env: prod, app: triton-prod, team: ml-platform }
 ---
