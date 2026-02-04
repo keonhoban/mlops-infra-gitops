@@ -83,53 +83,6 @@ spec:
         kind: SealedSecret
         name: slack-webhook-prod-secret
 
-      # 4) monitoring-prod (exact)
-      - kind: ConfigMap
-        name: grafana-ds-loki
-      - kind: Secret
-        name: alertmanager-config-prod
-      - kind: Secret
-        name: alertmanager-tls
-      - kind: Secret
-        name: grafana-admin-secret-prod
-      - kind: Secret
-        name: grafana-tls
-      - kind: Secret
-        name: monitoring-prod-kube-prome-admission
-      - kind: Secret
-        name: prometheus-tls
-
-      # 5) monitoring-prod SealedSecrets (exact)
-      - group: bitnami.com
-        kind: SealedSecret
-        name: alertmanager-config-prod
-      - group: bitnami.com
-        kind: SealedSecret
-        name: alertmanager-tls
-      - group: bitnami.com
-        kind: SealedSecret
-        name: grafana-admin-secret-prod
-      - group: bitnami.com
-        kind: SealedSecret
-        name: grafana-tls
-      - group: bitnami.com
-        kind: SealedSecret
-        name: prometheus-tls
-
-      # 6) monitoring-prod orphaned CRs (exact)
-      - group: monitoring.coreos.com
-        kind: PodMonitor
-        name: fastapi-prod-pm
-      - group: monitoring.coreos.com
-        kind: PrometheusRule
-        name: fastapi-alerts
-      - group: monitoring.coreos.com
-        kind: PrometheusRule
-        name: smoke-slack-prod
-      - group: monitoring.coreos.com
-        kind: PrometheusRule
-        name: triton-alerts
-
       # 7) PVC (decide)
       - kind: PersistentVolumeClaim
         name: triton-model-repo-pvc
