@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
-    path: optional
+    path: optional/apps
     directory:
       recurse: true
 

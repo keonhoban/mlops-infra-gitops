@@ -1,23 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: feast-dev
+  name: feast-prod
   namespace: argocd
 spec:
-  project: dev
+  project: prod
   destination:
     server: https://kubernetes.default.svc
-    namespace: feature-store-dev
+    namespace: feature-store-prod
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
-    path: charts/feast
+    path: optional/charts/feast
     helm:
       releaseName: feast
       valueFiles:
         - values/base.yaml
-        - values/dev.yaml
+        - values/prod.yaml
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+
