@@ -1,0 +1,13 @@
+iapiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - sealed-airflow-db-dev-secret.yaml
+  - sealed-airflow-dev-api-secret-key.yaml
+  - sealed-airflow-dev-jwt-secret.yaml
+  - sealed-airflow-fernet-dev-secret.yaml
+  - sealed-airflow-git-ssh-dev-secret.yaml
+  - sealed-aws-credentials-secret.yaml
+  - sealed-fastapi-token-dev-secret.yaml
+  - sealed-slack-webhook-dev-secret.yaml
+
