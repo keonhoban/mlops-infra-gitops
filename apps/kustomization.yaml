@@ -13,3 +13,5 @@ resources:
   # 3) Core AppSet
   - appset-core.yaml
 
+  # 4) Optional prereqs (cluster base)
+  - optional-prereqs/metallb-config.yaml
