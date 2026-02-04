@@ -31,7 +31,7 @@ spec:
       - kind: Secret
         name: mlflow-dev-tls
       - kind: Secret
-        name: monitoring-dev-kube-prome-admission
+        name: monitoring-dev-kube-promet-admission
 
       # 2) airflow-dev Secrets (exact)
       - kind: Secret
