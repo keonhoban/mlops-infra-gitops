@@ -1,2 +1,0 @@
-+ kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide
-No resources found in argocd namespace.

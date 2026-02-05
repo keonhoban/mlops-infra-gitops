@@ -82,3 +82,28 @@ Optional 스택을 항상 켜두는 것은 운영에는 자연스럽지만,
 - Core는 항상 자동 회복
 - Optional은 필요할 때만 자동 회복
 - Optional을 끄면 흔적 없이 사라짐
+
+---
+
+## Proof 산출물 (운영 관점)
+
+Optional ON / OFF 실행 시, 모든 결과는 자동으로 로그 스냅샷으로 남습니다.
+
+생성 위치:
+
+- `docs/proof/optional_off_<timestamp>/`
+- `docs/proof/optional_on_<timestamp>/`
+
+포함 내용 예시:
+
+- ArgoCD Application / ApplicationSet 목록
+- Optional 리소스 삭제/복구 로그
+- Optional 네임스페이스 잔존 여부
+- Core 서비스 상태 확인 결과
+
+이 디렉토리는
+- 운영 이력 추적
+- 면접 시 재현 증명
+- 장애 대응 시 기준 상태 확인
+
+용도로 활용됩니다.

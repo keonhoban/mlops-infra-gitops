@@ -1,2 +1,0 @@
-NAME         AGE
-mlops-core   2d5h

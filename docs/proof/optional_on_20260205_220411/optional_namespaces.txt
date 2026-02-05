@@ -1,2 +1,0 @@
-feature-store-dev    Active   6m45s
-feature-store-prod   Active   6m42s

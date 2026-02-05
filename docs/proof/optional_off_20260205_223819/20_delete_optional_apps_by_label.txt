@@ -1,6 +1,0 @@
-application.argoproj.io "feast-dev" deleted
-application.argoproj.io "feast-prod" deleted
-application.argoproj.io "monitoring-dev" deleted
-application.argoproj.io "monitoring-prod" deleted
-application.argoproj.io "optional-envs-dev" deleted
-application.argoproj.io "optional-envs-prod" deleted

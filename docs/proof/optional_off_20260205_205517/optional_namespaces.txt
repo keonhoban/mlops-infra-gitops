@@ -1,5 +1,0 @@
-feature-store-dev    Active   4s
-monitoring-dev       Active   2m45s
-monitoring-prod      Active   2m30s
-observability-dev    Active   117s
-observability-prod   Active   79s

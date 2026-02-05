@@ -1,0 +1,4 @@
+NAME                  AGE
+loki-env-matrix       70s
+mlops-core            2d7h
+promtail-env-matrix   70s

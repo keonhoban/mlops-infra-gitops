@@ -31,7 +31,7 @@ Observability/Feast 같은 확장은 **Optional로 분리**하여 **스위치(On
 
 ---
 
-## 3) 책임 경계 (왜 이 구조가 유지보수에 강한가)
+## 3) 책임 경계
 
 - GitOps: “틀(런타임)”을 배포/고정(Self-heal/Prune), 재현 가능한 상태를 보장
 - Airflow: “행동(파이프라인)”을 실행/통제(학습/등록/배포/롤백)
@@ -42,9 +42,9 @@ Observability/Feast 같은 확장은 **Optional로 분리**하여 **스위치(On
 
 ---
 
-## 4) Core vs Optional (압축 정의)
+## 4) Core vs Optional
 
-### Core (제출/면접 필수)
+### Core
 - ArgoCD App-of-Apps + Core ApplicationSet
 - Airflow / MLflow / Triton / FastAPI
 - 모델 repo PV/PVC + NFS 기반 저장 경로
@@ -60,22 +60,17 @@ Optional은 “있으면 좋은 것”이지, Core E2E가 돌아가는 데 필�
 
 ---
 
-## 5) 증명(Proof): Core-only / Optional-on 재현
+## 5) Proof (재현 가능성)
 
-문서/로그 스냅샷은 `docs/proof`, `docs/audit` 아래에 자동으로 축적됩니다.
+이 프로젝트는 Core-only / Optional-on 전환을 **스크립트로 재현 가능**하게 설계했습니다.
 
-- Core-only(OFF): Optional을 prune 해도 Core 서비스가 정상 동작함을 증명
-- Optional-on(ON): Optional을 다시 자동 동기화로 복구 가능함을 증명
-- Audit: 런타임/스토리지 바인딩/서비스 헬스 상태 스냅샷
+- Optional OFF: 확장 스택을 제거해도 Core E2E가 정상 동작함을 증명
+- Optional ON: 확장 스택을 GitOps 기준으로 자동 복구 가능함을 증명
 
-실행 방법과 증거 파일 구조는 `docs/OPERATIONS.md` 를 참고합니다.
+모든 전환 결과는 실행 로그로 남아 재현성과 운영 감각을 함께 보여줍니다.
 
 ---
 
-## 6) 빠른 링크
+## 6) 운영 문서
 
-- 운영/증명 루프: `docs/OPERATIONS.md`
-- 증거 스냅샷:
-  - `docs/proof/core_only/<timestamp>/`
-  - `docs/proof/optional_on/<timestamp>/`
-  - `docs/audit/<timestamp>/`
+- Optional 스택 토글(runbook): `docs/runbook/optional-toggle.md`
