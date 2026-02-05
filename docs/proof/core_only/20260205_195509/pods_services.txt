@@ -1,0 +1,68 @@
+### airflow-dev
+NAME                                             READY   STATUS    RESTARTS        AGE    IP                NODE          NOMINATED NODE   READINESS GATES
+pod/airflow-dev-api-server-5f97ff8d6d-6ln29      1/1     Running   0               105m   192.168.194.125   k8s-worker1   <none>           <none>
+pod/airflow-dev-dag-processor-598f79f665-2ltvw   3/3     Running   0               105m   192.168.126.56    k8s-worker2   <none>           <none>
+pod/airflow-dev-scheduler-79f5f7fbc7-lqj2h       2/2     Running   0               105m   192.168.126.45    k8s-worker2   <none>           <none>
+pod/airflow-dev-statsd-f45c894d7-5tt7g           1/1     Running   2 (3h24m ago)   2d3h   192.168.194.76    k8s-worker1   <none>           <none>
+pod/airflow-dev-triggerer-5c7d584f98-llj7p       3/3     Running   0               105m   192.168.194.75    k8s-worker1   <none>           <none>
+
+NAME                             TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE    SELECTOR
+service/airflow-dev-api-server   ClusterIP   10.109.178.173   <none>        8080/TCP            2d3h   component=api-server,release=airflow-dev,tier=airflow
+service/airflow-dev-statsd       ClusterIP   10.108.18.170    <none>        9125/UDP,9102/TCP   2d3h   component=statsd,release=airflow-dev,tier=airflow
+service/airflow-dev-triggerer    ClusterIP   None             <none>        8794/TCP            2d3h   component=triggerer,release=airflow-dev,tier=airflow
+
+### airflow-prod
+NAME                                             READY   STATUS    RESTARTS        AGE    IP                NODE          NOMINATED NODE   READINESS GATES
+pod/airflow-prod-api-server-9c884ddc9-ljttc      1/1     Running   0               105m   192.168.194.101   k8s-worker1   <none>           <none>
+pod/airflow-prod-dag-processor-746994f87-xwfbk   3/3     Running   0               105m   192.168.126.18    k8s-worker2   <none>           <none>
+pod/airflow-prod-scheduler-8b7f4cdb8-7skq2       2/2     Running   0               105m   192.168.126.37    k8s-worker2   <none>           <none>
+pod/airflow-prod-statsd-6cb5f89f69-xnlgk         1/1     Running   2 (3h24m ago)   2d3h   192.168.194.90    k8s-worker1   <none>           <none>
+pod/airflow-prod-triggerer-6845cb6979-g696l      3/3     Running   0               105m   192.168.194.114   k8s-worker1   <none>           <none>
+
+NAME                              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE    SELECTOR
+service/airflow-prod-api-server   ClusterIP   10.108.106.144   <none>        8080/TCP            2d3h   component=api-server,release=airflow-prod,tier=airflow
+service/airflow-prod-statsd       ClusterIP   10.96.81.68      <none>        9125/UDP,9102/TCP   2d3h   component=statsd,release=airflow-prod,tier=airflow
+service/airflow-prod-triggerer    ClusterIP   None             <none>        8794/TCP            2d3h   component=triggerer,release=airflow-prod,tier=airflow
+
+### mlflow-dev
+NAME                                     READY   STATUS    RESTARTS        AGE    IP               NODE          NOMINATED NODE   READINESS GATES
+pod/mlflow-dev-server-5b895bfb44-k6b6s   1/1     Running   2 (3h24m ago)   2d3h   192.168.194.77   k8s-worker1   <none>           <none>
+
+NAME                         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE    SELECTOR
+service/mlflow-dev-service   ClusterIP   10.105.86.177   <none>        5000/TCP   2d3h   app=mlflow-dev
+
+### mlflow-prod
+NAME                                      READY   STATUS    RESTARTS        AGE    IP               NODE          NOMINATED NODE   READINESS GATES
+pod/mlflow-prod-server-6df969c578-hx5g2   1/1     Running   2 (3h24m ago)   2d3h   192.168.194.94   k8s-worker1   <none>           <none>
+
+NAME                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE    SELECTOR
+service/mlflow-prod-service   ClusterIP   10.110.187.159   <none>        5000/TCP   2d3h   app=mlflow-prod
+
+### triton-dev
+NAME                          READY   STATUS    RESTARTS        AGE   IP              NODE          NOMINATED NODE   READINESS GATES
+pod/triton-6dfbffff6d-8xxn5   1/1     Running   1 (3h24m ago)   22h   192.168.126.9   k8s-worker2   <none>           <none>
+
+NAME             TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE   SELECTOR
+service/triton   ClusterIP   10.110.160.255   <none>        8000/TCP,8001/TCP,8002/TCP   44d   app=triton
+
+### triton-prod
+NAME                         READY   STATUS    RESTARTS        AGE   IP               NODE          NOMINATED NODE   READINESS GATES
+pod/triton-89688598f-wgmvd   1/1     Running   1 (3h24m ago)   22h   192.168.126.27   k8s-worker2   <none>           <none>
+
+NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE   SELECTOR
+service/triton   ClusterIP   10.109.120.76   <none>        8000/TCP,8001/TCP,8002/TCP   44d   app=triton
+
+### fastapi-dev
+NAME                                     READY   STATUS    RESTARTS        AGE    IP                NODE          NOMINATED NODE   READINESS GATES
+pod/fastapi-dev-server-647489bc4-qghdd   1/1     Running   2 (3h24m ago)   2d3h   192.168.194.116   k8s-worker1   <none>           <none>
+
+NAME                          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE    SELECTOR
+service/fastapi-dev-service   ClusterIP   10.109.32.179   <none>        80/TCP    2d3h   app=fastapi-dev
+
+### fastapi-prod
+NAME                                       READY   STATUS    RESTARTS        AGE    IP               NODE          NOMINATED NODE   READINESS GATES
+pod/fastapi-prod-server-59b6bfdc8f-r7q99   1/1     Running   2 (3h24m ago)   2d3h   192.168.194.91   k8s-worker1   <none>           <none>
+
+NAME                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE    SELECTOR
+service/fastapi-prod-service   ClusterIP   10.105.185.28   <none>        80/TCP    2d3h   app=fastapi-prod
+

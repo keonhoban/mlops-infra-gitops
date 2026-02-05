@@ -1,0 +1,6 @@
+feature-store-dev    Active   22d
+feature-store-prod   Active   22d
+monitoring-dev       Active   26m
+monitoring-prod      Active   26m
+observability-dev    Active   26m
+observability-prod   Active   26m

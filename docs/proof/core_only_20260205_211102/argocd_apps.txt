@@ -1,0 +1,13 @@
+NAME              SYNC STATUS   HEALTH STATUS
+airflow-dev       Synced        Healthy
+airflow-prod      Synced        Healthy
+dev-namespaces    Synced        Healthy
+fastapi-dev       Synced        Healthy
+fastapi-prod      Synced        Healthy
+metallb-config    Synced        Healthy
+mlflow-dev        Synced        Healthy
+mlflow-prod       Synced        Healthy
+prod-namespaces   Synced        Healthy
+root-apps         Synced        Healthy
+triton-dev        Synced        Healthy
+triton-prod       Synced        Healthy

@@ -1,0 +1,8 @@
+NAMESPACE      NAME                        CLASS   HOSTS           ADDRESS          PORTS     AGE
+airflow-dev    airflow-dev-ingress         nginx   airflow.local   192.168.18.240   80, 443   2d5h
+airflow-prod   airflow-prod-ingress        nginx   airflow.prod    192.168.18.240   80, 443   2d5h
+argocd         argocd-server               nginx   argocd.local    192.168.18.240   80, 443   178d
+fastapi-dev    fastapi-dev-fastapi-local   nginx   fastapi.local   192.168.18.240   80, 443   2d5h
+fastapi-prod   fastapi-prod-fastapi-prod   nginx   fastapi.prod    192.168.18.240   80, 443   2d5h
+mlflow-dev     mlflow-dev-service          nginx   mlflow.local    192.168.18.240   80, 443   2d5h
+mlflow-prod    mlflow-prod-service         nginx   mlflow.prod     192.168.18.240   80, 443   2d5h

@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: feast-prod
   namespace: argocd
+  labels:
+    scope: optional
 spec:
   project: prod
   destination:

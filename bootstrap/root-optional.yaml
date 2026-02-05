@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: root-optional
   namespace: argocd
+  labels:
+    scope: optional
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
 spec:
   project: default
 
@@ -22,7 +26,6 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
       - ApplyOutOfSyncOnly=true
       - PruneLast=true
 

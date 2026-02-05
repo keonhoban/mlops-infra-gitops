@@ -5,6 +5,8 @@ metadata:
     argocd.argoproj.io/sync-wave: "-1"
   name: optional-envs-prod
   namespace: argocd
+  labels:
+    scope: optional
 spec:
   project: prod
   source:

@@ -1,0 +1,23 @@
+NAME                 SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+airflow-dev          Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   dev
+airflow-prod         Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   prod
+dev-namespaces       Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   dev
+fastapi-dev          Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   dev
+fastapi-prod         Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   prod
+feast-dev            Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   dev
+feast-prod           Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   prod
+loki-dev             OutOfSync     Missing                                                    dev
+loki-prod            OutOfSync     Missing                                                    prod
+metallb-config       Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   default
+mlflow-dev           Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   dev
+mlflow-prod          Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   prod
+monitoring-dev       OutOfSync     Missing         65.5.0                                     dev
+monitoring-prod      OutOfSync     Missing         65.5.0                                     prod
+optional-envs-dev    OutOfSync     Missing         de39941a96c085ae32f9fbe540b124fc0c52eb58   dev
+optional-envs-prod   OutOfSync     Missing         de39941a96c085ae32f9fbe540b124fc0c52eb58   prod
+prod-namespaces      Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   prod
+promtail-dev         OutOfSync     Missing                                                    dev
+promtail-prod        OutOfSync     Missing                                                    prod
+root-apps            Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   default
+triton-dev           Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   dev
+triton-prod          Synced        Healthy         de39941a96c085ae32f9fbe540b124fc0c52eb58   prod
