@@ -6,6 +6,7 @@ metadata:
   labels:
     scope: optional
   annotations:
+    argocd.argoproj.io/sync-wave: "0"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true,PruneLast=true,ServerSideApply=true
 spec:
   project: prod
