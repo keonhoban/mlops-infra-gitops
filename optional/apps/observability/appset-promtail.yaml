@@ -20,6 +20,8 @@ spec:
   template:
     metadata:
       name: 'promtail-{{env}}'
+      labels:
+        scope: optional
       annotations:
         argocd.argoproj.io/sync-wave: "1"
     spec:

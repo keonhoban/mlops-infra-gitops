@@ -1,0 +1,4 @@
+namespace "monitoring-dev" deleted
+namespace "monitoring-prod" deleted
+namespace "observability-dev" deleted
+namespace "observability-prod" deleted

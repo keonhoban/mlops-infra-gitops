@@ -1,0 +1,3 @@
++ kubectl -n argocd get applicationsets.argoproj.io -o wide
+NAME         AGE
+mlops-core   2d6h
