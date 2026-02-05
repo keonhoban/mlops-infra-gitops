@@ -79,6 +79,10 @@ airflow:
         secret:
           secretName: aws-credentials-secret
 
+      - name: triton-model-repo
+        persistentVolumeClaim:
+          claimName: triton-model-repo-pvc
+
       - name: feature-store-resources
         configMap:
           name: feature-store-resources
@@ -87,6 +91,10 @@ airflow:
       - name: aws-credentials
         mountPath: /home/airflow/.aws
         readOnly: true
+
+      - name: triton-model-repo
+        mountPath: /models
+        readOnly: false
 
       - name: feature-store-resources
         mountPath: /opt/airflow/feature-store

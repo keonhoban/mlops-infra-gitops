@@ -6,11 +6,11 @@ spec:
   capacity:
     storage: 5Gi
   accessModes: [ReadWriteMany]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
   nfs:
     server: 192.168.18.141
     path: /mnt/nfs_share/mlops/triton/model-repo/dev
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: "nfs-observability"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -22,5 +22,6 @@ spec:
   resources:
     requests:
       storage: 5Gi
+  storageClassName: ""
   volumeName: airflow-triton-model-repo-dev-pv
-  storageClassName: "nfs-observability"
+
