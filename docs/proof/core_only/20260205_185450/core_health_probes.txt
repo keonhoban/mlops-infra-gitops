@@ -1,0 +1,7 @@
+### fastapi-dev /health
+{"status":"ok","loaded_aliases":["A","B"]}
+### fastapi-prod /health
+{"status":"ok","loaded_aliases":["A","B"]}
+### triton-dev ready
+
+### triton-prod ready

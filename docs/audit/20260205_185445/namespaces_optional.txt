@@ -1,0 +1,6 @@
+feature-store-dev    Active   22d
+feature-store-prod   Active   22d
+monitoring-dev       Active   9m46s
+monitoring-prod      Active   9m46s
+observability-dev    Active   9m46s
+observability-prod   Active   9m46s

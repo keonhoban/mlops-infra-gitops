@@ -1,0 +1,19 @@
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  1.4 658492 172120 ?       Ssl  07:31   0:02 /usr/local/bin/python /usr/local/bin/mlflow server --backend-store-uri=postgresql://mlflow_user:mlflow1234@192.168.18.142:5432/mlflow_dev --default-artifact-root=s3://mlflow-artifacts-keonho/dev --host=0.0.0.0 --port=5000 --serve-artifacts
+root          14  0.0  0.1  24264 19888 ?        S    07:32   0:00 /usr/local/bin/python -m gunicorn -b 0.0.0.0:5000 -w 4 mlflow.server:app
+root          15  0.0  1.3 659460 170896 ?       Sl   07:32   0:01 /usr/local/bin/python -m gunicorn -b 0.0.0.0:5000 -w 4 mlflow.server:app
+root          16  0.0  1.3 659520 170904 ?       Sl   07:32   0:01 /usr/local/bin/python -m gunicorn -b 0.0.0.0:5000 -w 4 mlflow.server:app
+---
+MLFLOW_DEV_SERVICE_PORT_5000_TCP_PORT=5000
+MLFLOW_DEV_SERVICE_PORT_5000_TCP_PROTO=tcp
+HOSTNAME=mlflow-dev-server-5b895bfb44-k6b6s
+DB_PORT=5432
+DB_NAME=mlflow_dev
+MLFLOW_DEV_SERVICE_SERVICE_HOST=10.105.86.177
+MLFLOW_DEV_SERVICE_PORT_5000_TCP=tcp://10.105.86.177:5000
+MLFLOW_DEV_SERVICE_PORT=tcp://10.105.86.177:5000
+MLFLOW_DEV_SERVICE_SERVICE_PORT=5000
+DB_PASSWORD=mlflow1234
+DB_HOST=192.168.18.142
+DB_USER=mlflow_user
+MLFLOW_DEV_SERVICE_PORT_5000_TCP_ADDR=10.105.86.177

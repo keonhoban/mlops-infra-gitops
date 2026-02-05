@@ -1,0 +1,41 @@
+TIMESTAMP                  GROUP              KIND       NAMESPACE                  NAME    STATUS   HEALTH        HOOK  MESSAGE
+2026-02-05T18:54:52+09:00  argoproj.io  ApplicationSet      argocd   promtail-env-matrix    Synced  Healthy              
+2026-02-05T18:54:52+09:00  argoproj.io  Application         argocd             feast-dev    Synced                       
+2026-02-05T18:54:52+09:00  argoproj.io  Application         argocd            feast-prod    Synced                       
+2026-02-05T18:54:52+09:00  argoproj.io  Application         argocd        monitoring-dev    Synced                       
+2026-02-05T18:54:52+09:00  argoproj.io  Application         argocd       monitoring-prod    Synced                       
+2026-02-05T18:54:52+09:00  argoproj.io  Application         argocd     optional-envs-dev    Synced                       
+2026-02-05T18:54:52+09:00  argoproj.io  Application         argocd    optional-envs-prod    Synced                       
+2026-02-05T18:54:52+09:00  argoproj.io  ApplicationSet      argocd       loki-env-matrix    Synced  Healthy              
+
+Name:               argocd/root-optional
+Project:            default
+Server:             https://kubernetes.default.svc
+Namespace:          argocd
+URL:                https://argocd.local/applications/root-optional
+Source:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             optional/apps
+SyncWindow:         Sync Allowed
+Sync Policy:        Manual
+Sync Status:        Synced to main (c2c6d75)
+Health Status:      Healthy
+
+Operation:          Sync
+Sync Revision:      c2c6d75d88f1d6fb7bb061d20afb0d7a0ba4e4ec
+Phase:              Succeeded
+Start:              2026-02-05 18:54:52 +0900 KST
+Finished:           2026-02-05 18:54:52 +0900 KST
+Duration:           0s
+Message:            successfully synced (no more tasks)
+
+GROUP        KIND            NAMESPACE  NAME                 STATUS  HEALTH   HOOK  MESSAGE
+argoproj.io  Application     argocd     feast-dev            Synced                 
+argoproj.io  Application     argocd     feast-prod           Synced                 
+argoproj.io  Application     argocd     monitoring-dev       Synced                 
+argoproj.io  Application     argocd     monitoring-prod      Synced                 
+argoproj.io  Application     argocd     optional-envs-dev    Synced                 
+argoproj.io  Application     argocd     optional-envs-prod   Synced                 
+argoproj.io  ApplicationSet  argocd     loki-env-matrix      Synced  Healthy        
+argoproj.io  ApplicationSet  argocd     promtail-env-matrix  Synced  Healthy        
