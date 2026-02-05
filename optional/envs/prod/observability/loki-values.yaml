@@ -55,7 +55,7 @@ gateway:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - host: loki-dev.local
+      - host: loki-prod.local
         paths:
           - path: /
             pathType: Prefix
