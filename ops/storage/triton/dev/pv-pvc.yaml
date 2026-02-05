@@ -10,7 +10,7 @@ spec:
     server: 192.168.18.141
     path: /mnt/nfs_share/mlops/triton/model-repo/dev
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: "nfs-observability"
+  storageClassName: nfs-core
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -23,4 +23,5 @@ spec:
     requests:
       storage: 5Gi
   volumeName: triton-model-repo-dev-pv
-  storageClassName: "nfs-observability"
+  storageClassName: nfs-core
+

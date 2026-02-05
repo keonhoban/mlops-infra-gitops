@@ -1,20 +1,11 @@
-# === 모드 고정 ===
 deploymentMode: SingleBinary
 
-# === 단일 바이너리만 1개 ===
 singleBinary:
   replicas: 1
+  # ✅ Optional: persistence OFF (지뢰 제거)
   persistence:
-    enabled: true
-    size: 100Gi
-    storageClass: nfs-observability
-    accessModes:                      
-      - ReadWriteMany
-  podSecurityContext:
-    fsGroup: 10001
-    fsGroupChangePolicy: OnRootMismatch
+    enabled: false
 
-# === Simple Scalable 타깃 전부 비활성 + replicas=0 못박기 ===
 read:
   enabled: false
   replicas: 0
@@ -29,29 +20,30 @@ loki:
   auth_enabled: false
   commonConfig:
     replication_factor: 1
+
+  # ✅ memberlist / clustering 끔
+  memberlist:
+    join_members: []
+
   storage:
     type: filesystem
-  compactor:
-    working_directory: /var/loki/compactor
-    compaction_interval: 5m
+
+  # ✅ TSDB 대신 boltdb-shipper + filesystem
   schemaConfig:
     configs:
-      - from: 2025-01-01
-        store: tsdb
+      - from: 2024-01-01
+        store: boltdb-shipper
         object_store: filesystem
-        schema: v13
+        schema: v12
         index:
-          prefix: index_
+          prefix: loki_index_
           period: 24h
-  ruler:
-    storage:
-      type: local
-      local:
-        directory: /data/rules
+
+  # ✅ compactor는 Optional에서는 꺼도 됨(불안정 요소 제거)
+  compactor: {}
 
 chunksCache:
   enabled: false
-
 resultsCache:
   enabled: false
 
@@ -68,3 +60,4 @@ gateway:
           - path: /
             pathType: Prefix
   tls: []
+

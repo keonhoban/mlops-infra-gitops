@@ -1,0 +1,2 @@
+applicationset.argoproj.io "loki-env-matrix" deleted
+applicationset.argoproj.io "promtail-env-matrix" deleted
