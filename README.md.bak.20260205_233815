@@ -1,25 +1,9 @@
-# GitOps 기반 E2E MLOps (Core + Optional)
-
-## Core가 증명하는 것
-- GitOps(ArgoCD)로 **dev/prod 분리** 및 자동 동기화(SelfHeal/Prune)
-- Airflow(DAG gitSync) → MLflow Registry → Triton Deploy → FastAPI Reload
-- 실패 시 Sensor/Smoke Test 기반으로 **Rollback 가능**
-
-## 빠른 증명(Proof)
-- Core only 증명 스크립트: `./ops/proof/proof_core_only.sh`
-- Optional ON/OFF 토글:
-  - ON: `./ops/toggle_optional_on.sh`
-  - OFF: `./ops/toggle_optional_off.sh`
-- 실행 증적은 `docs/proof/` 하위에 자동 저장됩니다.
-
-## Repo 안내
-- `apps/` : ArgoCD ApplicationSet / AppProject
-- `charts/` : Core Helm charts (airflow/mlflow/triton/fastapi)
-- `envs/` : dev/prod 공통 운영 리소스(네임스페이스, cert, sealed-secrets, feature-store cm 등)
-- `optional/` : Monitoring/Loki/Promtail/Feast 등 확장 증명 (Core와 분리)
-- `docs/runbook/` : 운영 절차 문서
-
 # 🧱 MLOps Infrastructure – One Commit Flow
+
+## Docs
+- docs/ARCHITECTURE.md
+- docs/CORE_OPTIONAL.md
+- docs/PROOF.md
 
 > **Git 커밋 한 번으로
 학습 → 등록 → 배포 → 실험 전환까지 자동 순환되는
