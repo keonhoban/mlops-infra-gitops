@@ -8,12 +8,15 @@ loki:
 
   storage:
     type: s3
+    bucketNames:
+      chunks: loki-chunks
+      ruler: loki-ruler
+      admin: loki-admin
     s3:
       endpoint: http://minio.baseline-prod.svc.cluster.local:9000
-      bucketnames: loki
       accessKeyId: minioadmin
       secretAccessKey: minioadmin
-      s3forcepathstyle: true
+      s3ForcePathStyle: true
       insecure: true
 
   schemaConfig:
@@ -34,5 +37,5 @@ singleBinary:
 
 persistence:
   enabled: true
-  size: 40Gi
+  size: 20Gi
 
