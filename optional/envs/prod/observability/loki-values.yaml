@@ -54,7 +54,6 @@ loki:
 
   compactor:
     working_directory: /var/loki/compactor
-    shared_store: filesystem
 
   memberlist:
     join_members: []
