@@ -10,6 +10,7 @@ backend:
 
 loki:
   auth_enabled: false
+
   commonConfig:
     replication_factor: 1
 
@@ -36,8 +37,19 @@ loki:
           prefix: loki_index_
           period: 24h
 
+  # ✅ Retention "정석" 핵심 1) retention_enabled 켰으면 delete_request_store 반드시 필요
   compactor:
     retention_enabled: true
+    delete_request_store: s3
+    working_directory: /var/loki/compactor
+
+    # 운영에서 흔히 같이 둠(필수는 아님)
+    retention_delete_delay: 2h
+    retention_delete_worker_count: 150
+
+  # ✅ Retention "정석" 핵심 2) 실제 보관기간은 limits_config.retention_period 로 제어
+  limits_config:
+    retention_period: 168h   # 예: 7일. 원하시는 기간으로 변경하세요.
 
 singleBinary:
   replicas: 1
