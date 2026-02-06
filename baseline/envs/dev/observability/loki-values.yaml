@@ -1,79 +1,34 @@
 deploymentMode: SingleBinary
 
-singleBinary:
-  replicas: 1
-  persistence:
-    enabled: false
-  extraArgs:
-    - -validation.allow-structured-metadata=false
-
-simpleScalable:
-  replicas:
-    backend: 0
-    read: 0
-    write: 0
-
-read:
-  replicas: 0
-write:
-  replicas: 0
-backend:
-  replicas: 0
-
 loki:
   auth_enabled: false
 
-  storage:
-    type: filesystem
-    bucketNames:
-      chunks: loki-chunks
-      ruler: loki-ruler
-      admin: loki-admin
-
   commonConfig:
     replication_factor: 1
-    path_prefix: /var/loki
+
+  storage:
+    type: filesystem
 
   schemaConfig:
     configs:
       - from: 2024-01-01
-        store: boltdb-shipper
+        store: tsdb
         object_store: filesystem
-        schema: v12
+        schema: v13
         index:
-          prefix: loki_index_
+          prefix: index_
           period: 24h
 
-  storageConfig:
-    boltdb_shipper:
-      active_index_directory: /var/loki/index
-      cache_location: /var/loki/cache
-      shared_store: filesystem
-    filesystem:
-      directory: /var/loki/chunks
+  ingester:
+    wal:
+      enabled: true
 
-  compactor:
-    working_directory: /var/loki/compactor
+  limits_config:
+    retention_period: 168h
 
-  memberlist:
-    join_members: []
+singleBinary:
+  replicas: 1
 
-chunksCache:
-  enabled: false
-resultsCache:
-  enabled: false
-
-gateway:
+persistence:
   enabled: true
-  service:
-    type: ClusterIP
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    hosts:
-      - host: loki-dev.local
-        paths:
-          - path: /
-            pathType: Prefix
-    tls: []
-
+  size: 10Gi
