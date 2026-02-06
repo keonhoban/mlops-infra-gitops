@@ -1,19 +1,26 @@
 deploymentMode: SingleBinary
 
+# ✅ Loki chart v6.x: SingleBinary만 쓰려면 아래 3개 replicas를 0으로 꺼야 validate 통과
+write:
+  replicas: 0
+read:
+  replicas: 0
+backend:
+  replicas: 0
+
 loki:
   auth_enabled: false
-
   commonConfig:
     replication_factor: 1
 
   storage:
     type: s3
-    bucketNames:   # ✅ bucketnames -> bucketNames (대문자 N)
+    bucketNames:
       chunks: loki-chunks
       ruler: loki-ruler
       admin: loki-admin
     s3:
-      endpoint: http://minio.baseline-dev.svc.cluster.local:9000   # prod는 baseline-prod로
+      endpoint: http://minio.baseline-dev.svc.cluster.local:9000
       accessKeyId: minioadmin
       secretAccessKey: minioadmin
       s3ForcePathStyle: true
@@ -21,7 +28,7 @@ loki:
 
   schemaConfig:
     configs:
-      - from: "2024-01-01"
+      - from: "2026-01-01"
         store: tsdb
         object_store: s3
         schema: v13
