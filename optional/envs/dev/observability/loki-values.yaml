@@ -2,33 +2,19 @@ deploymentMode: SingleBinary
 
 singleBinary:
   replicas: 1
-  # ✅ Optional: persistence OFF (지뢰 제거)
   persistence:
     enabled: false
 
-read:
-  enabled: false
-  replicas: 0
-write:
-  enabled: false
-  replicas: 0
-backend:
-  enabled: false
-  replicas: 0
-
 loki:
   auth_enabled: false
+
   commonConfig:
     replication_factor: 1
-
-  # ✅ memberlist / clustering 끔
-  memberlist:
-    join_members: []
+    path_prefix: /var/loki   # ✅ 핵심: 모든 로컬 파일 기반 경로의 루트
 
   storage:
     type: filesystem
 
-  # ✅ TSDB 대신 boltdb-shipper + filesystem
   schemaConfig:
     configs:
       - from: 2024-01-01
@@ -39,8 +25,20 @@ loki:
           prefix: loki_index_
           period: 24h
 
-  # ✅ compactor는 Optional에서는 꺼도 됨(불안정 요소 제거)
-  compactor: {}
+  storageConfig:             # ✅ 핵심: boltdb-shipper + filesystem 디렉토리 명시
+    boltdb_shipper:
+      active_index_directory: /var/loki/index
+      cache_location: /var/loki/cache
+      shared_store: filesystem
+    filesystem:
+      directory: /var/loki/chunks
+
+  compactor:                 # ✅ optional이어도 안정적으로 지정해두면 좋음
+    working_directory: /var/loki/compactor
+    shared_store: filesystem
+
+  memberlist:
+    join_members: []         # 싱글 바이너리면 사실상 의미 없음. 유지해도 무방.
 
 chunksCache:
   enabled: false
@@ -55,9 +53,9 @@ gateway:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - host: loki-dev.local
+      - host: loki-dev.local   # prod는 loki-prod.local
         paths:
           - path: /
             pathType: Prefix
-  tls: []
+    tls: []                   # ✅ tls는 ingress 아래에 두는 게 안전
 
