@@ -8,7 +8,7 @@ loki:
 
   storage:
     type: s3
-    bucketNames:
+    bucketnames:
       chunks: loki-chunks
       ruler: loki-ruler
       admin: loki-admin
