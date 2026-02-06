@@ -41,9 +41,8 @@ loki:
 
 singleBinary:
   replicas: 1
-
-persistence:
-  enabled: true
-  size: 20Gi
-  storageClass: nfs-core
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClass: nfs-core
 
