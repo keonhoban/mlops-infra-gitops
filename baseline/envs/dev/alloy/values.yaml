@@ -39,7 +39,7 @@ alloy:
 
       loki.write "default" {
         endpoint {
-          url = "http://loki.baseline-dev.svc.cluster.local:3100/loki/api/v1/push"
+          url = "http://loki-dev.baseline-dev.svc.cluster.local:3100/loki/api/v1/push"
         }
       }
 
