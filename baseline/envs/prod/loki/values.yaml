@@ -45,4 +45,5 @@ singleBinary:
 persistence:
   enabled: true
   size: 20Gi
+  storageClass: nfs-core
 
