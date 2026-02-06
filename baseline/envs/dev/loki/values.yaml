@@ -1,55 +1,98 @@
-deploymentMode: SingleBinary
+# baseline/envs/dev/loki/values.yaml
+# Loki Helm chart: grafana/loki (예: 6.52.0)
+# Loki image: 3.6.4 기준
+# 목표:
+# - SingleBinary (1 replica)
+# - MinIO(S3) object_store
+# - Retention ON (정석: compactor.delete_request_store + retention_enabled + retention_period)
+# - memcached 캐시 / memberlist 의존 제거 (DNS/SRV 이슈 방지)
 
-# ✅ Loki chart v6.x: SingleBinary만 쓰려면 아래 3개 replicas를 0으로 꺼야 validate 통과
-write:
-  replicas: 0
-read:
-  replicas: 0
-backend:
-  replicas: 0
+deploymentMode: SingleBinary
 
 loki:
   auth_enabled: false
 
-  commonConfig:
-    replication_factor: 1
+  # ✅ Loki 설정을 values에서 직접 고정 (ConfigMap 생성됨)
+  config: |
+    auth_enabled: false
 
-  storage:
-    type: s3
-    bucketNames:
-      chunks: loki-chunks
-      ruler: loki-ruler
-      admin: loki-admin
-    s3:
-      endpoint: http://minio.baseline-dev.svc.cluster.local:9000
-      accessKeyId: minioadmin
-      secretAccessKey: minioadmin
-      s3ForcePathStyle: true
-      insecure: true
+    server:
+      http_listen_port: 3100
+      grpc_listen_port: 9095
+      http_server_read_timeout: 600s
+      http_server_write_timeout: 600s
 
-  schemaConfig:
-    configs:
-      - from: "2026-01-01"
-        store: tsdb
-        object_store: s3
-        schema: v13
-        index:
-          prefix: loki_index_
-          period: 24h
+    common:
+      path_prefix: /var/loki
+      replication_factor: 1
+      compactor_grpc_address: loki-dev.baseline-dev.svc.cluster.local:9095
+      storage:
+        s3:
+          endpoint: http://minio.baseline-dev.svc.cluster.local:9000
+          bucketnames: loki-chunks
+          access_key_id: minioadmin
+          secret_access_key: minioadmin
+          insecure: true
+          s3forcepathstyle: true
 
-  # ✅ Retention "정석" 핵심 1) retention_enabled 켰으면 delete_request_store 반드시 필요
-  compactor:
-    retention_enabled: true
-    delete_request_store: s3
-    working_directory: /var/loki/compactor
+    # ✅ Retention 정석
+    compactor:
+      retention_enabled: true
+      delete_request_store: s3
+      retention_delete_delay: 2h
+      retention_delete_worker_count: 150
+      working_directory: /var/loki/compactor
 
-    # 운영에서 흔히 같이 둠(필수는 아님)
-    retention_delete_delay: 2h
-    retention_delete_worker_count: 150
+    limits_config:
+      reject_old_samples: true
+      reject_old_samples_max_age: 168h
+      retention_period: 168h
+      query_timeout: 300s
+      split_queries_by_interval: 15m
+      max_cache_freshness_per_query: 10m
+      volume_enabled: true
 
-  # ✅ Retention "정석" 핵심 2) 실제 보관기간은 limits_config.retention_period 로 제어
-  limits_config:
-    retention_period: 168h   # 예: 7일. 원하시는 기간으로 변경하세요.
+    # ✅ SingleBinary에서는 memberlist join을 비워 의존 제거
+    memberlist:
+      join_members: []
+
+    # ✅ memcached 캐시 사용 안 함 (SRV DNS 이슈 제거)
+    query_range:
+      cache_results: false
+
+    storage_config:
+      tsdb_shipper:
+        # index_gateway_client.server_address는 SingleBinary에선 비워도 됨
+        index_gateway_client:
+          server_address: ""
+
+    schema_config:
+      configs:
+        - from: "2026-01-01"
+          store: tsdb
+          object_store: s3
+          schema: v13
+          index:
+            prefix: loki_index_
+            period: 24h
+
+    # 룰 저장도 S3로 (선택: 룰 안 쓰면 이 블록 삭제 가능)
+    ruler:
+      storage:
+        type: s3
+        s3:
+          endpoint: http://minio.baseline-dev.svc.cluster.local:9000
+          bucketnames: loki-ruler
+          access_key_id: minioadmin
+          secret_access_key: minioadmin
+          insecure: true
+          s3forcepathstyle: true
+      wal:
+        dir: /var/loki/ruler-wal
+
+  # (선택) runtime-config 사용 중이면 유지
+  runtimeConfig:
+    enabled: true
 
 singleBinary:
   replicas: 1
@@ -57,4 +100,35 @@ singleBinary:
     enabled: true
     size: 20Gi
     storageClass: nfs-core
+
+  # 리소스는 상황에 맞게 조절
+  resources: {}
+
+# ✅ 캐시(memcached) 컴포넌트 전부 비활성화
+memcached:
+  enabled: false
+memcachedChunks:
+  enabled: false
+memcachedFrontend:
+  enabled: false
+memcachedIndexQueries:
+  enabled: false
+memcachedIndexWrites:
+  enabled: false
+memcachedResults:
+  enabled: false
+
+# ✅ Canary는 유지해도 되고, 꺼도 됩니다 (꺼도 무방)
+lokiCanary:
+  enabled: true
+
+# ✅ Gateway는 사용중이면 유지 (현재 gateway deployment가 있음)
+gateway:
+  enabled: true
+
+# ✅ chunks/results cache statefulset을 만들지 않게 (차트가 별도 토글을 갖는 경우가 있어 같이 둠)
+chunksCache:
+  enabled: false
+resultsCache:
+  enabled: false
 
