@@ -5,12 +5,23 @@ singleBinary:
   persistence:
     enabled: false
 
+# ✅ chart validate.yaml 에서 터지는 "both replicas > 0" 방지용
+simpleScalable:
+  replicas:
+    backend: 0
+    read: 0
+    write: 0
+
 loki:
   auth_enabled: false
 
+  # ✅ Loki 3.x에서 schema(v12) + boltdb-shipper 쓰면 Structured Metadata가 걸려서 죽음
+  limits_config:
+    allow_structured_metadata: false
+
   commonConfig:
     replication_factor: 1
-    path_prefix: /var/loki   # ✅ 핵심: 모든 로컬 파일 기반 경로의 루트
+    path_prefix: /var/loki
 
   storage:
     type: filesystem
@@ -25,7 +36,7 @@ loki:
           prefix: loki_index_
           period: 24h
 
-  storageConfig:             # ✅ 핵심: boltdb-shipper + filesystem 디렉토리 명시
+  storageConfig:
     boltdb_shipper:
       active_index_directory: /var/loki/index
       cache_location: /var/loki/cache
@@ -33,12 +44,12 @@ loki:
     filesystem:
       directory: /var/loki/chunks
 
-  compactor:                 # ✅ optional이어도 안정적으로 지정해두면 좋음
+  compactor:
     working_directory: /var/loki/compactor
     shared_store: filesystem
 
   memberlist:
-    join_members: []         # 싱글 바이너리면 사실상 의미 없음. 유지해도 무방.
+    join_members: []
 
 chunksCache:
   enabled: false
@@ -53,9 +64,9 @@ gateway:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - host: loki-dev.local   # prod는 loki-prod.local
+      - host: loki-dev.local
         paths:
           - path: /
             pathType: Prefix
-    tls: []                   # ✅ tls는 ingress 아래에 두는 게 안전
+    tls: []
 
