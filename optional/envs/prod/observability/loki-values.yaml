@@ -4,7 +4,6 @@ singleBinary:
   replicas: 1
   persistence:
     enabled: false
-  # ✅ Loki 3.x + (schema=v12, boltdb-shipper)에서 죽는 검증을 런타임 플래그로 우회
   extraArgs:
     - -validation.allow-structured-metadata=false
 
@@ -14,12 +13,15 @@ simpleScalable:
     read: 0
     write: 0
 
+read:
+  replicas: 0
+write:
+  replicas: 0
+backend:
+  replicas: 0
+
 loki:
   auth_enabled: false
-
-  commonConfig:
-    replication_factor: 1
-    path_prefix: /var/loki
 
   storage:
     type: filesystem
@@ -27,6 +29,10 @@ loki:
       chunks: loki-chunks
       ruler: loki-ruler
       admin: loki-admin
+
+  commonConfig:
+    replication_factor: 1
+    path_prefix: /var/loki
 
   schemaConfig:
     configs:
