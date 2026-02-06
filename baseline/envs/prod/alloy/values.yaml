@@ -1,0 +1,60 @@
+alloy:
+  configMap:
+    create: true
+    content: |-
+      logging {
+        level  = "info"
+        format = "logfmt"
+      }
+
+      discovery.kubernetes "pods" {
+        role = "pod"
+      }
+
+      discovery.relabel "pods" {
+        targets = discovery.kubernetes.pods.targets
+
+        rule {
+          action = "keep"
+          source_labels = ["__meta_kubernetes_namespace"]
+          regex = "(airflow-prod|mlflow-prod|fastapi-prod|triton-prod|feature-store-prod)"
+        }
+      }
+
+      loki.source.kubernetes "pods" {
+        targets    = discovery.relabel.pods.output
+        forward_to = [loki.process.pods.receiver]
+      }
+
+      loki.process "pods" {
+        stage.labels {
+          values = {
+            "namespace" = "__meta_kubernetes_namespace",
+            "pod"       = "__meta_kubernetes_pod_name",
+            "container" = "__meta_kubernetes_pod_container_name",
+          }
+        }
+        forward_to = [loki.write.default.receiver]
+      }
+
+      loki.write "default" {
+        endpoint {
+          url = "http://loki.baseline-prod.svc.cluster.local:3100/loki/api/v1/push"
+        }
+      }
+
+controller:
+  type: daemonset
+
+storagePath: /var/lib/alloy
+
+extraVolumeMounts:
+  - name: varliballoy
+    mountPath: /var/lib/alloy
+
+extraVolumes:
+  - name: varliballoy
+    hostPath:
+      path: /var/lib/alloy
+      type: DirectoryOrCreate
+

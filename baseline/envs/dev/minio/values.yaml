@@ -1,0 +1,13 @@
+auth:
+  rootUser: minioadmin
+  rootPassword: minioadmin
+
+defaultBuckets: "loki"
+
+persistence:
+  enabled: true
+  size: 50Gi
+
+service:
+  type: ClusterIP
+
