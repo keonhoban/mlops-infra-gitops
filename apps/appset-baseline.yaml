@@ -16,35 +16,41 @@ spec:
           - list:
               elements:
                 - app: minio
-                  ns: baseline-{{env}}
-                  chartRepo: https://charts.bitnami.com/bitnami
                   chart: minio
+                  chartRepo: https://charts.bitnami.com/bitnami
                   version: 17.0.21
-                  valuesPath: baseline/envs/{{env}}/minio/values.yaml
                 - app: loki
-                  ns: baseline-{{env}}
-                  chartRepo: https://grafana.github.io/helm-charts
                   chart: loki
-                  version: 6.52.0
-                  valuesPath: baseline/envs/{{env}}/loki/values.yaml
-                - app: alloy
-                  ns: baseline-{{env}}
                   chartRepo: https://grafana.github.io/helm-charts
+                  version: 6.52.0
+                - app: alloy
                   chart: alloy
+                  chartRepo: https://grafana.github.io/helm-charts
                   version: 1.5.3
-                  valuesPath: baseline/envs/{{env}}/alloy/values.yaml
 
   template:
     metadata:
       name: "{{app}}-{{env}}"
       labels:
-        layer: baseline
         env: "{{env}}"
+        layer: baseline
     spec:
       project: "{{project}}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{ns}}"
+        namespace: "baseline-{{env}}"
+
+      sources:
+        - repoURL: "{{chartRepo}}"
+          chart: "{{chart}}"
+          targetRevision: "{{version}}"
+          helm:
+            valueFiles:
+              - "$values/baseline/envs/{{env}}/{{app}}/values.yaml"
+
+        - repoURL: https://github.com/keonhoban/mlops-infra-gitops
+          targetRevision: main
+          ref: values
 
       syncPolicy:
         automated:
@@ -52,18 +58,4 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
-
-      sources:
-        # 1) Upstream Helm chart
-        - repoURL: "{{chartRepo}}"
-          chart: "{{chart}}"
-          targetRevision: "{{version}}"
-          helm:
-            valueFiles:
-              - $values/{{valuesPath}}
-
-        # 2) Values in this GitOps repo
-        - repoURL: https://github.com/keonhoban/mlops-infra-gitops
-          targetRevision: main
-          ref: values
 
