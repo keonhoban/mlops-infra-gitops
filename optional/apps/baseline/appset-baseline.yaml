@@ -1,10 +1,8 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: optional-baseline
+  name: mlops-baseline
   namespace: argocd
-  labels:
-    scope: optional
 spec:
   generators:
     - matrix:
@@ -17,13 +15,14 @@ spec:
                   project: prod
           - list:
               elements:
+                # ✅ minio 제거 (단독 Application으로 관리)
                 - app: loki
                   chart: loki
-                  repoURL: https://grafana.github.io/helm-charts
+                  chartRepo: https://grafana.github.io/helm-charts
                   version: 6.52.0
                 - app: alloy
                   chart: alloy
-                  repoURL: https://grafana.github.io/helm-charts
+                  chartRepo: https://grafana.github.io/helm-charts
                   version: 1.5.3
 
   template:
@@ -33,6 +32,7 @@ spec:
         scope: optional
         env: "{{env}}"
         layer: baseline
+
     spec:
       project: "{{project}}"
       destination:
@@ -40,7 +40,7 @@ spec:
         namespace: "baseline-{{env}}"
 
       sources:
-        - repoURL: "{{repoURL}}"
+        - repoURL: "{{chartRepo}}"
           chart: "{{chart}}"
           targetRevision: "{{version}}"
           helm:
