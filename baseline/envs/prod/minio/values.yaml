@@ -6,7 +6,8 @@ defaultBuckets: "loki"
 
 persistence:
   enabled: true
-  size: 100Gi
+  storageClass: nfs-core
+  size: 10Gi
 
 service:
   type: ClusterIP
