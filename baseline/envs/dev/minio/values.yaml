@@ -1,8 +1,9 @@
 image:
-  registry: docker.io
+  registry: public.ecr.aws
   repository: bitnami/minio
-  tag: latest
+  tag: "2025.7.23-debian-12-r3"
   pullPolicy: IfNotPresent
+
 auth:
   rootUser: minioadmin
   rootPassword: minioadmin
