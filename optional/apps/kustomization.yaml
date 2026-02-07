@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - envs/optional-envs-dev.yaml
+  - envs/optional-envs-prod.yaml
+
+  - baseline/appset-baseline.yaml
+  - baseline/minio-dev.yaml
+  - baseline/minio-prod.yaml
+
+  - feast/feast-dev.yaml
+  - feast/feast-prod.yaml
+
+  - monitoring/monitoring-dev.yaml
+  - monitoring/monitoring-prod.yaml
+

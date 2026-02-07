@@ -4,7 +4,7 @@ metadata:
   name: root-optional
   namespace: argocd
   labels:
-    scope: optional
+    stack: optional
   annotations:
     argocd.argoproj.io/sync-wave: "-10"
 spec:
@@ -14,8 +14,7 @@ spec:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
     path: optional/apps
-    directory:
-      recurse: true
+    kustomize: {}
 
   destination:
     server: https://kubernetes.default.svc
@@ -28,4 +27,5 @@ spec:
     syncOptions:
       - ApplyOutOfSyncOnly=true
       - PruneLast=true
+      - ServerSideApply=true
 

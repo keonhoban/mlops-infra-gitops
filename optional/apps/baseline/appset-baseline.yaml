@@ -3,6 +3,8 @@ kind: ApplicationSet
 metadata:
   name: mlops-baseline
   namespace: argocd
+  labels:
+    stack: optional
 spec:
   generators:
     - matrix:
@@ -29,6 +31,7 @@ spec:
     metadata:
       name: "{{app}}-{{env}}"
       labels:
+        stack: optional
         scope: optional
         env: "{{env}}"
         layer: baseline
@@ -57,4 +60,7 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+          - PruneLast=true
+          - ServerSideApply=true
 

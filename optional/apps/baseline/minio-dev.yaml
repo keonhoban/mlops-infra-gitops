@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: minio-dev
   namespace: argocd
+  labels:
+    stack: optional
+    scope: optional
+    env: dev
 spec:
   project: dev
   destination:
@@ -29,4 +33,7 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PruneLast=true
+      - ServerSideApply=true
 

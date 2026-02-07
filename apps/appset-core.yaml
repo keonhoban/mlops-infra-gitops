@@ -5,6 +5,7 @@ metadata:
   namespace: argocd
   labels:
     scope: core
+    stack: core
 spec:
   generators:
     - matrix:
@@ -39,7 +40,9 @@ spec:
       name: "{{app}}-{{env}}"
       labels:
         scope: core
+        stack: core
         env: "{{env}}"
+        app: "{{app}}"
         layer: core
       annotations:
         argocd.argoproj.io/sync-wave: "1"
@@ -64,4 +67,7 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+          - PruneLast=true
+          - ServerSideApply=true
 

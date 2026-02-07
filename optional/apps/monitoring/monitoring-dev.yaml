@@ -4,20 +4,11 @@ metadata:
   name: monitoring-dev
   namespace: argocd
   labels:
+    stack: optional
     scope: optional
     env: dev
 spec:
   project: dev
-  source:
-    repoURL: https://prometheus-community.github.io/helm-charts
-    chart: kube-prometheus-stack
-    targetRevision: 65.5.0
-    helm:
-      valueFiles:
-        - $values/optional/envs/dev/monitoring/values.yaml
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring-dev
 
   sources:
     - repoURL: https://prometheus-community.github.io/helm-charts
@@ -30,10 +21,17 @@ spec:
       targetRevision: main
       ref: values
 
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring-dev
+
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PruneLast=true
+      - ServerSideApply=true
 
