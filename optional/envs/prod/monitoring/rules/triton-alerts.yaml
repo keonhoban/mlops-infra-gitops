@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: triton-alerts
-  namespace: monitoring-prod
+  namespace: observability-prod
   labels:
     release: monitoring-prod
 spec:
