@@ -3,6 +3,8 @@ kind: ApplicationSet
 metadata:
   name: mlops-core
   namespace: argocd
+  labels:
+    scope: core
 spec:
   generators:
     - matrix:
@@ -35,6 +37,10 @@ spec:
   template:
     metadata:
       name: "{{app}}-{{env}}"
+      labels:
+        scope: core
+        env: "{{env}}"
+        layer: core
       annotations:
         argocd.argoproj.io/sync-wave: "1"
     spec:
@@ -42,6 +48,7 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: "{{ns}}"
+
       source:
         repoURL: https://github.com/keonhoban/mlops-infra-gitops
         targetRevision: main
@@ -50,8 +57,11 @@ spec:
           valueFiles:
             - values/base.yaml
             - "{{valuesFile}}"
+
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
 

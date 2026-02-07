@@ -1,16 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
   name: optional-envs-prod
   namespace: argocd
   labels:
     scope: optional
+    env: prod
 spec:
   project: prod
   source:
-    repoURL: https://github.com/keonhoban/mlops-infra-gitops.git
+    repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
     path: optional/envs/prod
   destination:
@@ -20,3 +19,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+

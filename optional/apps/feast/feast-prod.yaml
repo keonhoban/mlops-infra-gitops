@@ -5,22 +5,24 @@ metadata:
   namespace: argocd
   labels:
     scope: optional
+    env: prod
 spec:
   project: prod
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: feature-store-prod
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
     path: optional/charts/feast
     helm:
-      releaseName: feast
       valueFiles:
         - values/base.yaml
         - values/prod.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: feature-store-prod
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
 

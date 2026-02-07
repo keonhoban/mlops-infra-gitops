@@ -17,17 +17,14 @@ spec:
                   project: prod
           - list:
               elements:
-                # ✅ MinIO: OCI로 전환 (helm pull invalid_reference 방지)
                 - app: minio
                   chart: minio
                   repoURL: oci://registry-1.docker.io/bitnamicharts
                   version: 17.0.21
-
                 - app: loki
                   chart: loki
                   repoURL: https://grafana.github.io/helm-charts
                   version: 6.52.0
-
                 - app: alloy
                   chart: alloy
                   repoURL: https://grafana.github.io/helm-charts
@@ -37,9 +34,9 @@ spec:
     metadata:
       name: "{{app}}-{{env}}"
       labels:
+        scope: optional
         env: "{{env}}"
         layer: baseline
-        scope: optional
     spec:
       project: "{{project}}"
       destination:

@@ -41,11 +41,9 @@ loki:
       max_cache_freshness_per_query: 10m
       volume_enabled: true
 
-    # SingleBinary에서는 memberlist 의존 제거
     memberlist:
       join_members: []
 
-    # 캐시 비활성화
     query_range:
       cache_results: false
 
@@ -88,7 +86,6 @@ singleBinary:
     storageClass: nfs-core
   resources: {}
 
-# ✅ IMPORTANT: SimpleScalable targets MUST be zero (차트 validate.yaml 충돌 방지)
 backend:
   replicas: 0
 read:
@@ -96,7 +93,6 @@ read:
 write:
   replicas: 0
 
-# ✅ memcached components OFF
 memcached:
   enabled: false
 memcachedChunks:
@@ -110,13 +106,11 @@ memcachedIndexWrites:
 memcachedResults:
   enabled: false
 
-# ✅ cache subcharts OFF
 chunksCache:
   enabled: false
 resultsCache:
   enabled: false
 
-# ✅ 제출/유지보수 단순화: 불필요 구성 OFF
 lokiCanary:
   enabled: false
 

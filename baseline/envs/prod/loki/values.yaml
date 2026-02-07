@@ -86,7 +86,6 @@ singleBinary:
     storageClass: nfs-core
   resources: {}
 
-# ✅ validate 충돌 방지
 backend:
   replicas: 0
 read:
@@ -112,7 +111,6 @@ chunksCache:
 resultsCache:
   enabled: false
 
-# ✅ 제출/유지보수 단순화
 lokiCanary:
   enabled: false
 
