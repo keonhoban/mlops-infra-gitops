@@ -111,8 +111,9 @@ chunksCache:
 resultsCache:
   enabled: false
 
+# ✅ validate.yaml 통과 필수
 lokiCanary:
-  enabled: false
+  enabled: true
 
 gateway:
   enabled: false

@@ -86,6 +86,7 @@ singleBinary:
     storageClass: nfs-core
   resources: {}
 
+# SingleBinary만 사용하므로 scalable targets 0
 backend:
   replicas: 0
 read:
@@ -93,6 +94,7 @@ read:
 write:
   replicas: 0
 
+# 캐시/멤캐시 전부 OFF
 memcached:
   enabled: false
 memcachedChunks:
@@ -111,9 +113,11 @@ chunksCache:
 resultsCache:
   enabled: false
 
+# ✅ Loki chart validate.yaml 통과 필수
 lokiCanary:
-  enabled: false
+  enabled: true
 
+# (선택) gateway는 제출용에서 굳이 필요없으면 OFF
 gateway:
   enabled: false
 

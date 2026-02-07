@@ -17,10 +17,6 @@ spec:
                   project: prod
           - list:
               elements:
-                - app: minio
-                  chart: minio
-                  repoURL: oci://registry-1.docker.io/bitnamicharts
-                  version: 17.0.21
                 - app: loki
                   chart: loki
                   repoURL: https://grafana.github.io/helm-charts
