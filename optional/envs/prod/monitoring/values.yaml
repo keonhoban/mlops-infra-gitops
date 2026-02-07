@@ -1,0 +1,152 @@
+global:
+  imageRegistry: ""
+
+grafana:
+  image:
+    repository: grafana/grafana
+    tag: "11.2.2-security-01"
+  sidecar:
+    image:
+      repository: kiwigrid/k8s-sidecar
+      tag: "1.28.0"
+  admin:
+    existingSecret: grafana-admin-secret-prod
+    userKey: admin-user
+    passwordKey: admin-password
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana-prod.local
+    path: /
+    pathType: Prefix
+    tls:
+      - hosts:
+          - grafana-prod.local
+        secretName: grafana-tls
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: nfs-monitoring
+    size: 10Gi
+
+alertmanager:
+  alertmanagerSpec:
+    configSecret: alertmanager-config-prod
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: nfs-monitoring
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - alert-prod.local
+    path: /
+    pathType: Prefix
+    tls:
+      - hosts:
+          - alert-prod.local
+        secretName: alertmanager-tls
+
+kubelet:
+  service:
+    labels:
+      stack: prod
+  serviceMonitor:
+    namespaceSelector:
+      matchNames: [kube-system]
+    selector:
+      matchLabels:
+        stack: prod
+    metricRelabelings:
+      - action: keep
+        sourceLabels: [namespace]
+        regex: '.*-prod|monitoring-prod|kube-system'
+    cAdvisorMetricRelabelings:
+      - action: keep
+        sourceLabels: [namespace]
+        regex: '.*-prod|monitoring-prod|kube-system'
+
+kube-state-metrics:
+  prometheus:
+    monitor:
+      enabled: true
+      additionalLabels:
+        release: monitoring-prod
+      metricRelabelings:
+        - action: keep
+          sourceLabels: [namespace]
+          regex: '.*-prod|monitoring-prod|kube-system'
+
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus-prod.local
+    path: /
+    pathType: Prefix
+    tls:
+      - hosts:
+          - prometheus-prod.local
+        secretName: prometheus-tls
+
+  prometheusSpec:
+    externalUrl: "https://prometheus-prod.local"
+
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+
+    serviceMonitorSelector:
+      matchLabels:
+        release: monitoring-prod
+    podMonitorSelector:
+      matchLabels:
+        release: monitoring-prod
+    ruleSelector:
+      matchLabels:
+        release: monitoring-prod
+
+    serviceMonitorNamespaceSelector: {}
+    podMonitorNamespaceSelector: {}
+    ruleNamespaceSelector: {}
+
+    routePrefix: "/"
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+
+    retention: 15d
+    retentionSize: 30GiB
+
+kubeEtcd:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+coreDns:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: true
+  hostNetwork: false
+  hostPID: false
+  service:
+    hostPort: false
+    type: ClusterIP
+    port: 9100
+    targetPort: 9100

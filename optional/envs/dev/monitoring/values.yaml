@@ -1,0 +1,158 @@
+global:
+  imageRegistry: ""
+
+grafana:
+  image:
+    repository: grafana/grafana
+    tag: "11.2.2-security-01"
+  sidecar:
+    image:
+      repository: kiwigrid/k8s-sidecar
+      tag: "1.28.0"
+  admin:
+    existingSecret: grafana-admin-secret-dev
+    userKey: admin-user
+    passwordKey: admin-password
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana-dev.local
+    path: /
+    pathType: Prefix
+    tls:
+      - hosts:
+          - grafana-dev.local
+        secretName: grafana-tls
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: nfs-monitoring
+    size: 10Gi
+
+alertmanager:
+  alertmanagerSpec:
+    configSecret: alertmanager-config-dev
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: nfs-monitoring
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - alert-dev.local
+    path: /
+    pathType: Prefix
+    tls:
+      - hosts:
+          - alert-dev.local
+        secretName: alertmanager-tls
+
+# ✅ 중복 타깃 방지: kubelet Service에 stack 라벨 부여 + ServiceMonitor가 해당 라벨만 매칭
+kubelet:
+  service:
+    labels:
+      stack: dev
+  serviceMonitor:
+    namespaceSelector:
+      matchNames: [kube-system]
+    selector:
+      matchLabels:
+        stack: dev
+    metricRelabelings:
+      - action: keep
+        sourceLabels: [namespace]
+        regex: '.*-dev|monitoring-dev|kube-system'
+    cAdvisorMetricRelabelings:
+      - action: keep
+        sourceLabels: [namespace]
+        regex: '.*-dev|monitoring-dev|kube-system'
+
+kube-state-metrics:
+  prometheus:
+    monitor:
+      enabled: true
+      additionalLabels:
+        release: monitoring-dev
+      metricRelabelings:
+        - action: keep
+          sourceLabels: [namespace]
+          regex: '.*-dev|monitoring-dev|kube-system'
+
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus-dev.local
+    path: /
+    pathType: Prefix
+    tls:
+      - hosts:
+          - prometheus-dev.local
+        secretName: prometheus-tls
+
+  prometheusSpec:
+    externalUrl: "https://prometheus-dev.local"
+
+    # 오퍼레이터 기본값과 충돌 피하기
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+
+    # 라벨 기반으로만 선택
+    serviceMonitorSelector:
+      matchLabels:
+        release: monitoring-dev
+    podMonitorSelector:
+      matchLabels:
+        release: monitoring-dev
+    ruleSelector:
+      matchLabels:
+        release: monitoring-dev
+
+    # 네임스페이스 제한은 빈 객체로(오퍼레이터와 동일 표현)
+    serviceMonitorNamespaceSelector: {}
+    podMonitorNamespaceSelector: {}
+    ruleNamespaceSelector: {}
+
+    # 오퍼레이터가 넣는 기본값을 명시해 드리프트 방지
+    routePrefix: "/"
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+
+    retention: 15d
+    retentionSize: 30GiB
+
+# kube-system 일부 컴포넌트 비활성화
+kubeEtcd:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+coreDns:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: true
+  hostNetwork: false
+  hostPID: false
+  service:
+    hostPort: false
+    type: ClusterIP
+    port: 9100
+    targetPort: 9100
