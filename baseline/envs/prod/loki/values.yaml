@@ -29,7 +29,7 @@ loki:
       compactor_grpc_address: loki-prod.baseline-prod.svc.cluster.local:9095
       storage:
         s3:
-          endpoint: http://minio.baseline-prod.svc.cluster.local:9000
+          endpoint: http://minio-prod.baseline-prod.svc.cluster.local:9000
           bucketnames: loki-chunks
           access_key_id: minioadmin
           secret_access_key: minioadmin
@@ -67,7 +67,7 @@ loki:
       storage:
         type: s3
         s3:
-          endpoint: http://minio.baseline-prod.svc.cluster.local:9000
+          endpoint: http://minio-prod.baseline-prod.svc.cluster.local:9000
           bucketnames: loki-ruler
           access_key_id: minioadmin
           secret_access_key: minioadmin
