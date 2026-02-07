@@ -10,8 +10,6 @@ mkdir -p "$PROOF_DIR"
 ROOT_OPT_APP_NAME="${ROOT_OPT_APP_NAME:-root-optional}"
 
 # ✅ Optional 경계 네임스페이스: "옵셔널이 켜졌을 때만 존재해야 하는 ns"만 포함
-# - observability/monitoring 은 optional 전용
-# - feature-store-dev/prod 는 (Feast만 optional)인 경우 core에서 계속 쓸 수 있으므로 기본적으로 유지
 OPTIONAL_NAMESPACES=(
   "baseline-dev" "baseline-prod"
   "monitoring-dev" "monitoring-prod"
@@ -21,7 +19,6 @@ OPTIONAL_NAMESPACES=(
 run() {
   local name="$1"; shift
   log "RUN: $name"
-  # command 실패해도 스크립트 전체가 죽지 않게 해야하는 구간은 호출부에서 "|| true" 처리
   "$@" | tee "$PROOF_DIR/$name.txt"
 }
 
@@ -36,7 +33,6 @@ log "[OFF] detach root-optional (stop managing optional/apps)"
 run "10_delete_root_optional" kubectl -n argocd delete application "$ROOT_OPT_APP_NAME" --ignore-not-found=true || true
 
 # ---- 2) Delete Optional (AppSet -> App) by label ----
-# ✅ 타이밍 이슈 방지: AppSet이 자식 App을 다시 만들 수 있으므로 "AppSet 먼저" 삭제
 log "[OFF] delete optional ArgoCD ApplicationSets by label (best-effort)"
 run "20_delete_optional_appsets_by_label" kubectl -n argocd delete applicationset -l scope=optional --ignore-not-found=true || true
 
@@ -68,11 +64,11 @@ run "90_after_argocd_apps"    kubectl -n argocd get applications.argoproj.io -o 
 run "90_after_argocd_appsets" kubectl -n argocd get applicationsets.argoproj.io -o wide || true
 run "90_optional_apps_remaining_by_label"    kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
 run "90_optional_appsets_remaining_by_label" kubectl -n argocd get applicationsets.argoproj.io -l scope=optional -o wide || true
-run "90_optional_namespaces_remaining" kubectl get ns | egrep 'monitoring-|observability-' || true
+run "90_optional_namespaces_remaining" kubectl get ns | egrep 'baseline-|monitoring-|observability-' || true
 
 # (선택) 사람 눈으로 바로 확인 가능한 grep 증거
 run "95_grep_optional_left" kubectl -n argocd get applications,applicationsets \
-  | egrep 'monitoring|loki|promtail|feast|optional' || true
+  | egrep 'baseline|minio|loki|alloy|monitoring|observability|promtail|feast|optional' || true
 
 log "PROOF_DIR=$PROOF_DIR"
 

@@ -1,6 +1,5 @@
 deploymentMode: SingleBinary
 
-# --- Loki core config ---
 loki:
   auth_enabled: false
 
@@ -26,7 +25,6 @@ loki:
           insecure: true
           s3forcepathstyle: true
 
-    # --- Retention (정석) ---
     compactor:
       retention_enabled: true
       delete_request_store: s3
@@ -43,11 +41,11 @@ loki:
       max_cache_freshness_per_query: 10m
       volume_enabled: true
 
-    # --- SingleBinary에서는 memberlist 의존 제거 ---
+    # SingleBinary에서는 memberlist 의존 제거
     memberlist:
       join_members: []
 
-    # --- 캐시 비활성화 ---
+    # 캐시 비활성화
     query_range:
       cache_results: false
 
@@ -82,7 +80,6 @@ loki:
   runtimeConfig:
     enabled: true
 
-# --- ✅ SingleBinary only ---
 singleBinary:
   replicas: 1
   persistence:
@@ -91,8 +88,7 @@ singleBinary:
     storageClass: nfs-core
   resources: {}
 
-# --- ✅ IMPORTANT: SimpleScalable targets MUST be zero ---
-# (차트 validate.yaml 충돌 방지)
+# ✅ IMPORTANT: SimpleScalable targets MUST be zero (차트 validate.yaml 충돌 방지)
 backend:
   replicas: 0
 read:
@@ -100,7 +96,7 @@ read:
 write:
   replicas: 0
 
-# --- ✅ memcached components OFF ---
+# ✅ memcached components OFF
 memcached:
   enabled: false
 memcachedChunks:
@@ -114,33 +110,16 @@ memcachedIndexWrites:
 memcachedResults:
   enabled: false
 
-# --- ✅ cache subcharts OFF (있어도 끈다) ---
+# ✅ cache subcharts OFF
 chunksCache:
   enabled: false
 resultsCache:
   enabled: false
 
-# --- optional components ---
+# ✅ 제출/유지보수 단순화: 불필요 구성 OFF
 lokiCanary:
-  enabled: true
+  enabled: false
 
 gateway:
-  enabled: true
-
-# --- hard-stop: validate 충돌 방지 (SingleBinary만 사용) ---
-read:
-  replicas: 0
-write:
-  replicas: 0
-backend:
-  replicas: 0
-
-# 혹시 차트가 loki.* 아래 값을 참조하는 경우까지 커버
-loki:
-  read:
-    replicas: 0
-  write:
-    replicas: 0
-  backend:
-    replicas: 0
+  enabled: false
 

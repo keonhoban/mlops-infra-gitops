@@ -112,25 +112,10 @@ chunksCache:
 resultsCache:
   enabled: false
 
+# ✅ 제출/유지보수 단순화
 lokiCanary:
-  enabled: true
+  enabled: false
 
 gateway:
-  enabled: true
-
-# --- hard-stop: validate 충돌 방지 (SingleBinary만 사용) ---
-read:
-  replicas: 0
-write:
-  replicas: 0
-backend:
-  replicas: 0
-
-loki:
-  read:
-    replicas: 0
-  write:
-    replicas: 0
-  backend:
-    replicas: 0
+  enabled: false
 

@@ -39,7 +39,7 @@ spec:
       labels:
         env: "{{env}}"
         layer: baseline
-        scope: optional     # ✅ 토글 스크립트가 잡을 라벨
+        scope: optional
     spec:
       project: "{{project}}"
       destination:
