@@ -21,3 +21,7 @@ service:
 console:
   enabled: false
 
+global:
+  security:
+    allowInsecureImages: true
+
