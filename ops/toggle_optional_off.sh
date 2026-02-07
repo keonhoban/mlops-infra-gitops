@@ -13,6 +13,7 @@ ROOT_OPT_APP_NAME="${ROOT_OPT_APP_NAME:-root-optional}"
 # - observability/monitoring 은 optional 전용
 # - feature-store-dev/prod 는 (Feast만 optional)인 경우 core에서 계속 쓸 수 있으므로 기본적으로 유지
 OPTIONAL_NAMESPACES=(
+  "baseline-dev" "baseline-prod"
   "monitoring-dev" "monitoring-prod"
   "observability-dev" "observability-prod"
 )

@@ -1,8 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: mlops-baseline
+  name: optional-baseline
   namespace: argocd
+  labels:
+    scope: optional
 spec:
   generators:
     - matrix:
@@ -15,17 +17,20 @@ spec:
                   project: prod
           - list:
               elements:
+                # ✅ MinIO: OCI로 전환 (helm pull invalid_reference 방지)
                 - app: minio
                   chart: minio
-                  chartRepo: https://charts.bitnami.com/bitnami
+                  repoURL: oci://registry-1.docker.io/bitnamicharts
                   version: 17.0.21
+
                 - app: loki
                   chart: loki
-                  chartRepo: https://grafana.github.io/helm-charts
+                  repoURL: https://grafana.github.io/helm-charts
                   version: 6.52.0
+
                 - app: alloy
                   chart: alloy
-                  chartRepo: https://grafana.github.io/helm-charts
+                  repoURL: https://grafana.github.io/helm-charts
                   version: 1.5.3
 
   template:
@@ -34,6 +39,7 @@ spec:
       labels:
         env: "{{env}}"
         layer: baseline
+        scope: optional     # ✅ 토글 스크립트가 잡을 라벨
     spec:
       project: "{{project}}"
       destination:
@@ -41,7 +47,7 @@ spec:
         namespace: "baseline-{{env}}"
 
       sources:
-        - repoURL: "{{chartRepo}}"
+        - repoURL: "{{repoURL}}"
           chart: "{{chart}}"
           targetRevision: "{{version}}"
           helm:

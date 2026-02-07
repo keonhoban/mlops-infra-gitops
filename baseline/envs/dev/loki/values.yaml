@@ -1,18 +1,9 @@
-# baseline/envs/dev/loki/values.yaml
-# Loki Helm chart: grafana/loki (예: 6.52.0)
-# Loki image: 3.6.4 기준
-# 목표:
-# - SingleBinary (1 replica)
-# - MinIO(S3) object_store
-# - Retention ON (정석: compactor.delete_request_store + retention_enabled + retention_period)
-# - memcached 캐시 / memberlist 의존 제거 (DNS/SRV 이슈 방지)
-
 deploymentMode: SingleBinary
 
+# --- Loki core config ---
 loki:
   auth_enabled: false
 
-  # ✅ Loki 설정을 values에서 직접 고정 (ConfigMap 생성됨)
   config: |
     auth_enabled: false
 
@@ -35,7 +26,7 @@ loki:
           insecure: true
           s3forcepathstyle: true
 
-    # ✅ Retention 정석
+    # --- Retention (정석) ---
     compactor:
       retention_enabled: true
       delete_request_store: s3
@@ -52,17 +43,16 @@ loki:
       max_cache_freshness_per_query: 10m
       volume_enabled: true
 
-    # ✅ SingleBinary에서는 memberlist join을 비워 의존 제거
+    # --- SingleBinary에서는 memberlist 의존 제거 ---
     memberlist:
       join_members: []
 
-    # ✅ memcached 캐시 사용 안 함 (SRV DNS 이슈 제거)
+    # --- 캐시 비활성화 ---
     query_range:
       cache_results: false
 
     storage_config:
       tsdb_shipper:
-        # index_gateway_client.server_address는 SingleBinary에선 비워도 됨
         index_gateway_client:
           server_address: ""
 
@@ -76,7 +66,6 @@ loki:
             prefix: loki_index_
             period: 24h
 
-    # 룰 저장도 S3로 (선택: 룰 안 쓰면 이 블록 삭제 가능)
     ruler:
       storage:
         type: s3
@@ -90,21 +79,28 @@ loki:
       wal:
         dir: /var/loki/ruler-wal
 
-  # (선택) runtime-config 사용 중이면 유지
   runtimeConfig:
     enabled: true
 
+# --- ✅ SingleBinary only ---
 singleBinary:
   replicas: 1
   persistence:
     enabled: true
     size: 20Gi
     storageClass: nfs-core
-
-  # 리소스는 상황에 맞게 조절
   resources: {}
 
-# ✅ 캐시(memcached) 컴포넌트 전부 비활성화
+# --- ✅ IMPORTANT: SimpleScalable targets MUST be zero ---
+# (차트 validate.yaml 충돌 방지)
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0
+
+# --- ✅ memcached components OFF ---
 memcached:
   enabled: false
 memcachedChunks:
@@ -118,17 +114,33 @@ memcachedIndexWrites:
 memcachedResults:
   enabled: false
 
-# ✅ Canary는 유지해도 되고, 꺼도 됩니다 (꺼도 무방)
-lokiCanary:
-  enabled: true
-
-# ✅ Gateway는 사용중이면 유지 (현재 gateway deployment가 있음)
-gateway:
-  enabled: true
-
-# ✅ chunks/results cache statefulset을 만들지 않게 (차트가 별도 토글을 갖는 경우가 있어 같이 둠)
+# --- ✅ cache subcharts OFF (있어도 끈다) ---
 chunksCache:
   enabled: false
 resultsCache:
   enabled: false
+
+# --- optional components ---
+lokiCanary:
+  enabled: true
+
+gateway:
+  enabled: true
+
+# --- hard-stop: validate 충돌 방지 (SingleBinary만 사용) ---
+read:
+  replicas: 0
+write:
+  replicas: 0
+backend:
+  replicas: 0
+
+# 혹시 차트가 loki.* 아래 값을 참조하는 경우까지 커버
+loki:
+  read:
+    replicas: 0
+  write:
+    replicas: 0
+  backend:
+    replicas: 0
 
