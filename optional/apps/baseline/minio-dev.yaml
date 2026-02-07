@@ -9,17 +9,21 @@ metadata:
     layer: baseline
 spec:
   project: dev
+
   destination:
     server: https://kubernetes.default.svc
     namespace: baseline-dev
 
   sources:
+    # ✅ OCI Helm (Bitnami charts)
     - repoURL: oci://registry-1.docker.io/bitnamicharts
       chart: minio
       targetRevision: 17.0.21
       helm:
         valueFiles:
           - "$values/baseline/envs/dev/minio/values.yaml"
+
+    # values repo
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
       targetRevision: main
       ref: values
