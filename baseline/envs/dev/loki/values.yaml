@@ -3,6 +3,17 @@ deploymentMode: SingleBinary
 loki:
   auth_enabled: false
 
+  # ✅ chart validate가 요구하는 schema_config를 values 구조로 제공
+  schemaConfig:
+    configs:
+      - from: "2026-01-01"
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+
   config: |
     auth_enabled: false
 
@@ -52,16 +63,6 @@ loki:
         index_gateway_client:
           server_address: ""
 
-    schema_config:
-      configs:
-        - from: "2026-01-01"
-          store: tsdb
-          object_store: s3
-          schema: v13
-          index:
-            prefix: loki_index_
-            period: 24h
-
     ruler:
       storage:
         type: s3
@@ -86,7 +87,6 @@ singleBinary:
     storageClass: nfs-core
   resources: {}
 
-# SingleBinary만 사용하므로 scalable targets 0
 backend:
   replicas: 0
 read:
@@ -94,7 +94,6 @@ read:
 write:
   replicas: 0
 
-# 캐시/멤캐시 전부 OFF
 memcached:
   enabled: false
 memcachedChunks:
@@ -113,11 +112,9 @@ chunksCache:
 resultsCache:
   enabled: false
 
-# ✅ Loki chart validate.yaml 통과 필수
 lokiCanary:
   enabled: true
 
-# (선택) gateway는 제출용에서 굳이 필요없으면 OFF
 gateway:
   enabled: false
 
