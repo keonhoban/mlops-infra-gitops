@@ -15,9 +15,7 @@ spec:
     namespace: baseline-prod
 
   sources:
-    # ✅ OCI Helm (Bitnami charts)
-    - repoURL: oci://registry-1.docker.io/bitnamicharts
-      chart: minio
+    - repoURL: oci://registry-1.docker.io/bitnamicharts/minio
       targetRevision: 17.0.21
       helm:
         valueFiles:
