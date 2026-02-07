@@ -3,7 +3,7 @@ deploymentMode: SingleBinary
 loki:
   auth_enabled: false
 
-  # ✅ 차트 validate 통과용 (필수)
+  # ✅ chart validate 통과용 (필수)
   schemaConfig:
     configs:
       - from: "2024-01-01"
@@ -14,6 +14,8 @@ loki:
           prefix: loki_index_
           period: 24h
 
+  # ✅ 런타임 설정 (ConfigMap: loki/config.yaml로 들어감)
+  #    여기에도 schema_config가 반드시 있어야 Loki가 기동합니다.
   config: |
     auth_enabled: false
 
@@ -35,6 +37,17 @@ loki:
           secret_access_key: minioadmin
           insecure: true
           s3forcepathstyle: true
+
+    # ✅ 런타임에서 Loki가 읽는 schema_config (필수)
+    schema_config:
+      configs:
+        - from: "2024-01-01"
+          store: tsdb
+          object_store: s3
+          schema: v13
+          index:
+            prefix: loki_index_
+            period: 24h
 
     compactor:
       retention_enabled: true
