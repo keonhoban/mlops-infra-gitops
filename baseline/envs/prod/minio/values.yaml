@@ -12,3 +12,6 @@ persistence:
 service:
   type: ClusterIP
 
+console:
+  enabled: false
+
