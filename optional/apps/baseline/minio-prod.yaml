@@ -9,13 +9,17 @@ spec:
     server: https://kubernetes.default.svc
     namespace: baseline-prod
 
-  source:
-    repoURL: https://github.com/keonhoban/mlops-infra-gitops
-    targetRevision: main
-    path: optional/charts/minio
-    helm:
-      valueFiles:
-        - baseline/envs/prod/minio/values.yaml
+  sources:
+    - repoURL: https://github.com/keonhoban/mlops-infra-gitops
+      targetRevision: main
+      path: optional/charts/minio
+      helm:
+        valueFiles:
+          - $values/baseline/envs/prod/minio/values.yaml
+
+    - repoURL: https://github.com/keonhoban/mlops-infra-gitops
+      targetRevision: main
+      ref: values
 
   syncPolicy:
     automated:
