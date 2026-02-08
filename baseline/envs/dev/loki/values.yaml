@@ -92,9 +92,6 @@ loki:
       wal:
         dir: /var/loki/ruler-wal
 
-  runtimeConfig:
-    enabled: true
-
 singleBinary:
   replicas: 1
 
