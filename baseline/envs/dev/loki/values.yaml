@@ -3,6 +3,36 @@ deploymentMode: SingleBinary
 loki:
   auth_enabled: false
 
+  # ✅ Probes (chart 공통 적용 위치)
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: http-metrics
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 12
+    successThreshold: 1
+
+  livenessProbe:
+    httpGet:
+      path: /ready
+      port: http-metrics
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 12
+
+  # (선택이지만 강추) 초기 기동이 느리거나 TSDB/Compactor 준비가 늦을 때 안정화
+  startupProbe:
+    httpGet:
+      path: /ready
+      port: http-metrics
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+
   # ✅ Chart validate 통과용 (필수)
   schemaConfig:
     configs:
@@ -101,17 +131,13 @@ loki:
 singleBinary:
   replicas: 1
 
-  readinessProbe:
-    initialDelaySeconds: 60
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 12
-    successThreshold: 1
-    
+  # ✅ (중요) probe는 여기(singleBinary)가 아니라 loki.*Probe에 둡니다.
+
   persistence:
     enabled: true
     size: 20Gi
     storageClass: nfs-core
+
   resources: {}
 
 backend:
