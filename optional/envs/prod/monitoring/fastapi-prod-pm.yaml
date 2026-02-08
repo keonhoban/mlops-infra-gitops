@@ -3,7 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: fastapi-prod-pm
-  namespace: observability-prod
+  namespace: monitoring-prod
   labels: { release: monitoring-prod }
 spec:
   namespaceSelector:
