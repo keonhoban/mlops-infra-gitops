@@ -100,6 +100,14 @@ loki:
 
 singleBinary:
   replicas: 1
+
+  readinessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 12
+    successThreshold: 1
+    
   persistence:
     enabled: true
     size: 20Gi
