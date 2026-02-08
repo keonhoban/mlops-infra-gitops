@@ -67,11 +67,11 @@ kubelet:
     metricRelabelings:
       - action: keep
         sourceLabels: [namespace]
-        regex: '.*-dev|monitoring-dev|kube-system'
+        regex: '.*-dev|observability-dev|kube-system'
     cAdvisorMetricRelabelings:
       - action: keep
         sourceLabels: [namespace]
-        regex: '.*-dev|monitoring-dev|kube-system'
+        regex: '.*-dev|observability-dev|kube-system'
 
 kube-state-metrics:
   prometheus:
@@ -82,7 +82,7 @@ kube-state-metrics:
       metricRelabelings:
         - action: keep
           sourceLabels: [namespace]
-          regex: '.*-dev|monitoring-dev|kube-system'
+          regex: '.*-dev|observability-dev|kube-system'
 
 prometheus:
   ingress:

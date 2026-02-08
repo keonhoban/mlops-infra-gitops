@@ -23,7 +23,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: observability-prod
+    namespace: monitoring-prod
 
   syncPolicy:
     automated:
