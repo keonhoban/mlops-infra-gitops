@@ -3,7 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: fastapi-dev-sm
-  namespace: observability-dev
+  namespace: monitoring-dev
   labels:
     release: monitoring-dev
 spec:
