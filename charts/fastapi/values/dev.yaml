@@ -16,7 +16,7 @@ ingresses:
       enabled: true
       secretName: fastapi-dev-tls
       issuerName: selfsigned-issuer
-    excludeMetricks: true
+    excludeMetrics: true
 env:
   MLFLOW_TRACKING_URI: "http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000"
   MODEL_NAME: "best_model"
