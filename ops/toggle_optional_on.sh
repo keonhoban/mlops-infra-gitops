@@ -9,7 +9,7 @@ mkdir -p "$PROOF_DIR"
 
 ROOT_OPT_MANIFEST_PATH="${ROOT_OPT_MANIFEST_PATH:-bootstrap/root-optional.yaml}"
 
-WAIT="${WAIT:-false}"
+WAIT="${WAIT:-true}"
 WAIT_TIMEOUT_SEC="${WAIT_TIMEOUT_SEC:-900}"
 WAIT_INTERVAL_SEC="${WAIT_INTERVAL_SEC:-5}"
 
