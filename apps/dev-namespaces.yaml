@@ -3,8 +3,13 @@ kind: Application
 metadata:
   name: dev-namespaces
   namespace: argocd
+  labels:
+    stack: core
+    scope: core
+    layer: namespaces
+    env: dev
   annotations:
-    argocd.argoproj.io/sync-wave: "-1"
+    argocd.argoproj.io/sync-wave: "-15"
 spec:
   project: dev
   destination:
@@ -18,6 +23,11 @@ spec:
     automated:
       prune: true
       selfHeal: true
+      allowEmpty: false
     syncOptions:
       - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - ServerSideApply=true
 
