@@ -22,18 +22,22 @@ spec:
                   path: charts/mlflow
                   ns: mlflow-{{env}}
                   valuesFile: values/{{env}}.yaml
+                  wave: "10"
                 - app: airflow
                   path: charts/airflow
                   ns: airflow-{{env}}
                   valuesFile: values/{{env}}.yaml
-                - app: fastapi
-                  path: charts/fastapi
-                  ns: fastapi-{{env}}
-                  valuesFile: values/{{env}}.yaml
+                  wave: "20"
                 - app: triton
                   path: charts/triton
                   ns: triton-{{env}}
                   valuesFile: values/{{env}}.yaml
+                  wave: "30"
+                - app: fastapi
+                  path: charts/fastapi
+                  ns: fastapi-{{env}}
+                  valuesFile: values/{{env}}.yaml
+                  wave: "40"
 
   template:
     metadata:
@@ -45,7 +49,7 @@ spec:
         app: "{{app}}"
         layer: core
       annotations:
-        argocd.argoproj.io/sync-wave: "1"
+        argocd.argoproj.io/sync-wave: "{{wave}}"
     spec:
       project: "{{project}}"
       destination:

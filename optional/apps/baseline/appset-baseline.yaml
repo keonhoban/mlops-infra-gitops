@@ -5,6 +5,8 @@ metadata:
   namespace: argocd
   labels:
     stack: optional
+    scope: optional
+    layer: baseline
 spec:
   generators:
     - matrix:
@@ -22,10 +24,12 @@ spec:
                   chart: loki
                   chartRepo: https://grafana.github.io/helm-charts
                   version: 6.52.0
+                  wave: "60"
                 - app: alloy
                   chart: alloy
                   chartRepo: https://grafana.github.io/helm-charts
                   version: 1.5.3
+                  wave: "70"
 
   template:
     metadata:
@@ -34,7 +38,10 @@ spec:
         stack: optional
         scope: optional
         env: "{{env}}"
+        app: "{{app}}"
         layer: baseline
+      annotations:
+        argocd.argoproj.io/sync-wave: "{{wave}}"
 
     spec:
       project: "{{project}}"

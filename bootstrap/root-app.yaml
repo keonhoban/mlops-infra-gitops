@@ -3,6 +3,12 @@ kind: Application
 metadata:
   name: root-apps
   namespace: argocd
+  labels:
+    stack: core
+    scope: core
+    layer: root
+  annotations:
+    argocd.argoproj.io/sync-wave: "-20"
 spec:
   project: default
   source:
@@ -23,4 +29,5 @@ spec:
       - ApplyOutOfSyncOnly=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true
+      - ServerSideApply=true
 
