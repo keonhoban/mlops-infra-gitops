@@ -1,3 +1,4 @@
 ab_test_result.log
 ab_test_result_*.log
 capture_test.sh
+docs/proof/
