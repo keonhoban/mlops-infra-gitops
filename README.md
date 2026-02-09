@@ -118,15 +118,15 @@ GitOps 기준으로 언제든지 활성화 / 비활성화 가능합니다.
 
 ### dev / prod 환경 분리 확인
 
-```
-kubectl get ns | egrep"airflow-|mlflow-|fastapi-|triton-"
+```bash
+kubectl get ns | egrep "airflow-|mlflow-|fastapi-|triton-"
 ```
 
 ---
 
 ### Feature Store Contract GitOps 관리 확인
 
-```
+```bash
 kubectl get cm -A -l mlops.keonho.io/env=dev
 kubectl get cm -A -l mlops.keonho.io/env=prod
 ```
@@ -137,15 +137,15 @@ kubectl get cm -A -l mlops.keonho.io/env=prod
 
 아래 <scheduler-pod> 는 실제 scheduler Pod 이름으로 치환합니다.
 
-```
-kubectl -n airflow-devexec <scheduler-pod> --ls /opt/airflow/feature-store
+```bash
+kubectl -n airflow-dev exec <scheduler-pod> -- ls /opt/airflow/feature-store
 ```
 
 ---
 
 ### GitOps Sync 상태 확인
 
-```
+```bash
 argocd app list
 ```
 
@@ -204,7 +204,7 @@ NFS
 
 CI 정의 파일:
 
-```
+```bash
 .github/workflows/ci-helm-validate.yaml
 ```
 
