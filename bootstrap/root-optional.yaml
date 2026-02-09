@@ -5,6 +5,8 @@ metadata:
   namespace: argocd
   labels:
     stack: optional
+    scope: optional
+    layer: root
   annotations:
     argocd.argoproj.io/sync-wave: "-10"
 spec:

@@ -30,10 +30,12 @@ log "[OFF] detach root-optional (stop managing optional/apps)"
 run "10_delete_root_optional" kubectl -n argocd delete application "$ROOT_OPT_APP_NAME" --ignore-not-found=true || true
 
 log "[OFF] delete optional ArgoCD ApplicationSets by label (best-effort)"
-run "20_delete_optional_appsets_by_label" kubectl -n argocd delete applicationset -l scope=optional --ignore-not-found=true || true
+run "20_delete_optional_appsets_scope" kubectl -n argocd delete applicationset -l scope=optional --ignore-not-found=true || true
+run "20_delete_optional_appsets_stack" kubectl -n argocd delete applicationset -l stack=optional --ignore-not-found=true || true
 
 log "[OFF] delete optional ArgoCD Applications by label (best-effort)"
-run "21_delete_optional_apps_by_label" kubectl -n argocd delete application -l scope=optional --ignore-not-found=true || true
+run "21_delete_optional_apps_scope" kubectl -n argocd delete application -l scope=optional --ignore-not-found=true || true
+run "21_delete_optional_apps_stack" kubectl -n argocd delete application -l stack=optional --ignore-not-found=true || true
 
 log "[OFF] delete optional namespaces (core-only boundary)"
 run "30_delete_optional_namespaces" kubectl delete ns "${OPTIONAL_NAMESPACES[@]}" --ignore-not-found=true || true
@@ -55,8 +57,10 @@ done
 log "[OFF] proof"
 run "90_after_argocd_apps"    kubectl -n argocd get applications.argoproj.io -o wide || true
 run "90_after_argocd_appsets" kubectl -n argocd get applicationsets.argoproj.io -o wide || true
-run "90_optional_apps_remaining_by_label"    kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
-run "90_optional_appsets_remaining_by_label" kubectl -n argocd get applicationsets.argoproj.io -l scope=optional -o wide || true
+run "90_optional_apps_remaining_scope"    kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
+run "90_optional_appsets_remaining_scope" kubectl -n argocd get applicationsets.argoproj.io -l scope=optional -o wide || true
+run "90_optional_apps_remaining_stack"    kubectl -n argocd get applications.argoproj.io -l stack=optional -o wide || true
+run "90_optional_appsets_remaining_stack" kubectl -n argocd get applicationsets.argoproj.io -l stack=optional -o wide || true
 run "90_optional_namespaces_remaining" kubectl get ns | egrep 'baseline-|monitoring-|observability-' || true
 
 run "95_grep_optional_left" kubectl -n argocd get applications,applicationsets \

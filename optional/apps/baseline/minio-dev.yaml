@@ -7,22 +7,23 @@ metadata:
     stack: optional
     scope: optional
     env: dev
+    layer: baseline
+    app: minio
 spec:
   project: dev
+
   destination:
     server: https://kubernetes.default.svc
     namespace: baseline-dev
 
   sources:
-    # ✅ Chart는 git path로 (벤더링)
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
       targetRevision: main
       path: optional/charts/minio
       helm:
         valueFiles:
-          - $values/baseline/envs/dev/minio/values.yaml
+          - "$values/baseline/envs/dev/minio/values.yaml"
 
-    # ✅ values는 ref=values로
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
       targetRevision: main
       ref: values

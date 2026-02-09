@@ -7,8 +7,11 @@ metadata:
     stack: optional
     scope: optional
     env: prod
+    layer: baseline
+    app: minio
 spec:
   project: prod
+
   destination:
     server: https://kubernetes.default.svc
     namespace: baseline-prod
@@ -19,7 +22,7 @@ spec:
       path: optional/charts/minio
       helm:
         valueFiles:
-          - $values/baseline/envs/prod/minio/values.yaml
+          - "$values/baseline/envs/prod/minio/values.yaml"
 
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
       targetRevision: main
