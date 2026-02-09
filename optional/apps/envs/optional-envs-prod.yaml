@@ -4,7 +4,10 @@ metadata:
   name: optional-envs-prod
   namespace: argocd
   labels:
+    stack: optional
     scope: optional
+    layer: envs
+    app: envs
     env: prod
 spec:
   project: prod
@@ -21,4 +24,7 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PruneLast=true
+      - ServerSideApply=true
 

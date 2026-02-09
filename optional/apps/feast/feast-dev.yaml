@@ -4,7 +4,10 @@ metadata:
   name: feast-dev
   namespace: argocd
   labels:
+    stack: optional
     scope: optional
+    layer: feast
+    app: feast
     env: dev
 spec:
   project: dev
@@ -25,4 +28,7 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PruneLast=true
+      - ServerSideApply=true
 

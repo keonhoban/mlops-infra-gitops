@@ -6,6 +6,8 @@ metadata:
   labels:
     stack: optional
     scope: optional
+    layer: monitoring
+    app: monitoring
     env: dev
 spec:
   project: dev
