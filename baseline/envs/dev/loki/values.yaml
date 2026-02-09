@@ -43,7 +43,7 @@ loki:
           insecure: true
           s3forcepathstyle: true
 
-      # ✅ 핵심: consul 기본값 차단 (localhost:8500 방지)
+      # ✅ consul 기본값 차단 (localhost:8500 방지)
       ring:
         kvstore:
           store: inmemory
@@ -110,6 +110,12 @@ singleBinary:
     enabled: true
     size: 20Gi
     storageClass: local-path
+
+    # ✅ 핵심: optional 토글 OFF/Argo prune에도 PVC 보존
+    whenDeleted: Retain
+    whenScaled: Retain
+    enableStatefulSetAutoDeletePVC: false
+
   resources: {}
 
 backend:
