@@ -22,7 +22,7 @@ spec:
       path: optional/charts/minio
       helm:
         valueFiles:
-          - "$values/baseline/envs/dev/minio/values.yaml"
+          - "$values/optional/envs/dev/baseline/minio/values.yaml"
 
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
       targetRevision: main
