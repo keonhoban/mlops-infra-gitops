@@ -8,7 +8,7 @@ auth:
   rootUser: minioadmin
   rootPassword: minioadmin
 
-defaultBuckets: "loki"
+defaultBuckets: "loki-chunks,loki-ruler,loki-admin"
 
 persistence:
   enabled: true

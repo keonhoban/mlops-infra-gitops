@@ -45,7 +45,7 @@ loki:
       # ✅ 핵심: consul 기본값 차단 (localhost:8500 방지)
       ring:
         kvstore:
-          store: memberlist
+          store: inmemory
 
     schema_config:
       configs:
@@ -72,11 +72,6 @@ loki:
       split_queries_by_interval: 15m
       max_cache_freshness_per_query: 10m
       volume_enabled: true
-
-    # ✅ 핵심: memberlist 조인 주소 명시 (서비스 DNS)
-    memberlist:
-      join_members:
-        - loki-prod-memberlist.baseline-prod.svc.cluster.local
 
     query_range:
       cache_results: false
