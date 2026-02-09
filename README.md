@@ -23,7 +23,7 @@ E2E MLOps Core Platform입니다.
 
 이 프로젝트는
 
-**“ML 모델을 운영 가능한 시스템으로 만드는 데 필요한 최소 MLOps Core”**를
+“ML 모델을 운영 가능한 시스템으로 만드는 데 필요한 최소 MLOps Core”를
 
 GitOps 기반으로 자동화해 증명합니다.
 
@@ -97,54 +97,20 @@ GitOps 기준으로 언제든지 활성화 / 비활성화 가능합니다.
 
 ---
 
-## Repository Overview
+### Repository Overview
 
-- apps/
-    
-    GitOps 선언 계층 (무엇을 배포할지)
-    
-    ArgoCD ApplicationSet / AppProject 정의
-    
-- charts/
-    
-    Core 서비스 배포 방법 (어떻게 배포할지)
-    
-    Core Helm charts
-    
-    (airflow / mlflow / triton / fastapi)
-    
-- envs/
-    
-    환경별 공통 리소스 (dev/prod 차이)
-    
-    dev / prod 공통 운영 리소스
-    
-    (namespaces, certificates, sealed-secrets, feature-store contract 등)
-    
-- baseline/
-    
-    Optional에서 공통 재사용하는 운영 기본값
-    
-    Optional에서 공통으로 사용하는 baseline values
-    
-    (minio / loki / alloy 등)
-    
-- optional/
-    
-    Core 외 운영 성숙도 증명 레이어 (토글 가능)
-    
-    Monitoring / Logging / Feature Store 등 운영 확장 레이어
-    
-- ops/
-    
-    proof / toggle / rotate / seal / storage 관련 스크립트
-    
-- docs/
-    
-    runbook / proof / architecture 문서
-    
+| Directory | Purpose |
+| --- | --- |
+| apps/ | GitOps 선언 계층 (ArgoCD ApplicationSet / AppProject) |
+| charts/ | Core 서비스 Helm charts (airflow / mlflow / triton / fastapi) |
+| envs/ | dev / prod 공통 운영 리소스 (ns, certs, secrets, contracts) |
+| baseline/ | Optional 레이어 공통 baseline values |
+| optional/ | 운영 성숙도 확장 레이어 (Monitoring / Logging / Feature Store) |
+| ops/ | proof / toggle / rotate / seal 관련 운영 스크립트 |
+| docs/ | architecture / runbook / proof 문서 |
 
-외부 Airflow DAG repo는 gitSync 방식으로 주입됩니다.
+> Airflow DAG는 외부 repo에서 gitSync 방식으로 주입됩니다.
+> 
 
 ---
 
@@ -299,17 +265,3 @@ Optional 레이어는 **기능 나열이 아니라 운영 성숙도 증명**을 
 Core만으로도 E2E 자동화는 완결되며,
 
 Optional 레이어를 통해 실제 프로덕션 운영까지 고려했습니다.
-
----
-
-### 최종 코멘트
-
-이 README는
-
-**“이 프로젝트를 왜 만들었는지”**,
-
-**“어디까지 자동화되었는지”**,
-
-**“실제 운영을 고려했는지”**를
-
-말이 아니라 구조와 실행으로 증명하는 문서입니다.
