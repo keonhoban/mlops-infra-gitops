@@ -1,1 +1,0 @@
-applicationset.argoproj.io "mlops-baseline" deleted

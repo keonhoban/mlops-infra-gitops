@@ -1,2 +1,0 @@
-NAME            SYNC STATUS   HEALTH STATUS   REVISION   PROJECT
-root-optional                                            default

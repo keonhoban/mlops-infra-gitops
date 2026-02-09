@@ -1,4 +1,0 @@
-NAME                  AGE
-loki-env-matrix       102m
-mlops-core            2d9h
-promtail-env-matrix   102m
