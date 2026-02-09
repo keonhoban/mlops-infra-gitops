@@ -31,18 +31,6 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: observability-prod
-  labels: { env: prod, app: observability-prod, team: ml-platform }
----
-apiVersion: v1
-kind: Namespace
-metadata:
   name: storage-prod
   labels: { env: prod, app: storage-prod, team: ml-platform }
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: baseline-prod
-  labels: { env: prod, app: baseline-prod, team: ml-platform }
 

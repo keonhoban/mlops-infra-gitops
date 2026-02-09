@@ -1,0 +1,13 @@
+NAME              SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+airflow-dev       Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   dev
+airflow-prod      Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   prod
+dev-namespaces    Synced        Healthy         e08835410778d92ac9ca81f8f1fee2946e35631d   dev
+fastapi-dev       Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   dev
+fastapi-prod      Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   prod
+metallb-config    Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   default
+mlflow-dev        Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   dev
+mlflow-prod       Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   prod
+prod-namespaces   Synced        Healthy         e08835410778d92ac9ca81f8f1fee2946e35631d   prod
+root-apps         Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   default
+triton-dev        Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   dev
+triton-prod       Synced        Healthy         d2ff9193258e3b45e6606588ed5cf5a01d3f4526   prod
