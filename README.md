@@ -102,11 +102,12 @@ GitOps 기준으로 언제든지 활성화 / 비활성화 가능합니다.
 | Directory | Purpose |
 | --- | --- |
 | apps/ | GitOps 선언 계층 (ArgoCD ApplicationSet / AppProject) |
+| bootstrap/ | ArgoCD root-apps / root-optional 부트스트랩 |
 | charts/ | Core 서비스 Helm charts (airflow / mlflow / triton / fastapi) |
-| envs/ | dev / prod 공통 운영 리소스 (ns, certs, secrets, contracts) |
-| baseline/ | Optional 레이어 공통 baseline values |
-| optional/ | 운영 성숙도 확장 레이어 (Monitoring / Logging / Feature Store) |
-| ops/ | proof / toggle / rotate / seal 관련 운영 스크립트 |
+| envs/ | Core 운영 리소스 (ns, certs, secrets, contracts) |
+| optional/ | Optional 레이어 구성 (apps / charts / envs) |
+| optional/envs/ | Optional env별 values 및 운영 리소스 (baseline / monitoring 등) |
+| ops/ | proof / toggle / rotate / seal 운영 스크립트 |
 | docs/ | architecture / runbook / proof 문서 |
 
 > Airflow DAG는 외부 repo에서 gitSync 방식으로 주입됩니다.
