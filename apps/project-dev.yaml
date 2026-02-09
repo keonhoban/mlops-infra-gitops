@@ -3,11 +3,10 @@ kind: AppProject
 metadata:
   name: dev
   namespace: argocd
-  metadata:
-    labels:
-      scope: core
-      stack: core
-      layer: project
+  labels:
+    scope: core
+    stack: core
+    layer: project
 spec:
   description: Dev environment project
   sourceRepos:
