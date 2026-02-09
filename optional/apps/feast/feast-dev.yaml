@@ -11,14 +11,17 @@ metadata:
     env: dev
 spec:
   project: dev
-  source:
-    repoURL: https://github.com/keonhoban/mlops-infra-gitops
-    targetRevision: main
-    path: optional/charts/feast
-    helm:
-      valueFiles:
-        - values/base.yaml
-        - values/dev.yaml
+  sources:
+    - repoURL: https://github.com/keonhoban/mlops-infra-gitops
+      targetRevision: main
+      path: optional/charts/feast
+      helm:
+        valueFiles:
+          - values/base.yaml
+          - $values/optional/envs/dev/feast/values.yaml
+    - repoURL: https://github.com/keonhoban/mlops-infra-gitops
+      targetRevision: main
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: feature-store-dev
