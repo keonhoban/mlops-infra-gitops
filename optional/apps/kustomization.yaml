@@ -4,7 +4,6 @@ kind: Kustomization
 commonLabels:
   stack: optional
   scope: optional
-  layer: optional
 
 resources:
   - envs/optional-envs-dev.yaml

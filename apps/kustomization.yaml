@@ -4,7 +4,6 @@ kind: Kustomization
 commonLabels:
   stack: core
   scope: core
-  layer: root
 
 resources:
   # 1) ArgoCD Project
