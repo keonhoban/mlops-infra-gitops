@@ -18,7 +18,7 @@ ingresses:
       enabled: true
       secretName: fastapi-prod-tls
       issuerName: selfsigned-issuer
-      createCertificate: false
+      createCertificate: true
     excludeMetrics: true
 
 env:
