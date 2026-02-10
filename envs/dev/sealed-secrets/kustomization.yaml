@@ -5,4 +5,3 @@ resources:
   - airflow
   - fastapi
   - mlflow
-  - feature-store
