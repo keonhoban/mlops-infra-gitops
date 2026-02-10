@@ -3,10 +3,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-service
   labels:
-    app.kubernetes.io/name: fastapi
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/component: api
-    app.kubernetes.io/part-of: mlops
+{{- include "fastapi.commonLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -14,7 +11,5 @@ spec:
       port: {{ .Values.service.port }}
       targetPort: 8000
   selector:
-    app.kubernetes.io/name: fastapi
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/component: api
+{{- include "fastapi.selectorLabels" . | nindent 4 }}
 

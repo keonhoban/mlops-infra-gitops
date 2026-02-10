@@ -5,10 +5,7 @@ kind: Ingress
 metadata:
   name: {{ $.Release.Name }}-{{ $ing.name }}
   labels:
-    app.kubernetes.io/name: fastapi
-    app.kubernetes.io/instance: {{ $.Release.Name }}
-    app.kubernetes.io/component: api
-    app.kubernetes.io/part-of: mlops
+{{- include "fastapi.commonLabels" $ | nindent 4 }}
   annotations:
     nginx.ingress.kubernetes.io/whitelist-source-range: "{{ $ing.whitelist }}"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
