@@ -22,22 +22,18 @@ spec:
                 - app: mlflow
                   path: charts/mlflow
                   ns: mlflow-{{env}}
-                  valuesFile: values/{{env}}.yaml
                   wave: "10"
                 - app: airflow
                   path: charts/airflow
                   ns: airflow-{{env}}
-                  valuesFile: values/{{env}}.yaml
                   wave: "20"
                 - app: triton
                   path: charts/triton
                   ns: triton-{{env}}
-                  valuesFile: values/{{env}}.yaml
                   wave: "30"
                 - app: fastapi
                   path: charts/fastapi
                   ns: fastapi-{{env}}
-                  valuesFile: values/{{env}}.yaml
                   wave: "40"
 
   template:
@@ -57,14 +53,17 @@ spec:
         server: https://kubernetes.default.svc
         namespace: "{{ns}}"
 
-      source:
-        repoURL: https://github.com/keonhoban/mlops-infra-gitops
-        targetRevision: main
-        path: "{{path}}"
-        helm:
-          valueFiles:
-            - values/base.yaml
-            - "{{valuesFile}}"
+      sources:
+        - repoURL: https://github.com/keonhoban/mlops-infra-gitops
+          targetRevision: main
+          path: "{{path}}"
+          helm:
+            valueFiles:
+              - values/base.yaml
+              - $values/envs/{{env}}/{{app}}/values.yaml
+        - repoURL: https://github.com/keonhoban/mlops-infra-gitops
+          targetRevision: main
+          ref: values
 
       syncPolicy:
         automated:
@@ -75,4 +74,3 @@ spec:
           - ApplyOutOfSyncOnly=true
           - PruneLast=true
           - ServerSideApply=true
-
