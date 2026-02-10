@@ -1,5 +1,5 @@
 {{- range .Values.ingresses }}
-{{- if and .tls .tls.enabled .tls.secretName .tls.issuerName }}
+{{- if and .tls .tls.enabled .tls.secretName .tls.issuerName (default true .tls.createCertificate) }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate

@@ -1,4 +1,4 @@
-{{- if and .Values.ingress.tls .Values.ingress.tls.enabled .Values.ingress.tls.secretName .Values.ingress.tls.issuerName }}
+{{- if and .Values.ingress.tls .Values.ingress.tls.enabled .Values.ingress.tls.secretName .Values.ingress.tls.issuerName (default true .Values.ingress.tls.createCertificate) }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
