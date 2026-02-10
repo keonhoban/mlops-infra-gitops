@@ -6,8 +6,3 @@ resources:
   - feature-store/feature-store-cm.yaml
   - feature-store/airflow-kpo-rbac.yaml
   - certificates
-  - airflow
-  - mlflow
-  - triton
-  - fastapi
-
