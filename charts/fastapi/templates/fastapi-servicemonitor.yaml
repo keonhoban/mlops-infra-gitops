@@ -13,7 +13,9 @@ spec:
       - {{ .Release.Namespace }}
   selector:
     matchLabels:
+      app.kubernetes.io/name: fastapi
       app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: api
   endpoints:
     - port: http
       path: {{ .Values.metrics.path }}
