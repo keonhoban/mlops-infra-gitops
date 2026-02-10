@@ -3,5 +3,8 @@ kind: Kustomization
 
 resources:
   - namespaces.yaml
+  - sealed-secrets
+  - baseline
   - monitoring
-  - sealed-secrets/monitoring
+  - feast
+
