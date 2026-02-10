@@ -1,6 +1,7 @@
 aws:
   region: ap-northeast-2
   credentialsSecretName: aws-credentials-secret
+  profile: ""
 
 s3:
   bucket: datapipeline-raw-data-keonho

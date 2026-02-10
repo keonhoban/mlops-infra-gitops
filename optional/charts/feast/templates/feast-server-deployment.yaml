@@ -25,6 +25,8 @@ spec:
               value: {{ .Values.aws.region }}
             - name: AWS_REGION
               value: {{ .Values.aws.region }}
+            - name: AWS_PROFILE
+              value: {{ .Values.aws.profile | quote }}
           volumeMounts:
             - name: feast-repo
               mountPath: /feast-repo/feature_store.yaml
