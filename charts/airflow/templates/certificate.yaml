@@ -1,4 +1,4 @@
-{{- if and .Values.manualIngress.enabled .Values.manualIngress.tlsSecret .Values.manualIngress.tlsIssuerName .Values.manualIngress.host }}
+{{- if and .Values.manualIngress.enabled .Values.manualIngress.tlsSecret .Values.manualIngress.tlsIssuerName .Values.manualIngress.host .Values.manualIngress.createCertificate }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -13,3 +13,4 @@ spec:
   dnsNames:
     - {{ .Values.manualIngress.host }}
 {{- end }}
+

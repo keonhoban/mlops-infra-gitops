@@ -106,6 +106,7 @@ airflow:
 
 manualIngress:
   enabled: true
+  createCertificate: false
   host: airflow.local
   tlsSecret: airflow-dev-tls
   tlsIssuerName: selfsigned-issuer

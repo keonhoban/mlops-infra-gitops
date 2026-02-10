@@ -17,3 +17,6 @@ airflow:
   triggerer:
     persistence:
       enabled: false
+
+manualIngress:
+  createCertificate: true
