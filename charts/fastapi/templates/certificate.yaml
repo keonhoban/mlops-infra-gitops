@@ -1,5 +1,9 @@
 {{- range .Values.ingresses }}
-{{- if and .tls .tls.enabled .tls.secretName .tls.issuerName (default true .tls.createCertificate) }}
+{{- $create := true -}}
+{{- if hasKey .tls "createCertificate" -}}
+{{- $create = .tls.createCertificate -}}
+{{- end -}}
+{{- if and .tls .tls.enabled .tls.secretName .tls.issuerName $create }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -15,3 +19,4 @@ spec:
     - {{ .host }}
 {{- end }}
 {{- end }}
+
