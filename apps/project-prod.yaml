@@ -54,6 +54,11 @@ spec:
       - kind: Secret
         name: slack-webhook-prod-secret
 
+      - kind: Secret
+        name: monitoring-dev-kube-promet-admission
+      - kind: Secret
+        name: monitoring-prod-kube-prome-admission
+
       - group: bitnami.com
         kind: SealedSecret
         name: airflow-db-prod-secret
