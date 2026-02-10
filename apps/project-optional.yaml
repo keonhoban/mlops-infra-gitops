@@ -41,4 +41,14 @@ spec:
 
   orphanedResources:
     warn: true
+    ignore:
+      # kube-prometheus-stack admission webhook에서 자주 생기는 secret
+      - kind: Secret
+        name: monitoring-dev-kube-promet-admission
+      - kind: Secret
+        name: monitoring-prod-kube-prome-admission
+      - kind: Secret
+        name: monitoring-dev-kube-prome-admission
+      - kind: Secret
+        name: monitoring-prod-kube-promet-admission
 
