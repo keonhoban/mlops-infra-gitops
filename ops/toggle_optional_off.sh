@@ -13,6 +13,7 @@ OPTIONAL_NAMESPACES=(
   "baseline-dev" "baseline-prod"
   "monitoring-dev" "monitoring-prod"
   "observability-dev" "observability-prod"
+  "feature-store-dev" "feature-store-prod"
 )
 
 run() {
@@ -61,10 +62,10 @@ run "90_optional_apps_remaining_scope"    kubectl -n argocd get applications.arg
 run "90_optional_appsets_remaining_scope" kubectl -n argocd get applicationsets.argoproj.io -l scope=optional -o wide || true
 run "90_optional_apps_remaining_stack"    kubectl -n argocd get applications.argoproj.io -l stack=optional -o wide || true
 run "90_optional_appsets_remaining_stack" kubectl -n argocd get applicationsets.argoproj.io -l stack=optional -o wide || true
-run "90_optional_namespaces_remaining" kubectl get ns | egrep 'baseline-|monitoring-|observability-' || true
+run "90_optional_namespaces_remaining" kubectl get ns | egrep 'baseline-|monitoring-|observability-|feature-store-' || true
 
 run "95_grep_optional_left" kubectl -n argocd get applications,applicationsets \
-  | egrep 'baseline|minio|loki|alloy|monitoring|observability|promtail|feast|optional' || true
+  | egrep 'baseline|minio|loki|alloy|monitoring|observability|promtail|feast|feature-store|optional' || true
 
 log "PROOF_DIR=$PROOF_DIR"
 
