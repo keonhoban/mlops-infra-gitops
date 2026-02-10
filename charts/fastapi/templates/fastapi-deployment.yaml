@@ -4,15 +4,23 @@ metadata:
   name: {{ .Release.Name }}-server
   annotations:
     reloader.stakater.com/auto: "true"
+  labels:
+    app.kubernetes.io/name: fastapi
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: mlops
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app.kubernetes.io/name: fastapi
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: api
+        app.kubernetes.io/part-of: mlops
     spec:
       # 🔒 NFS(root_squash) 대비: Pod 레벨 Security Context
       securityContext:
@@ -26,9 +34,9 @@ spec:
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy }}
           ports:
-            - containerPort: 8000
+            - name: http
+              containerPort: 8000
 
-          # env: values.yaml의 env: 맵을 그대로 렌더링 (dev/prod 구조 대칭 유지)
           {{- if .Values.env }}
           env:
             {{- range $k, $v := .Values.env }}
@@ -37,7 +45,6 @@ spec:
             {{- end }}
           {{- end }}
 
-          # ✅ startup/readiness/liveness 표준화
           {{- if .Values.probes.startupProbe }}
           startupProbe:
 {{ toYaml .Values.probes.startupProbe | nindent 12 }}
@@ -53,7 +60,6 @@ spec:
 {{ toYaml .Values.probes.livenessProbe | nindent 12 }}
           {{- end }}
 
-          # ✅ resources 렌더링 (prod BestEffort 방지)
           {{- with .Values.resources }}
           resources:
 {{ toYaml . | nindent 12 }}
