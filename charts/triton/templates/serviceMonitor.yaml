@@ -4,19 +4,18 @@ kind: ServiceMonitor
 metadata:
   name: triton
   labels:
-    release: {{ .Values.monitoring.releaseLabel | quote }}
-    app: triton
-    env: {{ .Values.global.env | quote }}
+{{ include "triton.labels" . | nindent 4 }}
+    release: {{ default "monitoring" .Values.monitoring.releaseLabel | quote }}
 spec:
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      app: triton
-      env: {{ .Values.global.env | quote }}
+{{ include "triton.selectorLabels" . | nindent 6 }}
   endpoints:
     - port: metrics
       interval: {{ .Values.monitoring.scrapeInterval | default "30s" }}
       path: /metrics
 {{- end }}
+

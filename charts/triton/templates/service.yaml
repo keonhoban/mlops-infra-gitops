@@ -3,13 +3,11 @@ kind: Service
 metadata:
   name: triton
   labels:
-    app: triton
-    env: {{ .Values.global.env | quote }}
-    release: {{ .Values.monitoring.releaseLabel | quote }}
+{{ include "triton.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type | default "ClusterIP" }}
   selector:
-    app: triton
+{{ include "triton.selectorLabels" . | nindent 4 }}
   ports:
     - name: http
       port: {{ .Values.service.ports.http | default 8000 }}
@@ -23,3 +21,4 @@ spec:
       port: {{ .Values.service.ports.metrics | default 8002 }}
       targetPort: 8002
       protocol: TCP
+

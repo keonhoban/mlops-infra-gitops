@@ -2,17 +2,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: triton
+  labels:
+{{ include "triton.labels" . | nindent 4 }}
 spec:
   strategy:
     type: Recreate
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: triton
+{{ include "triton.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: triton
+{{ include "triton.labels" . | nindent 8 }}
     spec:
       containers:
         - name: triton
@@ -25,11 +27,14 @@ spec:
             - --grpc-port=8001
             - --metrics-port=8002
           ports:
-            - containerPort: 8000
-            - containerPort: 8001
-            - containerPort: 8002
+            - name: http
+              containerPort: 8000
+            - name: grpc
+              containerPort: 8001
+            - name: metrics
+              containerPort: 8002
           resources:
-{{ toYaml .Values.resources | indent 12 }}
+{{ toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: model-repo
               mountPath: {{ .Values.modelRepository.mountPath }}
@@ -37,3 +42,4 @@ spec:
         - name: model-repo
           persistentVolumeClaim:
             claimName: {{ .Values.modelRepository.pvc.name }}
+

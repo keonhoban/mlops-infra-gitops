@@ -5,21 +5,25 @@ metadata:
   name: {{ .Release.Name }}-server
   annotations:
     reloader.stakater.com/auto: "true"
+  labels:
+{{ include "mlflow.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+{{ include "mlflow.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+{{ include "mlflow.labels" . | nindent 8 }}
     spec:
       containers:
         - name: mlflow
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy }}
           ports:
-            - containerPort: 5000
+            - name: http
+              containerPort: 5000
           command: ["mlflow", "server"]
           args:
             - "--backend-store-uri=postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
@@ -57,11 +61,17 @@ spec:
           envFrom:
             - secretRef:
                 name: aws-credentials-secret
-          livenessProbe: {{- toYaml .Values.livenessProbe | nindent 12 }}
+
+          {{- if .Values.livenessProbe }}
+          livenessProbe:
+{{ toYaml .Values.livenessProbe | nindent 12 }}
+          {{- end }}
+
           resources:
             requests:
-              cpu: {{ .Values.resources.requests.cpu }}
-              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
             limits:
-              cpu: {{ .Values.resources.limits.cpu }}
-              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | quote }}
+

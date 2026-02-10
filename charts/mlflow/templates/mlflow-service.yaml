@@ -4,11 +4,13 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-service
   labels:
-    app: {{ .Release.Name }}
+{{ include "mlflow.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - name: http
+      port: {{ .Values.service.port }}
       targetPort: 5000
   selector:
-    app: {{ .Release.Name }}
+{{ include "mlflow.selectorLabels" . | nindent 4 }}
+
