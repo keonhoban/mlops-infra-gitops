@@ -14,12 +14,9 @@ spec:
           - list:
               elements:
                 - env: dev
-                  project: dev
                 - env: prod
-                  project: prod
           - list:
               elements:
-                # ✅ minio 제거 (단독 Application으로 관리)
                 - app: loki
                   chart: loki
                   chartRepo: https://grafana.github.io/helm-charts
@@ -42,9 +39,8 @@ spec:
         layer: baseline
       annotations:
         argocd.argoproj.io/sync-wave: "{{wave}}"
-
     spec:
-      project: "{{project}}"
+      project: optional
       destination:
         server: https://kubernetes.default.svc
         namespace: "baseline-{{env}}"
@@ -56,7 +52,6 @@ spec:
           helm:
             valueFiles:
               - "$values/optional/envs/{{env}}/baseline/{{app}}/values.yaml"
-
         - repoURL: https://github.com/keonhoban/mlops-infra-gitops
           targetRevision: main
           ref: values

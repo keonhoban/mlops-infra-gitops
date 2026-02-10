@@ -7,14 +7,13 @@ metadata:
     scope: core
     stack: core
     layer: project
+  annotations:
+    argocd.argoproj.io/sync-wave: "-19"
 spec:
   description: Dev environment project
+
   sourceRepos:
     - 'https://github.com/keonhoban/mlops-infra-gitops'
-    - 'https://charts.bitnami.com/bitnami'
-    - 'https://prometheus-community.github.io/helm-charts'
-    - 'https://grafana.github.io/helm-charts'
-    - 'oci://registry-1.docker.io/bitnamicharts'
 
   destinations:
     - namespace: '*-dev'
@@ -37,8 +36,6 @@ spec:
         name: fastapi-dev-tls
       - kind: Secret
         name: mlflow-dev-tls
-      - kind: Secret
-        name: monitoring-dev-kube-promet-admission
 
       - kind: Secret
         name: airflow-db-dev-secret

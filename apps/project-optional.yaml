@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: optional
+  namespace: argocd
+  labels:
+    scope: optional
+    stack: optional
+    layer: project
+  annotations:
+    argocd.argoproj.io/sync-wave: "-18"
+spec:
+  description: Optional stack project (baseline / monitoring / feast / observability)
+
+  sourceRepos:
+    - 'https://github.com/keonhoban/mlops-infra-gitops'
+    - 'https://prometheus-community.github.io/helm-charts'
+    - 'https://grafana.github.io/helm-charts'
+    - 'https://charts.bitnami.com/bitnami'
+    - 'oci://registry-1.docker.io/bitnamicharts'
+
+  destinations:
+    - namespace: baseline-*
+      server: https://kubernetes.default.svc
+    - namespace: monitoring-*
+      server: https://kubernetes.default.svc
+    - namespace: observability-*
+      server: https://kubernetes.default.svc
+    - namespace: feature-store-*
+      server: https://kubernetes.default.svc
+    - namespace: bootstrap-dev
+      server: https://kubernetes.default.svc
+    - namespace: bootstrap-prod
+      server: https://kubernetes.default.svc
+    - namespace: argocd
+      server: https://kubernetes.default.svc
+
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  orphanedResources:
+    warn: true
+

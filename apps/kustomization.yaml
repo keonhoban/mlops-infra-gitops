@@ -6,13 +6,15 @@ commonLabels:
   scope: core
 
 resources:
-  # 1) ArgoCD Project
+  # 0) ArgoCD Projects
   - project-dev.yaml
   - project-prod.yaml
+  - project-optional.yaml
 
-  # 2) Namespace scaffolding (envs/* apply)
+  # 1) Namespace scaffolding (envs/* apply)
   - dev-namespaces.yaml
   - prod-namespaces.yaml
 
-  # 3) Core AppSet
+  # 2) Core AppSet
   - appset-core.yaml
+

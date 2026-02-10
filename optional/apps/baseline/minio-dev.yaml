@@ -10,8 +10,7 @@ metadata:
     layer: baseline
     app: minio
 spec:
-  project: dev
-
+  project: optional
   destination:
     server: https://kubernetes.default.svc
     namespace: baseline-dev
@@ -23,7 +22,6 @@ spec:
       helm:
         valueFiles:
           - "$values/optional/envs/dev/baseline/minio/values.yaml"
-
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
       targetRevision: main
       ref: values

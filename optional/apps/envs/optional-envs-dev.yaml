@@ -10,7 +10,7 @@ metadata:
     app: envs
     env: dev
 spec:
-  project: dev
+  project: optional
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main

@@ -10,7 +10,7 @@ metadata:
     app: feast
     env: prod
 spec:
-  project: prod
+  project: optional
   sources:
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
       targetRevision: main
