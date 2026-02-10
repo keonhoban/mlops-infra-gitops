@@ -1,6 +1,12 @@
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: bootstrap-dev
+  labels: { env: dev, app: bootstrap-dev, team: ml-platform }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
   name: mlflow-dev
   labels: { env: dev, app: mlflow-dev, team: ml-platform }
 ---
