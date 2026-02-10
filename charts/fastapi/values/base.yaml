@@ -9,7 +9,23 @@ podSecurityContext:
   fsGroup: 2001
   fsGroupChangePolicy: OnRootMismatch
 
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
 probes:
+  startupProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    failureThreshold: 30
+
   readinessProbe:
     httpGet:
       path: /health

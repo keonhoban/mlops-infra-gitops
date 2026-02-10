@@ -28,6 +28,8 @@ env:
   CANARY_PERCENT: "10"
   LOG_TO_STDOUT: "true"
   LOG_LEVEL: "info"
+  TRITON_HTTP_URL: "http://triton.triton-prod.svc.cluster.local:8000"
+  TRITON_MODEL_NAME: "best_model"
 
 envFrom:
   - secretRef:
@@ -46,22 +48,5 @@ volumes:
     persistentVolumeClaim:
       claimName: fastapi-logs-pvc-prod
 
-probes:
-  readinessProbe:
-    httpGet:
-      path: /health
-      port: 8000
-    initialDelaySeconds: 5
-    periodSeconds: 5
-    failureThreshold: 3
-    successThreshold: 1
-
-  livenessProbe:
-    httpGet:
-      path: /health
-      port: 8000
-    initialDelaySeconds: 10
-    periodSeconds: 10
-    failureThreshold: 3
 monitoring:
   releaseLabel: monitoring-prod
