@@ -10,7 +10,7 @@ metadata:
     component: bootstrap
     env: dev
   annotations:
-    argocd.argoproj.io/sync-wave: "-15"
+    argocd.argoproj.io/sync-wave: "-20"
 spec:
   project: dev
   destination:

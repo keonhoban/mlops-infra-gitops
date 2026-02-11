@@ -7,6 +7,8 @@ metadata:
     scope: core
     stack: core
     layer: core
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   generators:
     - matrix:

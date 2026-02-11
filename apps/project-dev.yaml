@@ -8,7 +8,7 @@ metadata:
     stack: core
     layer: project
   annotations:
-    argocd.argoproj.io/sync-wave: "-19"
+    argocd.argoproj.io/sync-wave: "-30"
 spec:
   description: Dev environment project
 
