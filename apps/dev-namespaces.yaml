@@ -19,7 +19,7 @@ spec:
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
-    path: envs/dev
+    path: envs/dev/bootstrap
   syncPolicy:
     automated:
       prune: true

@@ -13,7 +13,9 @@ resources:
 
   # 1) Namespace scaffolding (envs/* apply)
   - dev-namespaces.yaml
+  - dev-support.yaml
   - prod-namespaces.yaml
+  - prod-support.yaml
 
   # 2) Core AppSet
   - appset-core.yaml

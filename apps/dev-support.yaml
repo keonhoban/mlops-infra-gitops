@@ -1,25 +1,25 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prod-namespaces
+  name: dev-support
   namespace: argocd
   labels:
     stack: core
     scope: core
-    layer: bootstrap
-    component: bootstrap
-    env: prod
+    layer: support
+    component: support
+    env: dev
   annotations:
-    argocd.argoproj.io/sync-wave: "-15"
+    argocd.argoproj.io/sync-wave: "-14"
 spec:
-  project: prod
+  project: dev
   destination:
     server: https://kubernetes.default.svc
-    namespace: bootstrap-prod
+    namespace: bootstrap-dev
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
-    path: envs/prod/bootstrap
+    path: envs/dev/support
   syncPolicy:
     automated:
       prune: true
@@ -31,4 +31,3 @@ spec:
       - PrunePropagationPolicy=foreground
       - PruneLast=true
       - ServerSideApply=true
-
