@@ -7,6 +7,7 @@ commonLabels:
 
 resources:
   # 0) ArgoCD Projects
+  - project-bootstrap.yaml
   - project-dev.yaml
   - project-prod.yaml
   - project-optional.yaml

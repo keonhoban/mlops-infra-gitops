@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: bootstrap
+  namespace: argocd
+  labels:
+    scope: core
+    stack: core
+    layer: project
+  annotations:
+    argocd.argoproj.io/sync-wave: "-31"
+spec:
+  description: Root/Bootstrap project (root-apps, root-optional)
+
+  sourceRepos:
+    - 'https://github.com/keonhoban/mlops-infra-gitops'
+
+  destinations:
+    - namespace: argocd
+      server: https://kubernetes.default.svc
+    - namespace: bootstrap-dev
+      server: https://kubernetes.default.svc
+    - namespace: bootstrap-prod
+      server: https://kubernetes.default.svc
+
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+

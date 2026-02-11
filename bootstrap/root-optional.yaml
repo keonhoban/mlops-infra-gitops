@@ -11,7 +11,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-10"
 spec:
-  project: default
+  project: bootstrap
 
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
