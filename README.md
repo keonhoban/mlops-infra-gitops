@@ -33,7 +33,7 @@ GitOps 기반으로 자동화해 증명합니다.
 - Sensor / Smoke Test 기반 무중단 전환 및 자동 Rollback
 - dev / prod 환경 완전 분리
 
-**수동 배포·수동 롤백 없이**,
+수동 배포·수동 롤백 없이,
 
 코드 변경만으로 모델 학습부터 트래픽 전환까지 반복 가능한 구조를 목표로 합니다.
 
@@ -91,9 +91,18 @@ Mermaid 다이어그램 대신, 실제 운영 흐름을 문장으로 고정합�
     ./ops/toggle_optional_off.sh
     
 
-Optional 레이어는 Core와 완전히 분리되어 있으며,
+---
 
-GitOps 기준으로 언제든지 활성화 / 비활성화 가능합니다.
+## Optional 레이어 정의
+
+Optional 레이어는 Core와 완전히 분리된 “운영 성숙도 레이어”입니다.
+
+- ON 상태에서는 GitOps Automated(Self-heal/Prune) 정책으로 운영 리소스처럼 자동 복구됩니다.
+- OFF 상태에서는 root-optional을 제거하여 Optional 리소스를 완전히 분리합니다.
+
+즉, Optional은 “항상 켜진 기능”이 아니라,
+
+필요 시 운영 스택으로 붙였다가 완전히 분리 가능한 레이어입니다.
 
 ---
 
@@ -110,8 +119,9 @@ GitOps 기준으로 언제든지 활성화 / 비활성화 가능합니다.
 | ops/ | proof / toggle / rotate / seal 운영 스크립트 |
 | docs/ | architecture / runbook / proof 문서 |
 
-> Airflow DAG는 외부 repo에서 gitSync 방식으로 주입됩니다.
-> 
+참고:
+
+- Airflow DAG는 외부 repo에서 gitSync 방식으로 주입됩니다.
 
 ---
 
@@ -119,18 +129,19 @@ GitOps 기준으로 언제든지 활성화 / 비활성화 가능합니다.
 
 ### dev / prod 환경 분리 확인
 
-```bash
+실행 예시:
+
 kubectl get ns | egrep "airflow-|mlflow-|fastapi-|triton-"
-```
 
 ---
 
 ### Feature Store Contract GitOps 관리 확인
 
-```bash
+실행 예시:
+
 kubectl get cm -A -l mlops.keonho.io/env=dev
+
 kubectl get cm -A -l mlops.keonho.io/env=prod
-```
 
 ---
 
@@ -138,17 +149,17 @@ kubectl get cm -A -l mlops.keonho.io/env=prod
 
 아래 <scheduler-pod> 는 실제 scheduler Pod 이름으로 치환합니다.
 
-```bash
+실행 예시:
+
 kubectl -n airflow-dev exec <scheduler-pod> -- ls /opt/airflow/feature-store
-```
 
 ---
 
 ### GitOps Sync 상태 확인
 
-```bash
+실행 예시:
+
 argocd app list
-```
 
 ---
 
@@ -176,38 +187,27 @@ argocd app list
 | 롤백 | DAG 기반 이전 정상 버전 복원 |
 | 환경 | dev / prod 완전 분리 |
 | 검증 | kubectl / argocd / proof script |
+| Optional | “운영 레이어 분리”: ON=자동복구, OFF=완전분리 |
 
 ---
 
 ## Tech Stack
 
-Helm
-
-Kubernetes
-
-ArgoCD
-
-GitHub Actions
-
-Airflow
-
-MLflow
-
-Triton
-
-FastAPI
-
-S3
-
-PostgreSQL
-
-NFS
+- Helm
+- Kubernetes
+- ArgoCD
+- GitHub Actions
+- Airflow
+- MLflow
+- Triton
+- FastAPI
+- S3
+- PostgreSQL
+- NFS
 
 CI 정의 파일:
 
-```bash
 .github/workflows/ci-helm-validate.yaml
-```
 
 ---
 
@@ -217,52 +217,50 @@ Core MLOps 파이프라인 위에
 
 실제 운영 환경에서 요구되는 기능을 Optional 레이어로 분리했습니다.
 
-Optional 레이어는 **기능 나열이 아니라 운영 성숙도 증명**을 목표로 합니다.
+Optional 레이어는 기능 나열이 아니라 “운영 성숙도 증명”을 목표로 합니다.
+
+Optional ON 상태는 데모가 아니라 실제 운영 모드입니다.
+
+- Auto Sync(Self-heal/Prune)가 적용되며, 드리프트 발생 시 자동 복구됩니다.
+
+Optional OFF는 설명·디버깅·유지보수를 단순화하기 위한 구조적 분리입니다.
+
+- root-optional 제거로 Optional 스택을 클러스터에서 완전히 분리합니다.
 
 ### Included Optional Components
 
 - Monitoring / Alerting
-    
-    Prometheus / Grafana / Alertmanager
-    
-    dev / prod 환경 분리
-    
-    FastAPI / Triton 지표 기반 알람 구성
-    
+    - Prometheus / Grafana / Alertmanager
+    - dev / prod 환경 분리
+    - FastAPI / Triton 지표 기반 알람 구성
 - Logging
-    
-    Loki + Alloy(Promtail) 기반 로그 수집
-    
-    AppSet 기반 배포
-    
-    서비스별 로그 조회 파이프라인 구성
-    
+    - Loki + Alloy(Promtail) 기반 로그 수집
+    - AppSet 기반 배포
+    - 서비스별 로그 조회 파이프라인 구성
 - Feature Store (Feast)
-    
-    Feature Contract GitOps 관리
-    
-    Offline / Online Store 분리
-    
-    Materialize 및 조회 검증(Proof)
-    
+    - Feature Contract GitOps 관리
+    - Offline / Online Store 분리
+    - Materialize 및 조회 검증(Proof)
 
 ---
 
 ## Core vs Optional 명확화
 
 - Core
-    
-    필수 MLOps 뼈대
-    
-    (GitOps · Airflow · MLflow · Triton · FastAPI · Rollback)
-    
+    - 필수 MLOps 뼈대
+    - (GitOps · Airflow · MLflow · Triton · FastAPI · Rollback)
 - Optional
-    
-    운영 성숙도 및 확장 증명
-    
-    (Monitoring · Logging · Feature Store 등, 토글 분리)
-    
+    - 운영 성숙도 및 확장 증명
+    - (Monitoring · Logging · Feature Store 등, 토글 분리)
 
-Core만으로도 E2E 자동화는 완결되며,
+Core만으로도 E2E 자동화 가능하며,
 
 Optional 레이어를 통해 실제 프로덕션 운영까지 고려했습니다.
+
+---
+
+### ArgoCD Orphaned Policy
+
+- orphanedResources.warn=true 유지
+- Secret / PVC / Admission 계열은 명시적 ignore
+- 방치가 아닌 “운영 안전을 위한 명확한 경계 설정”
