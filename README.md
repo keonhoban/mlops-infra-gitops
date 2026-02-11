@@ -3,8 +3,10 @@
 > Core: GitOps로 고정된 최소 E2E MLOps 루프  
 > Optional: 운영 성숙도 레이어 (Attach/Detach 가능)  
 > Airflow가 모델 생명주기를, ArgoCD가 런타임을 통제
-
-One Commit Flow — Build → Register → Deploy → Switch
+>
+> One Commit Flow — Build → Register → Deploy → Switch
+> 이 흐름은 Core-only 상태에서도 동일하게 동작하며,
+> Optional 레이어는 E2E 경로에 개입하지 않습니다.
 
 ---
 
