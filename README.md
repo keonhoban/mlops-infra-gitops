@@ -1,12 +1,14 @@
 # GitOps 기반 E2E MLOps Core Platform
 
-> Core: GitOps로 고정된 최소 E2E MLOps 루프  
-> Optional: 운영 성숙도 레이어 (Attach/Detach 가능)  
-> Airflow가 모델 생명주기를, ArgoCD가 런타임을 통제
->
+> Core: GitOps로 고정된 최소 E2E MLOps 루프
+Optional: 운영 성숙도 레이어 (Attach/Detach 가능)
+Airflow가 모델 생명주기를, ArgoCD가 런타임을 통제
+> 
+> 
 > One Commit Flow — Build → Register → Deploy → Switch
 > 이 흐름은 Core-only 상태에서도 동일하게 동작하며,
 > Optional 레이어는 E2E 경로에 개입하지 않습니다.
+> 
 
 ---
 
@@ -39,7 +41,7 @@ GitOps 기반으로 자동화해 증명합니다.
 - Sensor / Smoke Test 기반 무중단 전환 및 자동 Rollback
 - dev / prod 환경 완전 분리
 
-수동 배포·수동 롤백 없이,
+**수동 배포·수동 롤백 없이**,
 
 코드 변경만으로 모델 학습부터 트래픽 전환까지 반복 가능한 구조를 목표로 합니다.
 
@@ -97,18 +99,9 @@ Mermaid 다이어그램 대신, 실제 운영 흐름을 문장으로 고정합�
     ./ops/toggle_optional_off.sh
     
 
----
+Optional 레이어는 Core와 완전히 분리되어 있으며,
 
-## Optional 레이어 정의
-
-Optional 레이어는 Core와 완전히 분리된 “운영 성숙도 레이어”입니다.
-
-- ON 상태에서는 GitOps Automated(Self-heal/Prune) 정책으로 운영 리소스처럼 자동 복구됩니다.
-- OFF 상태에서는 root-optional을 제거하여 Optional 리소스를 완전히 분리합니다.
-
-즉, Optional은 “항상 켜진 기능”이 아니라,
-
-필요 시 운영 스택으로 붙였다가 완전히 분리 가능한 레이어입니다.
+GitOps 기준으로 언제든지 활성화 / 비활성화 가능합니다.
 
 ---
 
@@ -125,9 +118,8 @@ Optional 레이어는 Core와 완전히 분리된 “운영 성숙도 레이어�
 | ops/ | proof / toggle / rotate / seal 운영 스크립트 |
 | docs/ | architecture / runbook / proof 문서 |
 
-참고:
-
-- Airflow DAG는 외부 repo에서 gitSync 방식으로 주입됩니다.
+> Airflow DAG는 외부 repo에서 gitSync 방식으로 주입됩니다.
+> 
 
 ---
 
@@ -135,19 +127,18 @@ Optional 레이어는 Core와 완전히 분리된 “운영 성숙도 레이어�
 
 ### dev / prod 환경 분리 확인
 
-실행 예시:
-
+```bash
 kubectl get ns | egrep "airflow-|mlflow-|fastapi-|triton-"
+```
 
 ---
 
 ### Feature Store Contract GitOps 관리 확인
 
-실행 예시:
-
+```bash
 kubectl get cm -A -l mlops.keonho.io/env=dev
-
 kubectl get cm -A -l mlops.keonho.io/env=prod
+```
 
 ---
 
@@ -155,17 +146,17 @@ kubectl get cm -A -l mlops.keonho.io/env=prod
 
 아래 <scheduler-pod> 는 실제 scheduler Pod 이름으로 치환합니다.
 
-실행 예시:
-
+```bash
 kubectl -n airflow-dev exec <scheduler-pod> -- ls /opt/airflow/feature-store
+```
 
 ---
 
 ### GitOps Sync 상태 확인
 
-실행 예시:
-
+```bash
 argocd app list
+```
 
 ---
 
@@ -193,7 +184,6 @@ argocd app list
 | 롤백 | DAG 기반 이전 정상 버전 복원 |
 | 환경 | dev / prod 완전 분리 |
 | 검증 | kubectl / argocd / proof script |
-| Optional | “운영 레이어 분리”: ON=자동복구, OFF=완전분리 |
 
 ---
 
@@ -217,56 +207,107 @@ CI 정의 파일:
 
 ---
 
-## Operational Maturity (Optional, Toggleable)
+## 60초 Quickstart (면접 시연용)
 
-Core MLOps 파이프라인 위에
+Core-only 상태 확인:
 
-실제 운영 환경에서 요구되는 기능을 Optional 레이어로 분리했습니다.
+./ops/proof/proof_core_only.sh
 
-Optional 레이어는 기능 나열이 아니라 “운영 성숙도 증명”을 목표로 합니다.
+Optional ON (운영 확장 레이어 연결):
 
-Optional ON 상태는 데모가 아니라 실제 운영 모드입니다.
+./ops/toggle_optional_on.sh
 
-- Auto Sync(Self-heal/Prune)가 적용되며, 드리프트 발생 시 자동 복구됩니다.
+Optional OFF (Core-only 경계 복구):
 
-Optional OFF는 설명·디버깅·유지보수를 단순화하기 위한 구조적 분리입니다.
+./ops/toggle_optional_off.sh
 
-- root-optional 제거로 Optional 스택을 클러스터에서 완전히 분리합니다.
+상태 확인 예시:
+
+argocd app list
+
+kubectl get ns | egrep "airflow-|mlflow-|fastapi-|triton-"
+
+Proof 결과 확인:
+
+ls -la docs/proof/latest/
+
+위 커맨드만으로
+
+Core-only ↔ Optional-on 전환이 재현 가능합니다.
+
+---
+
+## Operational Maturity (Optional Layer)
+
+Core E2E 위에 운영 성숙도 레이어를 분리했습니다.
+
+Optional은 “항상 켜두는 기능”이 아니라
+
+필요 시 Attach/Detach 가능한 구조입니다.
+
+ON 상태:
+
+- GitOps Automated(Self-heal / Prune)
+- 운영 리소스로 자동 복구
+
+OFF 상태:
+
+- root-optional 제거
+- Optional namespace 완전 분리
+- Core-only 경계 유지
+
+---
 
 ### Included Optional Components
 
-- Monitoring / Alerting
-    - Prometheus / Grafana / Alertmanager
-    - dev / prod 환경 분리
-    - FastAPI / Triton 지표 기반 알람 구성
-- Logging
-    - Loki + Alloy(Promtail) 기반 로그 수집
-    - AppSet 기반 배포
-    - 서비스별 로그 조회 파이프라인 구성
-- Feature Store (Feast)
-    - Feature Contract GitOps 관리
-    - Offline / Online Store 분리
-    - Materialize 및 조회 검증(Proof)
+Monitoring / Alerting
+
+- Prometheus
+- Grafana
+- Alertmanager
+- FastAPI / Triton 지표 기반 알람
+
+Logging
+
+- Loki + Alloy(Promtail)
+- AppSet 기반 배포
+- 서비스별 로그 조회 파이프라인
+
+Feature Store (Feast)
+
+- Feature Contract GitOps 관리
+- Offline / Online Store 분리
+- Materialize 및 조회 Proof
 
 ---
 
-## Core vs Optional 명확화
+## Core vs Optional Boundary
 
-- Core
-    - 필수 MLOps 뼈대
-    - (GitOps · Airflow · MLflow · Triton · FastAPI · Rollback)
-- Optional
-    - 운영 성숙도 및 확장 증명
-    - (Monitoring · Logging · Feature Store 등, 토글 분리)
+Core
 
-Core만으로도 E2E 자동화 가능하며,
+- GitOps 런타임 고정
+- Airflow 기반 E2E 자동화
+- MLflow Registry
+- Triton 서빙
+- FastAPI 트래픽 제어
+- Rollback DAG
 
-Optional 레이어를 통해 실제 프로덕션 운영까지 고려했습니다.
+Optional
+
+- 운영 성숙도 증명 레이어
+- Monitoring / Logging / Feature Store 확장
+- Attach/Detach 구조
+
+Core만으로도 E2E는 완전히 동작합니다.
+
+Optional은 운영 증명을 위한 확장 계층입니다.
 
 ---
 
-### ArgoCD Orphaned Policy
+## ArgoCD Orphaned Policy
 
 - orphanedResources.warn=true 유지
-- Secret / PVC / Admission 계열은 명시적 ignore
-- 방치가 아닌 “운영 안전을 위한 명확한 경계 설정”
+- Secret / PVC / Admission 리소스는 명시적 ignore
+- 방치가 아니라 “운영 안전을 위한 경계 설정”
+
+상세 정책: docs/argocd-project.md 

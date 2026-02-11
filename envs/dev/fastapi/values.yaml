@@ -1,5 +1,6 @@
 image:
   tag: v1.3.7
+  pullPolicy: Always
 service:
   name: fastapi-dev-service
   port: 80
