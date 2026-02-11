@@ -1,5 +1,9 @@
 # GitOps 기반 E2E MLOps Core Platform
 
+> Core: GitOps로 고정된 최소 E2E MLOps 루프  
+> Optional: 운영 성숙도 레이어 (Attach/Detach 가능)  
+> Airflow가 모델 생명주기를, ArgoCD가 런타임을 통제
+
 One Commit Flow — Build → Register → Deploy → Switch
 
 ---
