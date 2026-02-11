@@ -9,6 +9,8 @@ metadata:
     layer: monitoring
     app: monitoring
     env: prod
+  annotations:
+    argocd.argoproj.io/sync-wave: "80"
 spec:
   project: optional
   sources:

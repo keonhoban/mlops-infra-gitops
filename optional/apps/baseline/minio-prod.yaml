@@ -9,6 +9,8 @@ metadata:
     env: prod
     layer: baseline
     app: minio
+  annotations:
+    argocd.argoproj.io/sync-wave: "50"
 spec:
   project: optional
   destination:

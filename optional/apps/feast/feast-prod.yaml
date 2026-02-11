@@ -9,6 +9,8 @@ metadata:
     layer: feast
     app: feast
     env: prod
+  annotations:
+    argocd.argoproj.io/sync-wave: "90"
 spec:
   project: optional
   sources:

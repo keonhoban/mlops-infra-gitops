@@ -6,7 +6,8 @@ metadata:
   labels:
     stack: core
     scope: core
-    layer: namespaces
+    layer: bootstrap
+    component: bootstrap
     env: dev
   annotations:
     argocd.argoproj.io/sync-wave: "-15"
