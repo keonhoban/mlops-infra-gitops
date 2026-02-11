@@ -1,0 +1,23 @@
+Name:               argocd/root-apps
+Project:            default
+Server:             https://kubernetes.default.svc
+Namespace:          argocd
+URL:                https://argocd.local/applications/root-apps
+Source:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             apps
+SyncWindow:         Sync Allowed
+Sync Policy:        Automated (Prune)
+Sync Status:        Synced to main (5d44b97)
+Health Status:      Healthy
+
+GROUP        KIND            NAMESPACE  NAME             STATUS  HEALTH   HOOK  MESSAGE
+argoproj.io  Application     argocd     prod-namespaces  Synced                 application.argoproj.io/prod-namespaces serverside-applied
+argoproj.io  AppProject      argocd     dev              Synced                 
+argoproj.io  AppProject      argocd     optional         Synced                 
+argoproj.io  AppProject      argocd     prod             Synced                 
+argoproj.io  Application     argocd     dev-namespaces   Synced                 
+argoproj.io  Application     argocd     dev-support      Synced                 
+argoproj.io  Application     argocd     prod-support     Synced                 
+argoproj.io  ApplicationSet  argocd     mlops-core       Synced  Healthy        

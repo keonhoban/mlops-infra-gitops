@@ -1,4 +1,4 @@
-ab_test_result.log
-ab_test_result_*.log
-capture_test.sh
-docs/proof/
+# proof: keep only latest
+docs/proof/*
+!docs/proof/latest/
+!docs/proof/latest/**

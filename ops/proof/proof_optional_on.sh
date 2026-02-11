@@ -2,7 +2,8 @@
 set -euo pipefail
 
 TS="$(date +%Y%m%d_%H%M%S)"
-OUT_DIR="docs/proof/optional_on/$TS"
+OUT_DIR="docs/proof/latest/optional_on"
+rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR"
 
 log() { echo "[optional-on] $*"; }
