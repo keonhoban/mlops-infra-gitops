@@ -1,7 +1,6 @@
 image:
   repository: hoizz/mlflow-custom
   pullPolicy: IfNotPresent
-  tag: latest
 
 service:
   type: ClusterIP

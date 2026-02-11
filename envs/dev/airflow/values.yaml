@@ -39,6 +39,8 @@ airflow:
   # Scheduler 설정 (Anchor 정의)
   scheduler: &dev_scheduler
     env:
+      - name: PYTHONPATH
+        value: /opt/airflow/dags/repo/dags
       - name: RELOAD_SECRET_TOKEN
         valueFrom:
           secretKeyRef:
