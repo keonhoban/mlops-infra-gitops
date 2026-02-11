@@ -4,21 +4,25 @@ metadata:
   name: root-apps
   namespace: argocd
   labels:
-    stack: core
     scope: core
+    stack: core
     layer: root
+    component: bootstrap
   annotations:
     argocd.argoproj.io/sync-wave: "-20"
 spec:
   project: default
+
   source:
     repoURL: https://github.com/keonhoban/mlops-infra-gitops
     targetRevision: main
     path: apps
     kustomize: {}
+
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
+
   syncPolicy:
     automated:
       prune: true

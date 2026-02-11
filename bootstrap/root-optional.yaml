@@ -4,9 +4,10 @@ metadata:
   name: root-optional
   namespace: argocd
   labels:
-    stack: optional
     scope: optional
+    stack: optional
     layer: root
+    component: optional-switch
   annotations:
     argocd.argoproj.io/sync-wave: "-10"
 spec:

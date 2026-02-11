@@ -42,13 +42,14 @@ spec:
       labels:
         scope: core
         stack: core
+        layer: app
         env: "{{env}}"
         app: "{{app}}"
-        layer: core
       annotations:
         argocd.argoproj.io/sync-wave: "{{wave}}"
     spec:
       project: "{{project}}"
+
       destination:
         server: https://kubernetes.default.svc
         namespace: "{{ns}}"
@@ -61,6 +62,8 @@ spec:
             valueFiles:
               - values/base.yaml
               - $values/envs/{{env}}/{{app}}/values.yaml
+
+        # values ref (multi-source valueFiles에서 $values로 참조)
         - repoURL: https://github.com/keonhoban/mlops-infra-gitops
           targetRevision: main
           ref: values
@@ -69,8 +72,10 @@ spec:
         automated:
           prune: true
           selfHeal: true
+          allowEmpty: false
         syncOptions:
           - CreateNamespace=true
           - ApplyOutOfSyncOnly=true
           - PruneLast=true
           - ServerSideApply=true
+

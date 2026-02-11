@@ -4,18 +4,23 @@ kind: Kustomization
 commonLabels:
   stack: optional
   scope: optional
+  layer: optional
 
 resources:
+  # optional namespaces/secrets/env foundation
   - envs/optional-envs-dev.yaml
   - envs/optional-envs-prod.yaml
 
+  # baseline stack
   - baseline/appset-baseline.yaml
   - baseline/minio-dev.yaml
   - baseline/minio-prod.yaml
 
+  # feast
   - feast/feast-dev.yaml
   - feast/feast-prod.yaml
 
+  # monitoring
   - monitoring/monitoring-dev.yaml
   - monitoring/monitoring-prod.yaml
 
