@@ -10,24 +10,24 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-29"
 spec:
-  description: Baseline project (shared infra required for core 운영: S3, logs)
+  description: Baseline stack project (minio / loki / alloy)
 
   sourceRepos:
-    - 'https://github.com/keonhoban/mlops-infra-gitops'
-    - 'https://grafana.github.io/helm-charts'
-    - 'https://charts.bitnami.com/bitnami'
-    - 'oci://registry-1.docker.io/bitnamicharts'
+    - "https://github.com/keonhoban/mlops-infra-gitops"
+    - "https://charts.bitnami.com/bitnami"
+    - "https://grafana.github.io/helm-charts"
 
   destinations:
-    - namespace: baseline-*
-      server: https://kubernetes.default.svc
-    - namespace: argocd
-      server: https://kubernetes.default.svc
+    - namespace: "baseline-*"
+      server: "https://kubernetes.default.svc"
+    - namespace: "argocd"
+      server: "https://kubernetes.default.svc"
+    - namespace: "bootstrap-dev"
+      server: "https://kubernetes.default.svc"
+    - namespace: "bootstrap-prod"
+      server: "https://kubernetes.default.svc"
 
   clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
-
-  orphanedResources:
-    warn: true
+    - group: "*"
+      kind: "*"
 
