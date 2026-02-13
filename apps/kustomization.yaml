@@ -11,6 +11,7 @@ resources:
   - project-dev.yaml
   - project-prod.yaml
   - project-optional.yaml
+  - project-baseline.yaml
 
   # 1) Namespace scaffolding (envs/* apply)
   - dev-namespaces.yaml
