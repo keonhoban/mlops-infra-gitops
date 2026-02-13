@@ -11,11 +11,6 @@ resources:
   - envs/optional-envs-dev.yaml
   - envs/optional-envs-prod.yaml
 
-  # baseline stack
-  - baseline/appset-baseline.yaml
-  - baseline/minio-dev.yaml
-  - baseline/minio-prod.yaml
-
   # feast
   - feast/feast-dev.yaml
   - feast/feast-prod.yaml

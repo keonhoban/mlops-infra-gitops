@@ -51,7 +51,7 @@ spec:
           targetRevision: "{{version}}"
           helm:
             valueFiles:
-              - "$values/optional/envs/{{env}}/baseline/{{app}}/values.yaml"
+              - "$values/baseline/envs/{{env}}/baseline/{{app}}/values.yaml"
         - repoURL: https://github.com/keonhoban/mlops-infra-gitops
           targetRevision: main
           ref: values
