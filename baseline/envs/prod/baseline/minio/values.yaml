@@ -1,28 +1,29 @@
-image:
-  registry: public.ecr.aws
-  repository: bitnami/minio
-  tag: "2025.7.23-debian-12-r3"
-  pullPolicy: IfNotPresent
+minio:
+  image:
+    registry: public.ecr.aws
+    repository: bitnami/minio
+    tag: "2025.7.23-debian-12-r3"
+    pullPolicy: IfNotPresent
 
-auth:
-  rootUser: minioadmin
-  rootPassword: minioadmin
+  auth:
+    rootUser: minioadmin
+    rootPassword: minioadmin
 
-defaultBuckets: "loki-chunks,loki-ruler,loki-admin"
+  defaultBuckets: "loki-chunks,loki-ruler,loki-admin"
 
-persistence:
-  enabled: true
-  storageClass: nfs-core
-  storageClassName: nfs-core
-  size: 10Gi
+  persistence:
+    enabled: true
+    storageClass: nfs-core
+    storageClassName: nfs-core
+    size: 10Gi
 
-service:
-  type: ClusterIP
+  service:
+    type: ClusterIP
 
-console:
-  enabled: false
+  console:
+    enabled: false
 
-global:
-  security:
-    allowInsecureImages: true
+  global:
+    security:
+      allowInsecureImages: true
 
