@@ -18,9 +18,9 @@ spec:
     namespace: baseline-prod
 
   sources:
-    - repoURL: oci://registry-1.docker.io
-      chart: bitnamicharts/minio
-      targetRevision: 17.0.21
+    - repoURL: https://github.com/keonhoban/mlops-infra-gitops
+      targetRevision: main
+      path: baseline/charts/minio-wrapper
       helm:
         valueFiles:
           - "$values/baseline/envs/prod/baseline/minio/values.yaml"
