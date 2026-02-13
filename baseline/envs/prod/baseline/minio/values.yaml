@@ -13,6 +13,7 @@ defaultBuckets: "loki-chunks,loki-ruler,loki-admin"
 persistence:
   enabled: true
   storageClass: nfs-core
+  storageClassName: nfs-core
   size: 10Gi
 
 service:
