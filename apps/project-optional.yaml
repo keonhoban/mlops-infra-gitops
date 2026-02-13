@@ -10,7 +10,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-29"
 spec:
-  description: Optional stack project (baseline / monitoring / feast / observability)
+  description: Optional project (monitoring / feast / observability)
 
   sourceRepos:
     - 'https://github.com/keonhoban/mlops-infra-gitops'
@@ -20,8 +20,6 @@ spec:
     - 'oci://registry-1.docker.io/bitnamicharts'
 
   destinations:
-    - namespace: baseline-*
-      server: https://kubernetes.default.svc
     - namespace: monitoring-*
       server: https://kubernetes.default.svc
     - namespace: observability-*
@@ -42,7 +40,6 @@ spec:
   orphanedResources:
     warn: true
     ignore:
-      # kube-prometheus-stack admission webhook에서 자주 생기는 secret
       - kind: Secret
         name: monitoring-dev-kube-promet-admission
       - kind: Secret

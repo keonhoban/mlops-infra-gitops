@@ -4,23 +4,23 @@ metadata:
   name: minio-prod
   namespace: argocd
   labels:
-    stack: optional
-    scope: optional
+    stack: baseline
+    scope: baseline
     env: prod
     layer: baseline
     app: minio
   annotations:
     argocd.argoproj.io/sync-wave: "50"
 spec:
-  project: optional
+  project: baseline
   destination:
     server: https://kubernetes.default.svc
     namespace: baseline-prod
 
   sources:
-    - repoURL: https://github.com/keonhoban/mlops-infra-gitops
-      targetRevision: main
-      path: optional/charts/minio
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: minio
+      targetRevision: 17.0.21
       helm:
         valueFiles:
           - "$values/baseline/envs/prod/baseline/minio/values.yaml"
@@ -37,3 +37,4 @@ spec:
       - ApplyOutOfSyncOnly=true
       - PruneLast=true
       - ServerSideApply=true
+

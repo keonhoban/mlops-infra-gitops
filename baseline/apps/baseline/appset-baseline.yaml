@@ -4,8 +4,8 @@ metadata:
   name: mlops-baseline
   namespace: argocd
   labels:
-    stack: optional
-    scope: optional
+    stack: baseline
+    scope: baseline
     layer: baseline
 spec:
   generators:
@@ -32,15 +32,15 @@ spec:
     metadata:
       name: "{{app}}-{{env}}"
       labels:
-        stack: optional
-        scope: optional
+        stack: baseline
+        scope: baseline
         env: "{{env}}"
         app: "{{app}}"
         layer: baseline
       annotations:
         argocd.argoproj.io/sync-wave: "{{wave}}"
     spec:
-      project: optional
+      project: baseline
       destination:
         server: https://kubernetes.default.svc
         namespace: "baseline-{{env}}"
