@@ -8,4 +8,6 @@ commonLabels:
 
 resources:
   - baseline/appset-baseline.yaml
+  - baseline/minio-dev.yaml
+  - baseline/minio-prod.yaml
 
