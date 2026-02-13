@@ -16,7 +16,7 @@ spec:
     - "https://github.com/keonhoban/mlops-infra-gitops"
     - "https://charts.bitnami.com/bitnami"
     - "https://grafana.github.io/helm-charts"
-    - "oci://registry-1.docker.io/bitnamicharts"
+    - "oci://registry-1.docker.io"
 
   destinations:
     - namespace: "baseline-*"
