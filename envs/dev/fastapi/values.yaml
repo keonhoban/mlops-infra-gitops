@@ -27,7 +27,7 @@ env:
   CANARY_PERCENT: "20"
   LOG_TO_STDOUT: "true"
   LOG_LEVEL: "info"
-  TRITON_HTTP_URL: "http://172.26.128.112:8000"
+  TRITON_HTTP_URL: "http://triton.triton-dev.svc.cluster.local:8000"
   TRITON_MODEL_NAME: "best_model"
 envFrom:
   - secretRef:
