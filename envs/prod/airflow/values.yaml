@@ -67,8 +67,6 @@ airflow:
       # -----------------------
       - name: S3_ENDPOINT_URL
         value: "http://minio-prod.baseline-prod.svc.cluster.local:9000"
-      - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__S3_ENDPOINT_URL
-        value: "http://minio-prod.baseline-prod.svc.cluster.local:9000"
       - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AWS_S3_ADDRESSING_STYLE
         value: "path"
 
