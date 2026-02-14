@@ -1,10 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-commonLabels:
-  stack: core
-  scope: core
-
 resources:
   # 0) ArgoCD Projects
   - project-bootstrap.yaml
