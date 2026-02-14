@@ -61,14 +61,6 @@ airflow:
         value: "http://fastapi-dev-service.fastapi-dev.svc.cluster.local"
 
       # -----------------------
-      # ✅ MinIO endpoint (dev)
-      # - Task Pod(KubernetesExecutor)까지 전달: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__
-      # - Scheduler/Worker 자체도 보장: S3_ENDPOINT_URL
-      # -----------------------
-      - name: S3_ENDPOINT_URL
-        value: "http://minio-dev.baseline-dev.svc.cluster.local:9000"
-
-      # -----------------------
       # Remote logging (S3/MinIO)
       # -----------------------
       - name: AIRFLOW__LOGGING__REMOTE_LOGGING
