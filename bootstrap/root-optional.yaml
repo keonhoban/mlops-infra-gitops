@@ -1,3 +1,4 @@
+# bootstrap/root-optional.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -23,11 +24,8 @@ spec:
     server: https://kubernetes.default.svc
     namespace: argocd
 
+  # ✅ Optional은 "수동 토글"이 기본값
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-      allowEmpty: false
     syncOptions:
       - CreateNamespace=true
       - ApplyOutOfSyncOnly=true
