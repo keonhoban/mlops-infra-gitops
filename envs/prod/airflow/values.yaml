@@ -41,11 +41,13 @@ airflow:
     env:
       - name: PYTHONPATH
         value: /opt/airflow/dags/repo/dags
+
       - name: RELOAD_SECRET_TOKEN
         valueFrom:
           secretKeyRef:
             name: fastapi-token-prod-secret
             key: RELOAD_SECRET_TOKEN
+
       - name: SLACK_WEBHOOK_URL
         valueFrom:
           secretKeyRef:
@@ -54,14 +56,32 @@ airflow:
 
       - name: MLFLOW_TRACKING_URI
         value: "http://mlflow-prod-service.mlflow-prod.svc.cluster.local:5000"
+
       - name: FASTAPI_RELOAD_URL
         value: "http://fastapi-prod-service.fastapi-prod.svc.cluster.local"
+
+      # -----------------------
+      # ✅ MinIO endpoint (prod)
+      # - Task Pod(KubernetesExecutor)까지 전달: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__
+      # - Scheduler/Worker 자체도 보장: S3_ENDPOINT_URL
+      # -----------------------
+      - name: S3_ENDPOINT_URL
+        value: "http://minio-prod.baseline-prod.svc.cluster.local:9000"
+      - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__S3_ENDPOINT_URL
+        value: "http://minio-prod.baseline-prod.svc.cluster.local:9000"
+      - name: AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AWS_S3_ADDRESSING_STYLE
+        value: "path"
+
+      # -----------------------
+      # Remote logging (S3/MinIO)
+      # -----------------------
       - name: AIRFLOW__LOGGING__REMOTE_LOGGING
         value: "True"
       - name: AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER
         value: "s3://mlflow-artifacts-keonho/prod/airflow-logs"
       - name: AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID
         value: "aws_default"
+
       - name: AWS_REGION
         value: ap-northeast-2
       - name: AWS_DEFAULT_REGION
