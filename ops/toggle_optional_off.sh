@@ -10,7 +10,6 @@ mkdir -p "$PROOF_DIR"
 ROOT_OPT_APP_NAME="${ROOT_OPT_APP_NAME:-root-optional}"
 
 OPTIONAL_NAMESPACES=(
-  "baseline-dev" "baseline-prod"
   "monitoring-dev" "monitoring-prod"
   "observability-dev" "observability-prod"
   "feature-store-dev" "feature-store-prod"

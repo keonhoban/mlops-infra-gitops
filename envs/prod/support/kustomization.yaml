@@ -3,5 +3,3 @@ kind: Kustomization
 
 resources:
   - sealed-secrets
-  - feature-store/feature-store-cm.yaml
-  - feature-store/airflow-kpo-rbac.yaml
