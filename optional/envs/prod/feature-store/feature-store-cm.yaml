@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: feature-store-resources
-  namespace: airflow-prod
+  namespace: feature-store-prod
   labels:
     app.kubernetes.io/part-of: mlops-platform
     app.kubernetes.io/component: feature-store-resources
