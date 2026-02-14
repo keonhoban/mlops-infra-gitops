@@ -28,9 +28,6 @@ spec:
     server: https://kubernetes.default.svc
     namespace: feature-store-dev
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ApplyOutOfSyncOnly=true
