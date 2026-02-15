@@ -5,5 +5,4 @@ resources:
   - namespaces.yaml
   - sealed-secrets
   - monitoring
-  - feature-store
   - feast
