@@ -28,7 +28,7 @@ data:
     from feast.types import Int64, Float64
 
     user_features_source = FileSource(
-        path="s3://{{ .Values.s3.bucket }}/{{ .Values.s3.featurePrefix }}/latest/features.parquet",
+        path="s3://{{ .Values.s3.bucket }}/{{ .Values.s3.featurePrefix }}/{{ .Values.env }}/user_features/latest/features.parquet",
         timestamp_field="event_timestamp",
         created_timestamp_column=None,
     )
