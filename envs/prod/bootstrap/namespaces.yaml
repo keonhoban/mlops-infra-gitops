@@ -33,4 +33,9 @@ kind: Namespace
 metadata:
   name: storage-prod
   labels: { env: prod, app: storage-prod, team: ml-platform }
-
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: feature-store-prod
+  labels: { env: prod, app: feature-store-prod, team: ml-platform }
