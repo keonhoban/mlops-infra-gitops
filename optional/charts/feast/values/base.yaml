@@ -1,0 +1,9 @@
+image:
+  repository: hoizz/feast-server
+  tag: "0.40.1-s3fs"
+
+service:
+  port: 6566
+
+redis:
+  image: "redis:7.2-alpine"
