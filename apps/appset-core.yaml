@@ -62,7 +62,7 @@ spec:
           path: "{{path}}"
           helm:
             valueFiles:
-              - values/base.yaml
+              - values.yaml
               - $values/envs/{{env}}/{{app}}/values.yaml
 
         # values ref (multi-source valueFiles에서 $values로 참조)

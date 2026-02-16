@@ -1,15 +1,15 @@
+{{- $svc := .Values.service | default dict -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-service
+  name: {{ .Release.Name }}
   labels:
 {{- include "fastapi.commonLabels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - name: http
-      port: {{ .Values.service.port }}
-      targetPort: 8000
+  type: {{ (get $svc "type" | default "ClusterIP") }}
   selector:
 {{- include "fastapi.selectorLabels" . | nindent 4 }}
-
+  ports:
+    - name: http
+      port: {{ (get $svc "port" | default 8000) }}
+      targetPort: 8000

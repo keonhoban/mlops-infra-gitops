@@ -1,27 +1,31 @@
-{{- if .Values.manualIngress.enabled }}
+{{- $mi := .Values.manualIngress | default dict -}}
+{{- $enabled := (get $mi "enabled" | default false) -}}
+{{- if $enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-{{- if and .Values.manualIngress.createCertificate .Values.manualIngress.tlsIssuerName }}
-    cert-manager.io/cluster-issuer: "{{ .Values.manualIngress.tlsIssuerName }}"
+{{- $createCert := (get $mi "createCertificate" | default false) -}}
+{{- $issuer := (get $mi "tlsIssuerName" | default "") -}}
+{{- if and $createCert $issuer }}
+    cert-manager.io/cluster-issuer: "{{ $issuer }}"
 {{- end }}
 spec:
-  ingressClassName: {{ default "nginx" .Values.manualIngress.ingressClassName }}
+  ingressClassName: {{ (get $mi "ingressClassName" | default "nginx") }}
   rules:
-    - host: {{ .Values.manualIngress.host }}
+    - host: {{ (get $mi "host" | default "") }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ .Values.manualIngress.serviceName | default (printf "%s-api-server" .Release.Name) }}
+                name: {{ (get $mi "serviceName" | default (printf "%s-api-server" .Release.Name)) }}
                 port:
-                  number: {{ .Values.manualIngress.servicePort | default 8080 }}
+                  number: {{ (get $mi "servicePort" | default 8080) }}
   tls:
-    - hosts: [{{ .Values.manualIngress.host | quote }}]
-      secretName: {{ .Values.manualIngress.tlsSecret }}
+    - hosts: [{{ (get $mi "host" | default "") | quote }}]
+      secretName: {{ (get $mi "tlsSecret" | default "") }}
 {{- end }}

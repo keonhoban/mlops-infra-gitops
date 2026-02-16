@@ -1,11 +1,10 @@
 image:
   repository: hoizz/mlflow-custom
   pullPolicy: IfNotPresent
-
+  tag: latest
 service:
   type: ClusterIP
   port: 5000
-
 resources:
   requests:
     cpu: "500m"
@@ -13,7 +12,6 @@ resources:
   limits:
     cpu: "1"
     memory: "2Gi"
-
 livenessProbe:
   httpGet:
     path: /
@@ -21,3 +19,20 @@ livenessProbe:
   initialDelaySeconds: 10
   periodSeconds: 10
   failureThreshold: 3
+dbConfig:
+  configMapName: mlflow-db-config
+  secretName: mlflow-db-secret
+  dbname: mlflow
+  host: postgres
+  port: 5432
+ingress:
+  ingressClassName: nginx
+  host: ""
+  annotations: {}
+  tls:
+    enabled: false
+    secretName: ""
+    issuerName: ""
+    createCertificate: false
+env:
+  defaultArtifactRoot: ""

@@ -1,39 +1,40 @@
-{{- $create := true -}}
-{{- if and .Values.ingress.tls (hasKey .Values.ingress.tls "createCertificate") -}}
-{{- $create = .Values.ingress.tls.createCertificate -}}
-{{- end -}}
+{{- $ing := .Values.ingress | default dict -}}
+{{- $tls := (get $ing "tls" | default dict) -}}
+{{- $tlsEnabled := (get $tls "enabled" | default false) -}}
+{{- $create := (get $tls "createCertificate" | default false) -}}
+{{- $issuer := (get $tls "issuerName" | default "") -}}
+{{- $host := (get $ing "host" | default "") -}}
+
+{{- if $host }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-service
-  labels:
-{{ include "mlflow.labels" . | nindent 4 }}
+  name: {{ .Release.Name }}
   annotations:
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-{{- if and .Values.ingress.tls .Values.ingress.tls.enabled .Values.ingress.tls.issuerName $create }}
-    cert-manager.io/cluster-issuer: "{{ .Values.ingress.tls.issuerName }}"
+{{- range $k, $v := (get $ing "annotations" | default dict) }}
+    {{ $k }}: {{ $v | quote }}
 {{- end }}
-{{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
+{{- if and $tlsEnabled $create $issuer }}
+    cert-manager.io/cluster-issuer: "{{ $issuer }}"
 {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  ingressClassName: {{ (get $ing "ingressClassName" | default "nginx") }}
   rules:
-    - host: {{ .Values.ingress.host }}
+    - host: {{ $host }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-service
+                name: {{ .Release.Name }}
                 port:
-                  number: {{ .Values.service.port }}
-{{- if and .Values.ingress.tls .Values.ingress.tls.enabled }}
+                  number: {{ .Values.service.port | default 5000 }}
+{{- if $tlsEnabled }}
   tls:
     - hosts:
-        - {{ .Values.ingress.host }}
-      secretName: {{ .Values.ingress.tls.secretName }}
+        - {{ $host }}
+      secretName: {{ (get $tls "secretName" | default (printf "%s-tls" .Release.Name)) }}
+{{- end }}
 {{- end }}
 

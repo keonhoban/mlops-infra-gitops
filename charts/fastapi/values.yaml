@@ -3,6 +3,10 @@ image:
   repository: hoizz/fastapi-custom
   pullPolicy: IfNotPresent
 
+service:
+  type: ClusterIP
+  port: 8000
+
 podSecurityContext:
   runAsUser: 2001
   runAsGroup: 2001

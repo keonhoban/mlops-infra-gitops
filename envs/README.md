@@ -11,7 +11,7 @@ Core 서비스의 설정은 여기서 환경별로 확정됩니다.
 
 ## 핵심 규칙 (경계)
 
-- 공통값은 charts/*/values/base.yaml에 둡니다.
+- 공통값은 charts/*/values.yaml에 둡니다.
 - envs에는 “환경별 차이만” 둡니다.
 - 평문 Secret은 커밋하지 않습니다(SealedSecret만 허용).
 
@@ -24,5 +24,5 @@ Core 서비스의 설정은 여기서 환경별로 확정됩니다.
 
 ## 다음으로 볼 곳
 
-- charts/*/values/base.yaml
+- charts/*/values.yaml
 - 보안 정책: docs/security/secrets.md

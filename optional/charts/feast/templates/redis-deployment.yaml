@@ -1,3 +1,4 @@
+{{- $r := .Values.redis | default dict -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,12 +16,12 @@ spec:
     spec:
       containers:
         - name: redis
-          image: {{ .Values.redis.image }}
+          image: {{ (get $r "image" | default "redis:7.2-alpine") }}
           ports:
             - containerPort: 6379
           args:
             - "--appendonly"
-            - "{{ ternary "yes" "no" .Values.redis.persistence }}"
+            - "{{ ternary "yes" "no" (get $r "persistence" | default false) }}"
           readinessProbe:
             tcpSocket:
               port: 6379

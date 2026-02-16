@@ -1,11 +1,12 @@
-{{- if .Values.monitoring.enabled }}
+{{- $m := .Values.monitoring | default dict -}}
+{{- if (get $m "enabled" | default false) }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: triton
   labels:
 {{ include "triton.labels" . | nindent 4 }}
-    release: {{ default "monitoring" .Values.monitoring.releaseLabel | quote }}
+    release: {{ (get $m "releaseLabel" | default "monitoring") | quote }}
 spec:
   namespaceSelector:
     matchNames:
@@ -15,7 +16,6 @@ spec:
 {{ include "triton.selectorLabels" . | nindent 6 }}
   endpoints:
     - port: metrics
-      interval: {{ .Values.monitoring.scrapeInterval | default "30s" }}
+      interval: {{ (get $m "scrapeInterval" | default "30s") | quote }}
       path: /metrics
 {{- end }}
-

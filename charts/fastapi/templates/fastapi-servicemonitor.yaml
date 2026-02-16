@@ -1,11 +1,13 @@
-{{- if .Values.metrics.enabled }}
+{{- $metrics := .Values.metrics | default dict -}}
+{{- $mon := .Values.monitoring | default dict -}}
+{{- if (get $metrics "enabled" | default false) }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ .Release.Name }}-sm
   labels:
 {{- include "fastapi.commonLabels" . | nindent 4 }}
-    release: {{ .Values.monitoring.releaseLabel | quote }}
+    release: {{ (get $mon "releaseLabel" | default "monitoring") | quote }}
 spec:
   namespaceSelector:
     matchNames:
@@ -15,8 +17,7 @@ spec:
 {{- include "fastapi.selectorLabels" . | nindent 6 }}
   endpoints:
     - port: http
-      path: {{ .Values.metrics.path }}
-      interval: {{ .Values.metrics.interval }}
-      scrapeTimeout: {{ .Values.metrics.scrapeTimeout }}
+      path: {{ (get $metrics "path" | default "/metrics") }}
+      interval: {{ (get $metrics "interval" | default "30s") | quote }}
+      scrapeTimeout: {{ (get $metrics "scrapeTimeout" | default "10s") | quote }}
 {{- end }}
-

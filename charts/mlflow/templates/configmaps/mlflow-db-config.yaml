@@ -1,9 +1,10 @@
+{{- $db := .Values.dbConfig | default dict -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.dbConfig.configMapName }}
-  namespace: {{ .Release.Name }}
+  name: {{ (get $db "configMapName" | default "mlflow-db-config") }}
+  namespace: {{ .Release.Namespace }}
 data:
-  dbname: {{ .Values.dbConfig.dbname }}
-  host: {{ .Values.dbConfig.host }}
-  port: "{{ .Values.dbConfig.port }}"
+  dbname: {{ (get $db "dbname" | default "mlflow") }}
+  host: {{ (get $db "host" | default "postgres") }}
+  port: "{{ (get $db "port" | default 5432) }}"

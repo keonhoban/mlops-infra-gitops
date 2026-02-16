@@ -19,7 +19,7 @@ spec:
       path: optional/charts/feast
       helm:
         valueFiles:
-          - values/base.yaml
+          - values.yaml
           - $values/optional/envs/dev/feast/values.yaml
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
       targetRevision: main

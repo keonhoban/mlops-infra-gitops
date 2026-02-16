@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: mlflow
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy }}
           ports:
             - name: http

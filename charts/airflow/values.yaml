@@ -19,4 +19,11 @@ airflow:
       enabled: false
 
 manualIngress:
+  enabled: false
   createCertificate: true
+  tlsIssuerName: ""
+  ingressClassName: nginx
+  host: ""
+  tlsSecret: ""
+  serviceName: ""
+  servicePort: 8080

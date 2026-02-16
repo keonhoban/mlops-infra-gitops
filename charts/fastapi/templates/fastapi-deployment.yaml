@@ -1,76 +1,71 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-server
-  annotations:
-    reloader.stakater.com/auto: "true"
+  name: {{ .Release.Name }}
   labels:
 {{- include "fastapi.commonLabels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
 {{- include "fastapi.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-{{- include "fastapi.commonLabels" . | nindent 8 }}
+{{- include "fastapi.selectorLabels" . | nindent 8 }}
     spec:
-      # 🔒 NFS(root_squash) 대비: Pod 레벨 Security Context
       securityContext:
         runAsUser: {{ default 2001 .Values.podSecurityContext.runAsUser }}
         runAsGroup: {{ default 2001 .Values.podSecurityContext.runAsGroup }}
         fsGroup: {{ default 2001 .Values.podSecurityContext.fsGroup }}
         fsGroupChangePolicy: {{ default "OnRootMismatch" .Values.podSecurityContext.fsGroupChangePolicy }}
-
       containers:
         - name: fastapi
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 8000
 
-          {{- if .Values.env }}
+{{- if .Values.env }}
           env:
-            {{- range $k, $v := .Values.env }}
+{{- range $k, $v := .Values.env }}
             - name: {{ $k }}
               value: {{ $v | quote }}
-            {{- end }}
-          {{- end }}
+{{- end }}
+{{- end }}
 
-          {{- if .Values.probes.startupProbe }}
-          startupProbe:
-{{ toYaml .Values.probes.startupProbe | nindent 12 }}
-          {{- end }}
-
-          {{- if .Values.probes.readinessProbe }}
-          readinessProbe:
-{{ toYaml .Values.probes.readinessProbe | nindent 12 }}
-          {{- end }}
-
-          {{- if .Values.probes.livenessProbe }}
-          livenessProbe:
-{{ toYaml .Values.probes.livenessProbe | nindent 12 }}
-          {{- end }}
-
-          {{- with .Values.resources }}
-          resources:
-{{ toYaml . | nindent 12 }}
-          {{- end }}
-
-          {{- with .Values.envFrom }}
+{{- with .Values.envFrom }}
           envFrom:
 {{ toYaml . | nindent 12 }}
-          {{- end }}
+{{- end }}
 
-          {{- with .Values.volumeMounts }}
+{{- with .Values.probes.startupProbe }}
+          startupProbe:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+
+{{- with .Values.probes.readinessProbe }}
+          readinessProbe:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+
+{{- with .Values.probes.livenessProbe }}
+          livenessProbe:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+
+{{- with .Values.resources }}
+          resources:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+
+{{- with .Values.volumeMounts }}
           volumeMounts:
 {{ toYaml . | nindent 12 }}
-          {{- end }}
+{{- end }}
 
-      {{- with .Values.volumes }}
+{{- with .Values.volumes }}
       volumes:
 {{ toYaml . | nindent 8 }}
-      {{- end }}
-
+{{- end }}
