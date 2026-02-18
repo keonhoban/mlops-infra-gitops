@@ -17,6 +17,11 @@ class AppSettings(BaseSettings):
     triton_model_name: str = Field(default="best_model")
     triton_timeout_sec: int = Field(default=5)
 
+    # ✅ transient error 흡수용 retry (모델 전환 순간 튐 방지)
+    triton_retry_attempts: int = Field(default=5)
+    triton_retry_backoff_ms: int = Field(default=120)
+    triton_retry_max_backoff_ms: int = Field(default=800)
+
     class Config:
         case_sensitive = False
 
