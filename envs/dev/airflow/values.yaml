@@ -57,7 +57,7 @@ airflow:
       - name: MLFLOW_TRACKING_URI
         value: "http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000"
 
-      - name: FASTAPI_RELOAD_URL
+      - name: FASTAPI_BASE_URL
         value: "http://fastapi-dev-service.fastapi-dev.svc.cluster.local"
 
       # -----------------------
