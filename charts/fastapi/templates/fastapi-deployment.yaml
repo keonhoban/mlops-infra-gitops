@@ -5,20 +5,32 @@ metadata:
   labels:
 {{- include "fastapi.commonLabels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount | default 2 }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
   selector:
     matchLabels:
 {{- include "fastapi.selectorLabels" . | nindent 6 }}
+
+  {{- with .Values.updateStrategy }}
+  strategy:
+{{ toYaml . | nindent 4 }}
+  {{- end }}
+
   template:
     metadata:
       labels:
 {{- include "fastapi.selectorLabels" . | nindent 8 }}
     spec:
+      {{- if .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- end }}
+
       securityContext:
         runAsUser: {{ default 2001 .Values.podSecurityContext.runAsUser }}
         runAsGroup: {{ default 2001 .Values.podSecurityContext.runAsGroup }}
         fsGroup: {{ default 2001 .Values.podSecurityContext.fsGroup }}
         fsGroupChangePolicy: {{ default "OnRootMismatch" .Values.podSecurityContext.fsGroupChangePolicy }}
+
       containers:
         - name: fastapi
           image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
@@ -26,6 +38,11 @@ spec:
           ports:
             - name: http
               containerPort: 8000
+
+          {{- with .Values.lifecycle }}
+          lifecycle:
+{{ toYaml . | nindent 12 }}
+          {{- end }}
 
 {{- if .Values.env }}
           env:
@@ -69,3 +86,4 @@ spec:
       volumes:
 {{ toYaml . | nindent 8 }}
 {{- end }}
+

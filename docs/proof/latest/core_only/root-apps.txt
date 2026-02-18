@@ -1,5 +1,5 @@
 Name:               argocd/root-apps
-Project:            default
+Project:            bootstrap
 Server:             https://kubernetes.default.svc
 Namespace:          argocd
 URL:                https://argocd.local/applications/root-apps
@@ -9,15 +9,17 @@ Source:
   Path:             apps
 SyncWindow:         Sync Allowed
 Sync Policy:        Automated (Prune)
-Sync Status:        Synced to main (5d44b97)
+Sync Status:        Synced to main (f31863f)
 Health Status:      Healthy
 
 GROUP        KIND            NAMESPACE  NAME             STATUS  HEALTH   HOOK  MESSAGE
 argoproj.io  Application     argocd     prod-namespaces  Synced                 application.argoproj.io/prod-namespaces serverside-applied
+argoproj.io  Application     argocd     prod-support     Synced                 application.argoproj.io/prod-support serverside-applied
+argoproj.io  Application     argocd     dev-support      Synced                 application.argoproj.io/dev-support serverside-applied
+argoproj.io  AppProject      argocd     baseline         Synced                 
+argoproj.io  AppProject      argocd     bootstrap        Synced                 
 argoproj.io  AppProject      argocd     dev              Synced                 
 argoproj.io  AppProject      argocd     optional         Synced                 
 argoproj.io  AppProject      argocd     prod             Synced                 
 argoproj.io  Application     argocd     dev-namespaces   Synced                 
-argoproj.io  Application     argocd     dev-support      Synced                 
-argoproj.io  Application     argocd     prod-support     Synced                 
 argoproj.io  ApplicationSet  argocd     mlops-core       Synced  Healthy        

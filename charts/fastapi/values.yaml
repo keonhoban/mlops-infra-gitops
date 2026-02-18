@@ -1,6 +1,15 @@
-replicaCount: 1
+# FastAPI chart default values
+# 목표:
+# - RollingUpdate 기반 무중단(가까운 수준) 롤아웃
+# - readiness는 "서빙 준비" 의미를 가져야 함 (/ready)
+# - 로그는 stdout 중심(옵션 A: 로그 PVC 제거 전제)
+
+replicaCount: 2
+revisionHistoryLimit: 3
+
 image:
   repository: hoizz/fastapi-custom
+  tag: ""               # envs/*/fastapi/values.yaml 에서 tag 지정
   pullPolicy: IfNotPresent
 
 service:
@@ -13,6 +22,24 @@ podSecurityContext:
   fsGroup: 2001
   fsGroupChangePolicy: OnRootMismatch
 
+# RollingUpdate "무중단" 핵심:
+# - maxUnavailable: 0  => 기존 Pod를 내리기 전에 새 Pod가 Ready 되어야 함
+# - maxSurge: 1        => 동시에 1개 더 띄워서 교체
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+# 종료 시 연결 드레인 시간을 조금 줌 (nginx ingress/keep-alive/요청 처리 여유)
+terminationGracePeriodSeconds: 30
+
+# 종료 직전 약간 대기 (in-flight 요청 처리)
+lifecycle:
+  preStop:
+    exec:
+      command: ["/bin/sh", "-lc", "sleep 10"]
+
 resources:
   requests:
     cpu: 100m
@@ -21,20 +48,23 @@ resources:
     cpu: 500m
     memory: 512Mi
 
+# probes 설계:
+# - startup/readiness: /ready (Triton ready + alias 로드 등 '서빙 준비' 보장)
+# - liveness: /health (프로세스 생존만 확인)
 probes:
   startupProbe:
     httpGet:
-      path: /health
+      path: /ready
       port: 8000
-    initialDelaySeconds: 5
+    initialDelaySeconds: 3
     periodSeconds: 5
     failureThreshold: 30
 
   readinessProbe:
     httpGet:
-      path: /health
+      path: /ready
       port: 8000
-    initialDelaySeconds: 5
+    initialDelaySeconds: 3
     periodSeconds: 5
     failureThreshold: 3
     successThreshold: 1
@@ -43,12 +73,27 @@ probes:
     httpGet:
       path: /health
       port: 8000
-    initialDelaySeconds: 15
+    initialDelaySeconds: 10
     periodSeconds: 10
     failureThreshold: 5
+
+# 운영 중 노드 드레인/업데이트에서도 최소 1개는 유지되게 (replicas=2 전제)
+pdb:
+  enabled: true
+  minAvailable: 1
 
 metrics:
   enabled: true
   path: /metrics
   interval: 15s
   scrapeTimeout: 10s
+
+# 기본값에서는 volumes/volumeMounts를 두지 않습니다.
+# (옵션 A: 로그는 stdout, Loki/Alloy 수집)
+volumeMounts: []
+volumes: []
+
+# env/envFrom는 환경별(envs/*/fastapi/values.yaml)에서 주입하는 구조 유지
+env: {}
+envFrom: []
+
