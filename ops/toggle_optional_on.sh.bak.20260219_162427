@@ -16,7 +16,7 @@ WAIT="${WAIT:-true}"
 WAIT_TIMEOUT_SEC="${WAIT_TIMEOUT_SEC:-900}"
 
 # 출력 제어
-QUIET="${QUIET:-true}"           # true면 성공/진행 로그 최소화 (현재는 사용 안 하고 있음)
+QUIET="${QUIET:-true}"          # true면 성공/진행 로그 최소화
 TAIL_EVENTS="${TAIL_EVENTS:-60}" # 실패 시 이벤트 tail 개수
 TAIL_LOGS="${TAIL_LOGS:-80}"     # 실패 시 argocd app logs tail 개수
 
@@ -42,6 +42,7 @@ app_ns() {
 # -----------------------------
 run_to_file() {
   local name="$1"; shift
+  # stdout/stderr 모두 파일로 저장
   ( "$@" ) >"$PROOF_DIR/${name}.txt" 2>&1 || return $?
 }
 
@@ -71,6 +72,7 @@ wait_app_exists() {
   done
 }
 
+# 실패 시 “필요한 것만” 수집
 collect_failure_bundle() {
   local app="$1"
   local ns
@@ -89,6 +91,7 @@ collect_failure_bundle() {
   fi
 }
 
+# 에러를 “짧게” 보여주고 종료
 fail_fast() {
   local app="$1"
   local step="$2"
@@ -104,19 +107,13 @@ fail_fast() {
   echo "proof_dir: $PROOF_DIR"
   echo
 
+  # 화면에는 “핵심 상태/이벤트 tail”만 보여주기
   print_file_tail "$PROOF_DIR/fail_${app}_argocd_get.txt" 120
   print_file_tail "$PROOF_DIR/fail_${app}_kubectl_events.txt" 120
   print_file_tail "$PROOF_DIR/fail_${app}_kubectl_pods.txt" 80
 
   echo "======================================================"
   exit "$code"
-}
-
-is_monitoring_app() {
-  case "$1" in
-    monitoring-dev|monitoring-prod) return 0 ;;
-    *) return 1 ;;
-  esac
 }
 
 sync_and_wait_quiet() {
@@ -126,43 +123,25 @@ sync_and_wait_quiet() {
   local sync_rc=0
   local wait_rc=0
 
-  # monitoring만 sync 1회 재시도
-  local retry_sync=0
-  if is_monitoring_app "$app"; then
-    retry_sync=1
-  fi
-
+  # set -e 때문에 중간에 죽지 않게 보호
   set +e
-
-  # 1st sync
   run_to_file "sync_${app}" argocd app sync "$app" --prune --timeout 600
   sync_rc=$?
-
-  # retry once for monitoring (sync 실패 케이스 정리 목적)
-  if (( sync_rc != 0 )) && (( retry_sync == 1 )); then
-    run_to_file "sync_${app}_retry1" argocd app sync "$app" --prune --timeout 600
-    sync_rc=$?
-  fi
 
   if [[ "$WAIT" == "true" ]]; then
     run_to_file "wait_${app}" argocd app wait "$app" --sync --health --timeout 600
     wait_rc=$?
   fi
-
   set -e
 
-  # 최종 판정은 wait(운영 판정)
+  # 최종 판정은 wait 기준(=실제 운영 판정)
   if (( wait_rc != 0 )); then
     fail_fast "$app" "wait" "$wait_rc"
   fi
 
-  # sync는 참고값이지만, monitoring은 “깔끔한 ON 출력”을 위해 경고를 숨김
+  # sync는 참고값: 종종 비정상 rc가 나와도 결국 Healthy로 수렴함
   if (( sync_rc != 0 )); then
-    if is_monitoring_app "$app"; then
-      log "[ON] OK: ${app}"
-    else
-      log "[ON] WARN: ${app} sync rc=${sync_rc}, but wait succeeded (soft-pass)"
-    fi
+    log "[ON] WARN: ${app} sync rc=${sync_rc}, but wait succeeded (soft-pass)"
   else
     log "[ON] OK: ${app}"
   fi
@@ -178,6 +157,7 @@ if [[ ! -f "$ROOT_OPT_MANIFEST_PATH" ]]; then
   exit 1
 fi
 
+# 사전 상태는 optional만 간단히(파일로만 저장)
 run_to_file "00_before_optional_apps" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
 run_to_file "00_before_optional_ns"   bash -lc "kubectl get ns | egrep 'monitoring-|observability-|feature-store-' || true" || true
 
@@ -188,6 +168,7 @@ if ! run_to_file "10_apply_root_optional" kubectl apply -f "$ROOT_OPT_MANIFEST_P
 fi
 
 if ! run_to_file "12_sync_root_optional" argocd app sync root-optional --prune --timeout 600; then
+  # root-optional 실패도 번들 수집
   fail_fast "root-optional" "sync" "$?"
 fi
 
@@ -201,6 +182,7 @@ for app in "${OPTIONAL_STACK_APPS[@]}"; do
   sync_and_wait_quiet "$app"
 done
 
+# 마지막 요약도 파일로만
 run_to_file "90_after_optional_apps" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
 run_to_file "90_after_optional_ns"   bash -lc "kubectl get ns | egrep 'monitoring-|observability-|feature-store-' || true" || true
 
