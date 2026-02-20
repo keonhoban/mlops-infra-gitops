@@ -7,7 +7,6 @@ ENV="${1:-dev}"                              # dev | prod
 REGION="${REGION:-ap-northeast-2}"
 SS_CTL="${SS_CTL:-sealed-secrets}"
 SS_NS="${SS_NS:-kube-system}"
-ARGO_APP="${ENV}-secrets"
 
 info(){ echo "[$(date +%H:%M:%S)] $*"; }
 kseal(){ kubeseal --controller-name "$SS_CTL" --controller-namespace "$SS_NS" -o yaml; }
@@ -79,8 +78,10 @@ if [[ "$USE_AWS_API" -eq 1 ]]; then
   fi
 
   NEW_JSON="$("${AWS_CLI[@]}" iam create-access-key --user-name "$TARGET_USER")"
-  export NEW_ID="$(echo "$NEW_JSON" | jq -r .AccessKey.AccessKeyId)"
-  export NEW_SECRET="$(echo "$NEW_JSON" | jq -r .AccessKey.SecretAccessKey)"
+  NEW_ID="0 0echo "" | jq -r .AccessKey.AccessKeyId)"
+  export NEW_ID
+  NEW_SECRET="0 0echo "" | jq -r .AccessKey.SecretAccessKey)"
+  export NEW_SECRET
   info "Created new key: ${NEW_ID:0:4}********${NEW_ID: -4}"
 
   BK="/root/backup/${TARGET_USER}-${ENV}-new-access-key-$(date +%F-%H%M%S).json"

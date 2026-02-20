@@ -9,3 +9,7 @@ __pycache__/
 .env
 docs/proof/optional_on_*
 docs/proof/optional_off_*
+
+# generated proof artifacts
+docs/proof/latest/
+docs/audit/

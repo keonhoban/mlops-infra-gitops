@@ -145,7 +145,7 @@ if [[ ! -f "$ROOT_OPT_MANIFEST_PATH" ]]; then
 fi
 
 run_to_file "00_before_optional_apps" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
-run_to_file "00_before_optional_ns"   bash -lc "kubectl get ns | egrep 'feature-store-' || true" || true
+run_to_file "00_before_optional_ns"   bash -lc "kubectl get ns | grep -E 'feature-store-' || true" || true
 
 # root-optional apply/sync
 if ! run_to_file "10_apply_root_optional" kubectl apply -f "$ROOT_OPT_MANIFEST_PATH"; then
@@ -168,6 +168,6 @@ for app in "${OPTIONAL_STACK_APPS[@]}"; do
 done
 
 run_to_file "90_after_optional_apps" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
-run_to_file "90_after_optional_ns"   bash -lc "kubectl get ns | egrep 'feature-store-' || true" || true
+run_to_file "90_after_optional_ns"   bash -lc "kubectl get ns | grep -E 'feature-store-' || true" || true
 
 log "[ON] DONE (proof_dir=$PROOF_DIR)"

@@ -9,7 +9,7 @@ PAYLOAD='{"data": [[5.1, 3.5, 1.4, 0.2]]}'
 
 echo "🔍 A/B·Canary·Blue-Green 분포 확인 (${N}건)"
 : > ab_test_result.log
-for i in $(seq 1 $N); do
+for i in $(seq 1 "$N"); do
   id="client_$i"
   variant=$(curl -sk "${URL}/predict" \
     -H "Content-Type: application/json" \

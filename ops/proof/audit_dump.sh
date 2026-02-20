@@ -27,24 +27,24 @@ log "root-optional detail (if exists)"
 argocd app get root-optional | tee "$OUT_DIR/root-optional.txt" >/dev/null || true
 
 log "namespaces (optional-related)"
-kubectl get ns | egrep 'feature-store|observability|monitoring|loki|promtail' | tee "$OUT_DIR/namespaces_optional.txt" >/dev/null || true
+kubectl get ns | grep -E 'feature-store|monitoring|loki|promtail' | tee "$OUT_DIR/namespaces_optional.txt" >/dev/null || true
 
 log "PVC/PV sanity (triton/airflow model repo)"
 {
   echo "### airflow-dev pvc"
-  kubectl -n airflow-dev get pvc triton-model-repo-pvc -o yaml 2>/dev/null | egrep 'name:|namespace:|storageClassName|volumeName' || true
+  kubectl -n airflow-dev get pvc triton-model-repo-pvc -o yaml 2>/dev/null | grep -E 'name:|namespace:|storageClassName|volumeName' || true
   echo
   echo "### triton-dev pvc"
-  kubectl -n triton-dev get pvc triton-model-repo-pvc -o yaml 2>/dev/null | egrep 'name:|namespace:|storageClassName|volumeName' || true
+  kubectl -n triton-dev get pvc triton-model-repo-pvc -o yaml 2>/dev/null | grep -E 'name:|namespace:|storageClassName|volumeName' || true
   echo
   echo "### triton-prod pvc"
-  kubectl -n triton-prod get pvc triton-model-repo-pvc -o yaml 2>/dev/null | egrep 'name:|namespace:|storageClassName|volumeName' || true
+  kubectl -n triton-prod get pvc triton-model-repo-pvc -o yaml 2>/dev/null | grep -E 'name:|namespace:|storageClassName|volumeName' || true
   echo
   echo "### pv triton-model-repo-dev-pv"
-  kubectl get pv triton-model-repo-dev-pv -o yaml 2>/dev/null | egrep 'storageClassName|persistentVolumeReclaimPolicy|path:|server:' || true
+  kubectl get pv triton-model-repo-dev-pv -o yaml 2>/dev/null | grep -E 'storageClassName|persistentVolumeReclaimPolicy|path:|server:' || true
   echo
   echo "### pv airflow-triton-model-repo-dev-pv"
-  kubectl get pv airflow-triton-model-repo-dev-pv -o yaml 2>/dev/null | egrep 'storageClassName|persistentVolumeReclaimPolicy|path:|server:' || true
+  kubectl get pv airflow-triton-model-repo-dev-pv -o yaml 2>/dev/null | grep -E 'storageClassName|persistentVolumeReclaimPolicy|path:|server:' || true
 } | tee "$OUT_DIR/pvc_pv_sanity.txt" >/dev/null
 
 log "Core runtime probes (fastapi/triton/mlflow)"
@@ -68,10 +68,10 @@ log "Core runtime probes (fastapi/triton/mlflow)"
   kexec triton-prod triton curl -sS localhost:8000/v2/health/ready || true
   echo
   echo "### mlflow-dev runtime env (top + env grep)"
-  kexec mlflow-dev mlflow-dev sh -lc 'ps aux | head -n 5; echo "---"; printenv | egrep -i "DB_|MLFLOW|ARTIFACT|S3" ' || true
+  kexec mlflow-dev mlflow-dev sh -lc 'ps aux | head -n 5; echo "---"; printenv | grep -E -i "DB_|MLFLOW|ARTIFACT|S3" ' || true
   echo
   echo "### mlflow-prod runtime env (top + env grep)"
-  kexec mlflow-prod mlflow-prod sh -lc 'ps aux | head -n 5; echo "---"; printenv | egrep -i "DB_|MLFLOW|ARTIFACT|S3" ' || true
+  kexec mlflow-prod mlflow-prod sh -lc 'ps aux | head -n 5; echo "---"; printenv | grep -E -i "DB_|MLFLOW|ARTIFACT|S3" ' || true
 } | tee "$OUT_DIR/core_runtime_probes.txt" >/dev/null
 
 log "DONE -> $OUT_DIR"

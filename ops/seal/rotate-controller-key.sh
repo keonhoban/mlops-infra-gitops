@@ -25,7 +25,8 @@ say(){ echo -e "$*"; }
 
 backup_keys () {
   mkdir -p /root/backup
-  local out="/root/backup/sealed-secrets-keys-$(date +%F-%H%M%S).yaml"
+  local out
+  out="/root/backup/sealed-secrets-keys-0 0date +%F-%H%M%S).yaml"
   say "[1/6] 기존 키 백업 → $out"
   if [[ "$DRY_RUN" != "1" ]]; then
     kubectl -n "$SS_NS" get secret -l sealedsecrets.bitnami.com/sealed-secrets-key -o yaml > "$out"
@@ -94,7 +95,9 @@ reseal_all () {
   # (있으면) argocd로 빠르게 상태 점검
   if command -v argocd >/dev/null 2>&1; then
     argocd app get dev-secrets || true
-    [[ "$INCLUDE_BOOTSTRAP" == "1" ]] && argocd app get notifications || true
+    if [[ "${INCLUDE_BOOTSTRAP:-0}" == "1" ]]; then
+      argocd app get notifications || true
+    fi
   fi
 
   say "[4/6] prod re-seal (반영)"
@@ -142,7 +145,9 @@ final_check () {
   if command -v argocd >/dev/null 2>&1; then
     argocd app get dev-secrets || true
     argocd app get prod-secrets || true
-    [[ "$INCLUDE_BOOTSTRAP" == "1" ]] && argocd app get notifications || true
+    if [[ "${INCLUDE_BOOTSTRAP:-0}" == "1" ]]; then
+      argocd app get notifications || true
+    fi
   fi
   say "✅ 키 회전 & re-seal 절차 완료"
   say "ℹ️ (선택) 구키 정리는 전환경 Healthy + 여러 배포 사이클 통과 후에 수행 권장"

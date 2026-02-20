@@ -78,7 +78,9 @@ reseal_file () {
                  --format yaml > "$f"
   fi
 
-  [[ "$SHOW_DIFF" == "1" ]] && git --no-pager diff -- "$f" || true
+  if [[ "${SHOW_DIFF:-0}" == "1" ]]; then
+    git --no-pager diff -- "" || true
+  fi
 }
 
 # 1) env re-seal
@@ -104,7 +106,9 @@ if [[ "$INCLUDE_BOOTSTRAP" == "1" ]]; then
       echo "⚠️  argocd/argocd-notifications-secret 없음. bootstrap 건너뜀."
     fi
   fi
-  [[ "$SHOW_DIFF" == "1" ]] && git --no-pager diff -- "$SEALED" || true
+  if [[ "${SHOW_DIFF:-0}" == "1" ]]; then
+    git --no-pager diff -- "" || true
+  fi
   git add "$SEALED" 2>/dev/null || true
 fi
 

@@ -60,7 +60,7 @@ fi
 
 log "3) Capture AFTER app list (optional should be gone or OutOfSync/Missing only)"
 argocd app list | tee "$OUT_DIR/argocd_app_list_after.txt" >/dev/null
-argocd app list | egrep 'feast-|monitoring-|loki-|promtail-|optional-' \
+argocd app list | grep -E 'feast-|monitoring-|loki-|promtail-|optional-' \
   | tee "$OUT_DIR/optional_apps_after.txt" >/dev/null || true
 
 log "4) Core health probes"
