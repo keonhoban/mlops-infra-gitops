@@ -10,7 +10,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-29"
 spec:
-  description: Optional project (monitoring / feast / observability)
+  description: Optional project (monitoring / feast)
 
   sourceRepos:
     - 'https://github.com/keonhoban/mlops-infra-gitops'
@@ -21,8 +21,6 @@ spec:
 
   destinations:
     - namespace: monitoring-*
-      server: https://kubernetes.default.svc
-    - namespace: observability-*
       server: https://kubernetes.default.svc
     - namespace: feature-store-*
       server: https://kubernetes.default.svc
