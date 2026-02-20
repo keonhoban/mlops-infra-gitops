@@ -17,9 +17,6 @@ WAIT_INTERVAL_SEC="${WAIT_INTERVAL_SEC:-5}"
 OPTIONAL_ENVS_APPS=("optional-envs-dev" "optional-envs-prod")
 OPTIONAL_STACK_APPS=("feast-dev" "feast-prod")
 
-# optional이 만드는 namespace만 관리 (feature-store만)
-OPTIONAL_NAMESPACES=("feature-store-dev" "feature-store-prod")
-
 run() {
   local name="$1"; shift
   log "RUN: $name"
@@ -31,12 +28,24 @@ app_exists() {
   argocd app get "$app" >/dev/null 2>&1
 }
 
+# 1) 가능하면 argocd app delete --cascade (리소스 정리까지 깔끔)
+# 2) 안되면 kubectl delete application fallback
 delete_app_if_exists() {
   local phase="$1"; shift
   local app="$1"
 
   if app_exists "$app"; then
-    run "${phase}_delete_${app}" kubectl -n argocd delete application "$app" --ignore-not-found=true
+    log "[OFF] deleting app=${app} (prefer: argocd app delete --cascade)"
+
+    set +e
+    run "${phase}_argocd_delete_${app}" argocd app delete "$app" --cascade --yes
+    local rc=$?
+    set -e
+
+    if (( rc != 0 )); then
+      log "[OFF] argocd app delete failed (rc=${rc}) -> fallback kubectl delete application ${app}"
+      run "${phase}_kubectl_delete_${app}" kubectl -n argocd delete application "$app" --ignore-not-found=true
+    fi
   else
     log "[OFF] skip delete (app not found): ${app}"
   fi
@@ -73,44 +82,12 @@ wait_no_optional_apps() {
   done
 }
 
-wait_ns_terminated_or_force() {
-  local ns="$1"
-  local start now elapsed phase
-  start="$(date +%s)"
-
-  while true; do
-    if ! kubectl get ns "$ns" >/dev/null 2>&1; then
-      log "[OFF] ns deleted: ${ns}"
-      return 0
-    fi
-
-    phase="$(kubectl get ns "$ns" -o jsonpath='{.status.phase}' 2>/dev/null || true)"
-
-    now="$(date +%s)"
-    elapsed=$((now - start))
-    if (( elapsed > WAIT_TIMEOUT_SEC )); then
-      log "[OFF] TIMEOUT waiting ns terminate: ${ns} (phase=${phase})"
-
-      if [[ "$phase" == "Terminating" ]]; then
-        log "[OFF] force finalize ns=${ns}"
-        kubectl get ns "$ns" -o json \
-          | sed 's/"finalizers": \[[^]]*\]/"finalizers": []/' \
-          | kubectl replace --raw "/api/v1/namespaces/$ns/finalize" -f - \
-          || true
-      fi
-      return 1
-    fi
-
-    log "[OFF] waiting ns=${ns} phase=${phase} ..."
-    sleep 3
-  done
-}
-
 log "[OFF] proof dir: $PROOF_DIR"
 
 run "00_before_argocd_apps"    kubectl -n argocd get applications.argoproj.io -o wide || true
 run "00_before_argocd_appsets" kubectl -n argocd get applicationsets.argoproj.io -o wide || true
-run "00_before_namespaces"     kubectl get ns || true
+run "00_before_optional_scope" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
+run "00_before_feature_store_ns" bash -lc "kubectl get ns | grep -E 'feature-store-(dev|prod)' || true" || true
 
 log "[OFF] delete optional child apps (explicit list)"
 for app in "${OPTIONAL_STACK_APPS[@]}"; do
@@ -123,24 +100,18 @@ done
 log "[OFF] delete root-optional (detach optional/apps management)"
 delete_app_if_exists "12" "$ROOT_OPT_APP_NAME"
 
-log "[OFF] delete optional namespaces (core-only boundary)"
-run "20_delete_optional_namespaces" kubectl delete ns "${OPTIONAL_NAMESPACES[@]}" --ignore-not-found=true || true
-
 if [[ "$WAIT" == "true" ]]; then
   wait_no_optional_apps | tee "$PROOF_DIR/30_wait_no_optional_apps.txt" || true
-
-  log "[OFF] WAIT=true -> waiting namespaces termination (timeout=${WAIT_TIMEOUT_SEC}s each)"
-  for ns in "${OPTIONAL_NAMESPACES[@]}"; do
-    log "RUN: 40_wait_ns_${ns}"
-    wait_ns_terminated_or_force "$ns" | tee "$PROOF_DIR/40_wait_ns_${ns}.txt" || true
-  done
 fi
+
+# ✅ 핵심: bootstrap이 namespace를 소유하므로 OFF에서 namespace를 삭제하지 않는다.
+# 제출용 증거는 "ns는 남아있고(optional boundary), optional scope apps는 0개"로 남긴다.
 
 log "[OFF] proof"
 run "90_after_argocd_apps"    kubectl -n argocd get applications.argoproj.io -o wide || true
 run "90_after_argocd_appsets" kubectl -n argocd get applicationsets.argoproj.io -o wide || true
 run "90_optional_scope_remaining" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
-run "90_optional_namespaces_remaining" kubectl get ns | grep -E 'feature-store-' || true
+run "90_feature_store_ns" bash -lc "kubectl get ns | grep -E 'feature-store-(dev|prod)' || true" || true
 
 run "95_grep_optional_left" kubectl -n argocd get applications,applicationsets \
   | grep -E 'optional|feast|feature-store' || true
