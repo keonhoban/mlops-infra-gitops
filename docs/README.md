@@ -56,7 +56,7 @@ Optional Attach / Detach 결과 로그
 Proof 디렉토리는 다음 목적을 가집니다:
 
 - 운영 이력 추적
-- 면접 시 재현 증명
+- 재현 증명
 - GitOps 경계 검증
 
 주의: Baseline(Logging/Monitoring/S3)은 Always-on이며 Optional 토글로 제거되지 않습니다.
@@ -64,7 +64,7 @@ Optional 토글은 feature-store(Feast) 등 확장 레이어에만 적용됩니�
 
 ---
 
-## Reading Flow (면접 시 권장 동선)
+## Reading Flow (권장 동선)
 
 1. 루트 README (전체 철학)
 2. architecture.md (레이어 구조)
