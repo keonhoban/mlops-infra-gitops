@@ -1,10 +1,14 @@
----
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp: null
+  annotations:
+    argocd.argoproj.io/tracking-id: optional-envs-dev:bitnami.com/SealedSecret:monitoring-dev/alertmanager-tls
+  creationTimestamp: "2026-02-20T09:35:50Z"
+  generation: 1
   name: alertmanager-tls
   namespace: monitoring-dev
+  resourceVersion: "7140481"
+  uid: 048a49e3-de07-47ee-859d-e86c7d360b64
 spec:
   encryptedData:
     tls.crt: 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
@@ -15,3 +19,10 @@ spec:
       name: alertmanager-tls
       namespace: monitoring-dev
     type: kubernetes.io/tls
+status:
+  conditions:
+  - lastTransitionTime: "2026-02-20T09:35:51Z"
+    lastUpdateTime: "2026-02-20T09:35:51Z"
+    status: "True"
+    type: Synced
+  observedGeneration: 1

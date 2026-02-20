@@ -3,7 +3,4 @@ kind: Kustomization
 
 resources:
   - alertmanager-config-prod.yaml
-  - alertmanager-tls.sealed.yaml
   - grafana-admin-secret-prod.yaml
-  - grafana-tls.sealed.yaml
-  - prometheus-tls.sealed.yaml
