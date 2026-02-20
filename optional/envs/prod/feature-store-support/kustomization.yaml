@@ -1,3 +1,5 @@
-optional/envs/prod/feature-store-support/
-  kustomization.yaml
-  airflow-kpo-rbac.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - airflow-kpo-rbac.yaml
