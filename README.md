@@ -101,8 +101,8 @@ Monitoring ingress (실제 클러스터 기준):
 
 - Core/Baseline 상태 확인(증명): `./ops/proof/proof_core_only.sh`
   - *주의*: 본 프로젝트에서 “core_only”는 **Optional이 없는 상태(Core+Baseline)** 를 의미합니다.
-- Optional ON: `./ops/toggle_optional_on.sh` (Feast/feature-store 등 Attach)
-- Optional OFF: `./ops/toggle_optional_off.sh` (Optional 리소스 Detach)
+- Optional ON: `./ops/toggle/optional_on.sh` (Feast/feature-store 등 Attach)
+- Optional OFF: `./ops/toggle/optional_off.sh` (Optional 리소스 Detach)
 - GitOps 상태 확인: `argocd app list`
 
 ---

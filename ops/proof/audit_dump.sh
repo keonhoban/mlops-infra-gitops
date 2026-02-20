@@ -27,7 +27,7 @@ log "root-optional detail (if exists)"
 argocd app get root-optional | tee "$OUT_DIR/root-optional.txt" >/dev/null || true
 
 log "namespaces (optional-related)"
-kubectl get ns | grep -E 'feature-store|monitoring|loki|promtail' | tee "$OUT_DIR/namespaces_optional.txt" >/dev/null || true
+kubectl get ns | grep -E 'feature-store|monitoring|loki|observability' | tee "$OUT_DIR/namespaces_optional.txt" >/dev/null || true
 
 log "PVC/PV sanity (triton/airflow model repo)"
 {

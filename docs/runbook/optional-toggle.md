@@ -22,10 +22,10 @@
 ## Commands
 
 ### Optional ON
-`./ops/toggle_optional_on.sh`
+`./ops/toggle/optional_on.sh`
 
 ### Optional OFF
-`./ops/toggle_optional_off.sh`
+`./ops/toggle/optional_off.sh`
 
 ---
 

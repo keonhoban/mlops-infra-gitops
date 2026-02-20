@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ops/rotate/rotate-aws-credentials.sh
+# ops/security/rotate-aws-credentials.sh
 set -euo pipefail
 
 # ===== 기본 파라미터 =====

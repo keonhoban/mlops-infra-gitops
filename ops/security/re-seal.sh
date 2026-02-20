@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# ops/seal/re-seal.sh
+# ops/security/re-seal.sh
 # 사용법:
-#   bash ops/seal/re-seal.sh dev
-#   SHOW_DIFF=1 bash ops/seal/re-seal.sh prod
+#   bash ops/security/re-seal.sh dev
+#   SHOW_DIFF=1 bash ops/security/re-seal.sh prod
 # 옵션:
 #   INCLUDE_BOOTSTRAP=1  # bootstrap/notifications까지 같이 처리
 #   DRY_RUN=1            # 실행 대신 계획만 출력

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# ops/seal/rotate-controller-key.sh
+# ops/security/rotate-controller-key.sh
 # 사용법:
-#   bash ops/seal/rotate-controller-key.sh
+#   bash ops/security/rotate-controller-key.sh
 # 옵션:
 #   INCLUDE_BOOTSTRAP=1  # notifications 같이 re-seal
 #   DRY_RUN=1            # 실제 패치/봉인/커밋 없이 흐름만
@@ -84,7 +84,7 @@ patch_args_temp_short () {
 
 reseal_all () {
   say "[3/6] dev re-seal (검증)"
-  local cmd="SHOW_DIFF=1 INCLUDE_BOOTSTRAP=${INCLUDE_BOOTSTRAP} bash ops/seal/re-seal.sh dev"
+  local cmd="SHOW_DIFF=1 INCLUDE_BOOTSTRAP=${INCLUDE_BOOTSTRAP} bash ops/security/re-seal.sh dev"
   if [[ "$DRY_RUN" == "1" ]]; then
     say "  (dry-run) $cmd"
   else
@@ -101,7 +101,7 @@ reseal_all () {
   fi
 
   say "[4/6] prod re-seal (반영)"
-  cmd="SHOW_DIFF=1 INCLUDE_BOOTSTRAP=${INCLUDE_BOOTSTRAP} bash ops/seal/re-seal.sh prod"
+  cmd="SHOW_DIFF=1 INCLUDE_BOOTSTRAP=${INCLUDE_BOOTSTRAP} bash ops/security/re-seal.sh prod"
   if [[ "$DRY_RUN" == "1" ]]; then
     say "  (dry-run) $cmd"
   else

@@ -32,7 +32,7 @@ argocd app sync root-optional | tee "$OUT_DIR/root_optional_sync.txt" >/dev/null
 log "3) Post-snapshot"
 argocd app get root-optional | tee "$OUT_DIR/root-optional.txt" >/dev/null || true
 argocd app list | tee "$OUT_DIR/argocd_app_list_after.txt" >/dev/null
-argocd app list | grep -E 'feast-|monitoring-|loki-|promtail-|optional-' \
+argocd app list | grep -E 'feast-|monitoring-|loki-|alloy-|optional-' \
   | tee "$OUT_DIR/optional_apps_after.txt" >/dev/null || true
 
 log "DONE -> $OUT_DIR"
