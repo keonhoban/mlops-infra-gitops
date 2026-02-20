@@ -6,3 +6,4 @@ resources:
   - fastapi-prod-pm.yaml
   - rules/fastapi-alerts.yaml
   - rules/triton-alerts.yaml
+  - sealed-secrets/monitoring-sealedsecrets.yaml

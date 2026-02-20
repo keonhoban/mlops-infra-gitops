@@ -7,3 +7,5 @@ __pycache__/
 *.pyo
 *.pyd
 .env
+docs/proof/optional_on_*
+docs/proof/optional_off_*
