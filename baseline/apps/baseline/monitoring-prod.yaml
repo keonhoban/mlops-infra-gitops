@@ -1,35 +1,39 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: monitoring-dev
+  name: monitoring-prod
   namespace: argocd
   labels:
-    stack: optional
-    scope: optional
-    layer: monitoring
+    stack: baseline
+    scope: baseline
+    env: prod
+    layer: baseline
     app: monitoring
-    env: dev
   annotations:
     argocd.argoproj.io/sync-wave: "80"
 spec:
-  project: optional
+  project: baseline
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring-prod
+
   sources:
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: kube-prometheus-stack
       targetRevision: 65.5.0
       helm:
         valueFiles:
-          - "$values/optional/envs/dev/monitoring/values.yaml"
+          - "$values/baseline/envs/prod/baseline/monitoring/values.yaml"
     - repoURL: https://github.com/keonhoban/mlops-infra-gitops
       targetRevision: main
       ref: values
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring-dev
+
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ApplyOutOfSyncOnly=true
       - PruneLast=true
       - ServerSideApply=true
-

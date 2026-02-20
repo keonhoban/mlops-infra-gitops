@@ -10,4 +10,7 @@ resources:
   - baseline/appset-baseline.yaml
   - baseline/minio-dev.yaml
   - baseline/minio-prod.yaml
-
+  - baseline/monitoring-dev.yaml
+  - baseline/monitoring-prod.yaml
+  - baseline/monitoring-extra-dev.yaml
+  - baseline/monitoring-extra-prod.yaml

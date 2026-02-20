@@ -15,11 +15,9 @@ WAIT_INTERVAL_SEC="${WAIT_INTERVAL_SEC:-5}"
 
 # 토글 대상(명시)
 OPTIONAL_ENVS_APPS=("optional-envs-dev" "optional-envs-prod")
-OPTIONAL_STACK_APPS=("monitoring-dev" "monitoring-prod" "feast-dev" "feast-prod")
+OPTIONAL_STACK_APPS=("feast-dev" "feast-prod")
 
 OPTIONAL_NAMESPACES=(
-  "monitoring-dev" "monitoring-prod"
-  "observability-dev" "observability-prod"
   "feature-store-dev" "feature-store-prod"
 )
 

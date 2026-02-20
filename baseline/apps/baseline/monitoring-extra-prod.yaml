@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring-extra-prod
+  namespace: argocd
+  labels:
+    stack: baseline
+    scope: baseline
+    env: prod
+    layer: baseline
+    app: monitoring-extra
+  annotations:
+    argocd.argoproj.io/sync-wave: "85"
+spec:
+  project: baseline
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring-prod
+
+  source:
+    repoURL: https://github.com/keonhoban/mlops-infra-gitops
+    targetRevision: main
+    path: baseline/envs/prod/baseline/monitoring/extra
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PruneLast=true
+      - ServerSideApply=true

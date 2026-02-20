@@ -21,15 +21,13 @@ TAIL_EVENTS="${TAIL_EVENTS:-60}" # 실패 시 이벤트 tail 개수
 TAIL_LOGS="${TAIL_LOGS:-80}"     # 실패 시 argocd app logs tail 개수
 
 OPTIONAL_ENVS_APPS=("optional-envs-dev" "optional-envs-prod")
-OPTIONAL_STACK_APPS=("monitoring-dev" "monitoring-prod" "feast-dev" "feast-prod")
+OPTIONAL_STACK_APPS=("feast-dev" "feast-prod")
 
 # app -> namespace 매핑 (실패 시 kubectl 이벤트/파드 수집용)
 app_ns() {
   case "$1" in
     optional-envs-dev)  echo "bootstrap-dev" ;;
     optional-envs-prod) echo "bootstrap-prod" ;;
-    monitoring-dev)     echo "monitoring-dev" ;;
-    monitoring-prod)    echo "monitoring-prod" ;;
     feast-dev)          echo "feature-store-dev" ;;
     feast-prod)         echo "feature-store-prod" ;;
     root-optional)      echo "argocd" ;;
@@ -111,38 +109,17 @@ fail_fast() {
   echo "======================================================"
   exit "$code"
 }
-
-is_monitoring_app() {
-  case "$1" in
-    monitoring-dev|monitoring-prod) return 0 ;;
-    *) return 1 ;;
-  esac
-}
-
 sync_and_wait_quiet() {
   local app="$1"
   wait_app_exists "$app"
 
   local sync_rc=0
   local wait_rc=0
-
-  # monitoring만 sync 1회 재시도
-  local retry_sync=0
-  if is_monitoring_app "$app"; then
-    retry_sync=1
-  fi
-
   set +e
 
   # 1st sync
   run_to_file "sync_${app}" argocd app sync "$app" --prune --timeout 600
-  sync_rc=$?
-
-  # retry once for monitoring (sync 실패 케이스 정리 목적)
-  if (( sync_rc != 0 )) && (( retry_sync == 1 )); then
-    run_to_file "sync_${app}_retry1" argocd app sync "$app" --prune --timeout 600
-    sync_rc=$?
-  fi
+  sync_rc=$?  fi
 
   if [[ "$WAIT" == "true" ]]; then
     run_to_file "wait_${app}" argocd app wait "$app" --sync --health --timeout 600
@@ -154,16 +131,7 @@ sync_and_wait_quiet() {
   # 최종 판정은 wait(운영 판정)
   if (( wait_rc != 0 )); then
     fail_fast "$app" "wait" "$wait_rc"
-  fi
-
-  # sync는 참고값이지만, monitoring은 “깔끔한 ON 출력”을 위해 경고를 숨김
-  if (( sync_rc != 0 )); then
-    if is_monitoring_app "$app"; then
-      log "[ON] OK: ${app}"
-    else
-      log "[ON] WARN: ${app} sync rc=${sync_rc}, but wait succeeded (soft-pass)"
-    fi
-  else
+  fi  else
     log "[ON] OK: ${app}"
   fi
 }
