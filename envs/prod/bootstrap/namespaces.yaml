@@ -45,3 +45,9 @@ kind: Namespace
 metadata:
   name: feature-store-prod
   labels: { env: prod, app: feature-store-prod, team: ml-platform }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: baseline-prod
+  labels: { env: prod, app: baseline-prod, team: ml-platform }
