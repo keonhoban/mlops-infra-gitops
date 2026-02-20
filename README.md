@@ -103,6 +103,8 @@ Monitoring ingress (실제 클러스터 기준):
   - *주의*: 본 프로젝트에서 “core_only”는 **Optional이 없는 상태(Core+Baseline)** 를 의미합니다.
 - Optional ON: `./ops/toggle/optional_on.sh` (Feast/feature-store 등 Attach)
 - Optional OFF: `./ops/toggle/optional_off.sh` (Optional 리소스 Detach)
+
+- Makefile shortcut: `make help` (e.g. `make proof-core`, `make optional-on`)
 - GitOps 상태 확인: `argocd app list`
 
 ---
@@ -117,5 +119,5 @@ Monitoring ingress (실제 클러스터 기준):
 | envs/ | Core 운영 리소스 |
 | baseline/ | Baseline stack (MinIO/Loki/Alloy/Monitoring) |
 | optional/ | Optional 확장 레이어 (Feast 등) |
-| ops/ | proof / toggle / rotate |
+| ops/ | proof / toggle / security |
 | docs/ | architecture / runbook / proof |
