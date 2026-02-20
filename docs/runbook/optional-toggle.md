@@ -19,7 +19,23 @@
 
 ---
 
-## Commands
+## Commands (추천: Makefile)
+
+### Optional ON
+- `make optional-on`
+
+### Optional OFF
+- `make optional-off`
+
+### Proof (Core-only / Optional-on 스냅샷)
+- Core-only: `make proof-core`
+- Optional-on: `make proof-optional`
+
+> Makefile이 없는 환경이라면 아래 스크립트를 직접 실행해도 됩니다.
+
+---
+
+## Commands (대체: Script)
 
 ### Optional ON
 `./ops/toggle/optional_on.sh`
@@ -29,7 +45,7 @@
 
 ---
 
-## Proof
+## Proof 산출물
 
 토글 실행 시 `docs/proof/optional_on_*`, `docs/proof/optional_off_*`에 로그가 남습니다.
 (“Optional OFF 시 Optional scope=0”을 증거로 제시)
