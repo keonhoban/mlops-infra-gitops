@@ -6,4 +6,5 @@ resources:
   - sealed-secrets
   - monitoring
   - feast
+  - feature-store-support
 
