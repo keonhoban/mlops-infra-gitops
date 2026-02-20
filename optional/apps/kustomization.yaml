@@ -14,8 +14,3 @@ resources:
   # feast
   - feast/feast-dev.yaml
   - feast/feast-prod.yaml
-
-  # monitoring
-  - monitoring/monitoring-dev.yaml
-  - monitoring/monitoring-prod.yaml
-
