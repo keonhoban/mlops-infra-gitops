@@ -13,13 +13,12 @@ WAIT="${WAIT:-true}"
 WAIT_TIMEOUT_SEC="${WAIT_TIMEOUT_SEC:-900}"
 WAIT_INTERVAL_SEC="${WAIT_INTERVAL_SEC:-5}"
 
-# 토글 대상(명시)
+# 토글 대상(명시) - monitoring 제외!
 OPTIONAL_ENVS_APPS=("optional-envs-dev" "optional-envs-prod")
 OPTIONAL_STACK_APPS=("feast-dev" "feast-prod")
 
-OPTIONAL_NAMESPACES=(
-  "feature-store-dev" "feature-store-prod"
-)
+# optional이 만드는 namespace만 관리 (feature-store만)
+OPTIONAL_NAMESPACES=("feature-store-dev" "feature-store-prod")
 
 run() {
   local name="$1"; shift
@@ -141,10 +140,9 @@ log "[OFF] proof"
 run "90_after_argocd_apps"    kubectl -n argocd get applications.argoproj.io -o wide || true
 run "90_after_argocd_appsets" kubectl -n argocd get applicationsets.argoproj.io -o wide || true
 run "90_optional_scope_remaining" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
-run "90_optional_namespaces_remaining" kubectl get ns | egrep 'baseline-|monitoring-|observability-' || true
+run "90_optional_namespaces_remaining" kubectl get ns | egrep 'feature-store-' || true
 
 run "95_grep_optional_left" kubectl -n argocd get applications,applicationsets \
-  | egrep 'baseline|minio|loki|alloy|monitoring|observability|promtail|feast|optional' || true
+  | egrep 'optional|feast|feature-store' || true
 
 log "PROOF_DIR=$PROOF_DIR"
-

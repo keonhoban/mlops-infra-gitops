@@ -15,11 +15,10 @@ ROOT_OPT_MANIFEST_PATH="${ROOT_OPT_MANIFEST_PATH:-bootstrap/root-optional.yaml}"
 WAIT="${WAIT:-true}"
 WAIT_TIMEOUT_SEC="${WAIT_TIMEOUT_SEC:-900}"
 
-# 출력 제어
-QUIET="${QUIET:-true}"           # true면 성공/진행 로그 최소화 (현재는 사용 안 하고 있음)
-TAIL_EVENTS="${TAIL_EVENTS:-60}" # 실패 시 이벤트 tail 개수
-TAIL_LOGS="${TAIL_LOGS:-80}"     # 실패 시 argocd app logs tail 개수
+TAIL_EVENTS="${TAIL_EVENTS:-60}"
+TAIL_LOGS="${TAIL_LOGS:-80}"
 
+# Optional scope apps (monitoring 제외!)
 OPTIONAL_ENVS_APPS=("optional-envs-dev" "optional-envs-prod")
 OPTIONAL_STACK_APPS=("feast-dev" "feast-prod")
 
@@ -83,7 +82,7 @@ collect_failure_bundle() {
   if [[ -n "$ns" ]]; then
     run_to_file "fail_${app}_kubectl_pods"   kubectl -n "$ns" get pods -o wide || true
     run_to_file "fail_${app}_kubectl_events" bash -lc "kubectl -n \"$ns\" get events --sort-by=.lastTimestamp | tail -n \"$TAIL_EVENTS\"" || true
-    run_to_file "fail_${app}_kubectl_deploy" kubectl -n "$ns" get deploy,sts,ds,svc,ing,pvc -o wide || true
+    run_to_file "fail_${app}_kubectl_objs"   kubectl -n "$ns" get deploy,sts,ds,svc,ing,pvc -o wide || true
   fi
 }
 
@@ -109,17 +108,17 @@ fail_fast() {
   echo "======================================================"
   exit "$code"
 }
-sync_and_wait_quiet() {
+
+sync_and_wait() {
   local app="$1"
   wait_app_exists "$app"
 
-  local sync_rc=0
   local wait_rc=0
   set +e
 
-  # 1st sync
+  # sync는 실패해도 기록만 남기고, 최종 판정은 wait로 한다
   run_to_file "sync_${app}" argocd app sync "$app" --prune --timeout 600
-  sync_rc=$?  fi
+  local sync_rc=$?
 
   if [[ "$WAIT" == "true" ]]; then
     run_to_file "wait_${app}" argocd app wait "$app" --sync --health --timeout 600
@@ -128,12 +127,11 @@ sync_and_wait_quiet() {
 
   set -e
 
-  # 최종 판정은 wait(운영 판정)
   if (( wait_rc != 0 )); then
     fail_fast "$app" "wait" "$wait_rc"
-  fi  else
-    log "[ON] OK: ${app}"
   fi
+
+  log "[ON] OK: ${app} (sync_rc=${sync_rc}, wait_rc=${wait_rc})"
 }
 
 # -----------------------------
@@ -147,7 +145,7 @@ if [[ ! -f "$ROOT_OPT_MANIFEST_PATH" ]]; then
 fi
 
 run_to_file "00_before_optional_apps" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
-run_to_file "00_before_optional_ns"   bash -lc "kubectl get ns | egrep 'monitoring-|observability-|feature-store-' || true" || true
+run_to_file "00_before_optional_ns"   bash -lc "kubectl get ns | egrep 'feature-store-' || true" || true
 
 # root-optional apply/sync
 if ! run_to_file "10_apply_root_optional" kubectl apply -f "$ROOT_OPT_MANIFEST_PATH"; then
@@ -161,16 +159,15 @@ fi
 
 # envs 먼저
 for app in "${OPTIONAL_ENVS_APPS[@]}"; do
-  sync_and_wait_quiet "$app"
+  sync_and_wait "$app"
 done
 
 # stack
 for app in "${OPTIONAL_STACK_APPS[@]}"; do
-  sync_and_wait_quiet "$app"
+  sync_and_wait "$app"
 done
 
 run_to_file "90_after_optional_apps" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
-run_to_file "90_after_optional_ns"   bash -lc "kubectl get ns | egrep 'monitoring-|observability-|feature-store-' || true" || true
+run_to_file "90_after_optional_ns"   bash -lc "kubectl get ns | egrep 'feature-store-' || true" || true
 
 log "[ON] DONE (proof_dir=$PROOF_DIR)"
-
