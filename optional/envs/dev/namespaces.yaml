@@ -15,4 +15,10 @@ kind: Namespace
 metadata:
   name: observability-dev
   labels: { env: dev, app: observability-dev, team: ml-platform }
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: feature-store-dev
+  labels: { env: dev, app: feature-store-dev, team: ml-platform }
 

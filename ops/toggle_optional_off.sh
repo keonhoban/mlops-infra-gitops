@@ -20,6 +20,7 @@ OPTIONAL_STACK_APPS=("monitoring-dev" "monitoring-prod" "feast-dev" "feast-prod"
 OPTIONAL_NAMESPACES=(
   "monitoring-dev" "monitoring-prod"
   "observability-dev" "observability-prod"
+  "feature-store-dev" "feature-store-prod"
 )
 
 run() {
