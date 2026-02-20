@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - namespaces.yaml
   - sealed-secrets
-  - monitoring
   - feast
   - feature-store-support
 
