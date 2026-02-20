@@ -31,9 +31,7 @@ spec:
     - namespace: argocd
       server: https://kubernetes.default.svc
 
-  clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
+  clusterResourceWhitelist: []
 
   orphanedResources:
     warn: true
