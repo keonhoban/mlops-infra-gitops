@@ -1,6 +1,11 @@
 configs:
   cm:
     url: https://argocd.local
+    resource.customizations: |
+      bitnami.com/SealedSecret:
+        ignoreDifferences: |
+          jsonPointers:
+          - /status
 
 configsParams:
   server.insecure: "false"
@@ -24,3 +29,4 @@ redis:
 global:
   image:
     tag: v2.12.3
+
