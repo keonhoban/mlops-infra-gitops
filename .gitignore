@@ -2,3 +2,8 @@
 docs/proof/*
 !docs/proof/latest/
 !docs/proof/latest/**
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
