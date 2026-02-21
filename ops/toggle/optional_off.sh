@@ -112,6 +112,8 @@ run "90_after_argocd_apps"    kubectl -n argocd get applications.argoproj.io -o 
 run "90_after_argocd_appsets" kubectl -n argocd get applicationsets.argoproj.io -o wide || true
 run "90_optional_scope_remaining" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
 run "90_feature_store_ns" bash -lc "kubectl get ns | grep -E 'feature-store-(dev|prod)' || true" || true
+run "91_feature_store_dev_empty"  kubectl -n feature-store-dev  get all,pvc,cm,secret -o wide || true
+run "92_feature_store_prod_empty" kubectl -n feature-store-prod get all,pvc,cm,secret -o wide || true
 
 run "95_grep_optional_left" kubectl -n argocd get applications,applicationsets \
   | grep -E 'optional|feast|feature-store' || true

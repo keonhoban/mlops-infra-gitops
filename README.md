@@ -66,6 +66,9 @@ Monitoring ingress (실제 클러스터 기준):
 - Feature Store: Feast (+ Redis)
 - (확장 후보) Tempo/Pyroscope 등 추가 컴포넌트
 
+> Optional OFF는 “비파괴 Detach”입니다. feature-store-* namespace는 경계/재부착 안정성을 위해 유지되며,  
+> 실제 Feast/Redis 리소스는 Optional ON에서만 생성됩니다.
+
 ---
 
 ## Deployment Success Criteria (Core 기준)

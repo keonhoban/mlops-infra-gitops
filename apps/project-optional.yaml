@@ -10,18 +10,14 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-29"
 spec:
-  description: Optional project (monitoring / feast)
+  description: Optional project (feature-store / feast)
 
   sourceRepos:
     - 'https://github.com/keonhoban/mlops-infra-gitops'
-    - 'https://prometheus-community.github.io/helm-charts'
-    - 'https://grafana.github.io/helm-charts'
     - 'https://charts.bitnami.com/bitnami'
     - 'oci://registry-1.docker.io/bitnamicharts'
 
   destinations:
-    - namespace: monitoring-*
-      server: https://kubernetes.default.svc
     - namespace: feature-store-*
       server: https://kubernetes.default.svc
     - namespace: bootstrap-dev
@@ -35,13 +31,3 @@ spec:
 
   orphanedResources:
     warn: true
-    ignore:
-      - kind: Secret
-        name: monitoring-dev-kube-promet-admission
-      - kind: Secret
-        name: monitoring-prod-kube-prome-admission
-      - kind: Secret
-        name: monitoring-dev-kube-prome-admission
-      - kind: Secret
-        name: monitoring-prod-kube-promet-admission
-

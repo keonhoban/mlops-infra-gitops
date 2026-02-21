@@ -2,20 +2,22 @@
 
 ## Optional ON/OFF의 의미
 
-- Optional ON: feature-store(Feast) 등 확장 컴포넌트를 Attach
+- Optional ON: Feast(feature-store) 등 확장 컴포넌트를 Attach
 - Optional OFF: Optional 리소스를 Detach하여 클러스터를 Core+Baseline 상태로 복귀
 
-### 토글 대상(삭제/생성되는 것)
+### 토글 대상(Attach/Detach로 변화하는 것)
 - ArgoCD Applications:
   - root-optional
   - optional-envs-dev / optional-envs-prod
   - feast-dev / feast-prod
-- Kubernetes namespaces:
-  - feature-store-dev / feature-store-prod
 
 ### 토글 대상이 아닌 것(항상 유지)
 - Baseline: MinIO / Loki / Alloy / Monitoring
 - Core: Airflow / MLflow / Triton / FastAPI
+- Kubernetes namespaces (항상 유지: 경계/재부착 안정성 목적)
+  - feature-store-dev / feature-store-prod
+  - (설명) Optional OFF에서도 namespace는 “경계/재부착 안정성” 목적의 빈 컨테이너로 유지됩니다.
+    실제 Feast/Redis 리소스는 Attach 시에만 생성됩니다.
 
 ---
 

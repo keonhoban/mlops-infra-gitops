@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-OUT_DIR="docs/proof/latest/core_only"
+OUT_DIR="/root/mlops-infra/docs/proof/latest/core_only"
 rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR"
 
