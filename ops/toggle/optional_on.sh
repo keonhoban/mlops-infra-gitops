@@ -170,5 +170,7 @@ done
 
 run_to_file "90_after_optional_apps" kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide || true
 run_to_file "90_after_feature_store_ns" bash -lc "kubectl get ns | grep -E 'feature-store-(dev|prod)' || true" || true
+run_to_file "91_feature_store_dev_objects"  kubectl -n feature-store-dev  get all,pvc,cm,secret -o wide || true
+run_to_file "92_feature_store_prod_objects" kubectl -n feature-store-prod get all,pvc,cm,secret -o wide || true
 
 log "[ON] DONE (proof_dir=$PROOF_DIR)"
