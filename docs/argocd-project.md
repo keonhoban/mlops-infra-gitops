@@ -1,163 +1,145 @@
-## ArgoCD AppProject 운영 정책 (dev / prod)
+# Architecture
 
-이 문서는 본 MLOps 플랫폼에서 사용하는 **ArgoCD AppProject 설계 의도와 운영 정책**을 설명합니다.
+이 문서는 GitOps(ArgoCD) 기반으로 운영되는 **E2E ML Platform**의 전체 구조를 설명합니다.
 
-목표는 **GitOps 기반 안정성 + 자동화 + 실무 유지보수 용이성**입니다.
+핵심은 다음 3가지입니다.
 
----
-
-## 1. 환경 분리 전략 (dev / prod)
-
-### 프로젝트 단위 분리
-
-- `AppProject/dev`
-- `AppProject/prod`
-
-각 프로젝트는 **소스 접근, 배포 대상, 리소스 범위**가 분리됩니다.
-
-### Namespace 규칙
-
-- dev: `-dev`
-- prod: `-prod`
-
-이를 통해:
-
-- 잘못된 환경 배포를 구조적으로 차단
-- GitOps에서 환경 간 충돌 방지
-- “환경 격리” 증명 가능
+- **Core**: 모델 생명주기 E2E 자동화 (Train → Register → Deploy → Reload)
+- **Baseline**: 운영 필수 기반층 (Storage/Logging/Monitoring) — Always-on
+- **Optional**: 실험/확장 레이어 (Feature Store 등) — Attach/Detach
 
 ---
 
-## 2. Source Repository 제한 정책
+## 1. High-level Topology
 
-각 AppProject는 **명시적으로 허용된 Repo만 접근 가능**합니다.
+### GitOps Control Plane
+- 모든 변경은 Git Commit에서 시작
+- ArgoCD가 선언 상태를 강제(SelfHeal/Prune)
+- dev / prod는 **AppProject + Namespace 규칙**으로 구조적으로 격리
 
-### 허용 Repo
-
-- 내부 GitOps Repo
-    - `https://github.com/keonhoban/mlops-infra-gitops`
-- 외부 Helm Chart Repo
-    - Bitnami
-    - Prometheus Community
-    - Grafana
-    - OCI(bitnamicharts)
-
-➡️ **임의의 외부 Repo 배포를 구조적으로 차단**하여
-
-보안·재현성·감사 가능성을 확보합니다.
+### Runtime Data Plane (Core)
+- Airflow: 학습/평가/등록/배포/롤백 흐름 제어
+- MLflow: Tracking/Registry
+- Triton: 모델 서빙 (Load/Ready/Inference)
+- FastAPI: alias 기반 요청 라우팅 + Reload API 제공
 
 ---
 
-## 3. Orphaned Resources 정책
+## 2. Environment Isolation (dev / prod)
 
-본 프로젝트는 `orphanedResources.warn = true` 를 기본으로 하되,
+- Namespace 규칙:
+  - dev: `*-dev`
+  - prod: `*-prod`
 
-**의도적으로 GitOps가 직접 관리하지 않는 리소스는 ignore**합니다.
-
-이는 “방치”가 아니라 **운영 안전성을 위한 명시적 설계**입니다.
-
-### 3-1. TLS / Admission / 인증서 계열
-
-외부 컨트롤러(cert-manager, admission webhook 등)가
-
-**동적으로 생성·갱신**하는 리소스입니다.
-
-예시:
-
-- `-tls`
-- `monitoring-*-admission`
-
-➡️ GitOps가 직접 제어하지 않는 것이 정상이며,
-
-삭제 시 서비스 중단 위험이 있음
+- ArgoCD AppProject:
+  - `dev` / `prod` 프로젝트에서 repo/destination 범위를 분리
+  - 잘못된 환경 배포를 구조적으로 차단
 
 ---
 
-### 3-2. 보안 / Secret 계열 (SealedSecret 패턴)
+## 3. Optional Attach/Detach Boundary
 
-본 플랫폼은 **SealedSecret → Secret 복호화 구조**를 사용합니다.
+Optional은 “삭제”가 아니라 **비파괴 Detach**를 목표로 합니다.
 
-- Git에는 SealedSecret만 존재
-- 클러스터에는 Secret이 생성됨
+- Optional OFF:
+  - Optional scope 앱(root-optional, optional-envs-*, feast-*)은 제거
+  - `feature-store-dev/prod` namespace는 경계/재부착 안정성을 위해 유지
+- Optional ON:
+  - root-optional을 통해 optional 앱들이 다시 생성되고, Feast/Redis 리소스가 재생성
 
-예시:
-
-- `airflow-*-secret`
-- `mlflow-db-*-secret`
-- `aws-credentials*`
-- `slack-webhook*`
-
-➡️ 복호화 결과물은 **의도적으로 GitOps 추적 대상에서 제외**
+> Optional 토글의 증거(Proof)는 `docs/proof/` 하위에 스냅샷으로 남습니다.
 
 ---
 
-### 3-3. Stateful 데이터 (PVC)
+## Monitoring & Logging (Baseline)
 
-운영 데이터 손실 방지를 위해 PVC는 보호 대상입니다.
-
-예시:
-
-- `triton-model-repo-pvc`
-- `fastapi-logs-pvc-*`
-
-➡️ GitOps sync/prune 과정에서 **데이터 삭제를 방지**
+Monitoring과 Logging은 Baseline 레이어에 속하며 항상 활성화됩니다.
+Optional 토글과 무관하게 유지됩니다.
 
 ---
 
-## 4. Helm Hook Job 운영 정책 (Airflow 사례)
+### Monitoring Stack
 
-Airflow 설치 시 다음 Job은 **Helm Hook으로 1회 실행**됩니다.
+Helm Chart:
+- kube-prometheus-stack (65.5.0)
 
-- DB Migration Job
-- Admin User 생성 Job (`create-user`)
+Ingress Endpoints:
 
-### 동작 방식
+#### dev
+- Grafana: https://grafana-dev.local
+- Prometheus: https://prometheus-dev.local
+- Alertmanager: https://alert-dev.local
 
-1. ArgoCD Sync 중 Hook Job 실행
-2. 정상 완료
-3. Job / Pod 자동 정리
+#### prod
+- Grafana: https://grafana-prod.local
+- Prometheus: https://prometheus-prod.local
+- Alertmanager: https://alert-prod.local
 
-### 관측 포인트
+Grafana datasource 구성:
 
-- ArgoCD App 상태: `Succeeded`
-- Kubernetes Event에 실행/완료 로그 존재
-- `kubectl get job` 에는 남지 않음
+- Prometheus:
+  http://monitoring-dev-kube-promet-prometheus.monitoring-dev:9090/
+- Alertmanager:
+  http://monitoring-dev-kube-promet-alertmanager.monitoring-dev:9093/
 
-➡️ 이는 **정상 동작이며, 운영 노이즈를 남기지 않는 설계**
-
----
-
-## 5. Cluster Resource 접근 정책
-
-현재 AppProject는 다음을 허용합니다:
-
-```yaml
-clusterResourceWhitelist:
-  - group: '*'
-    kind: '*'
-
-```
-
-### 설계 의도
-
-- Monitoring Stack, CRD, Admission Controller 등
-    
-    **클러스터 레벨 리소스 사용 필요**
-    
-- 개인/학습/포트폴리오 환경에서
-    
-    **구성 복잡도보다 안정성을 우선**
-    
-
-➡️ 실무 환경에서는 점진적으로 Scope 축소 가능
-
-➡️ 현재는 **“명확히 설명 가능한 합리적 선택”**
+PrometheusRule / ServiceMonitor / PodMonitor는
+`baseline/envs/*/baseline/monitoring/extra` 경로에서 관리됩니다.
 
 ---
 
-## 6. 요약
+### Logging Flow
 
-- dev/prod AppProject 분리로 환경 충돌을 구조적으로 차단
-- orphan ignore는 방치가 아니라 **운영 안전을 위한 명시적 정책**
-- Secret, PVC, Admission 리소스는 GitOps 보호 대상
-- Helm hook job은 실행 후 정리되어 클러스터를 깨끗하게 유지
+Logging은 Grafana Alloy + Loki 조합으로 구성됩니다.
+
+Flow:
+
+Pod Logs
+   ↓
+Alloy (DaemonSet)
+   ↓
+Loki (SingleBinary, TSDB)
+   ↓
+Grafana (Loki datasource)
+
+---
+
+### Alloy Configuration (dev 기준)
+
+- DaemonSet 형태
+- 수집 대상 namespace 필터링:
+
+  airflow-dev
+  mlflow-dev
+  fastapi-dev
+  triton-dev
+  feature-store-dev
+
+Loki Push Endpoint:
+
+http://loki-dev.baseline-dev.svc.cluster.local:3100/loki/api/v1/push
+
+---
+
+### Loki Configuration (dev 기준)
+
+Deployment Mode: SingleBinary
+
+Storage:
+- Backend: S3 (MinIO)
+- Endpoint:
+  http://minio-dev.baseline-dev.svc.cluster.local:9000
+
+Buckets:
+- loki-chunks
+- loki-ruler
+- loki-admin
+
+Retention:
+- 168h (7 days)
+
+Persistence:
+- 20Gi PVC
+- whenDeleted: Retain
+- enableStatefulSetAutoDeletePVC: false
+
+→ Optional 토글 / ArgoCD prune에도 로그 데이터는 보존됩니다.

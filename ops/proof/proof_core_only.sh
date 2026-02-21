@@ -44,24 +44,52 @@ kexec() {
   kubectl -n "$ns" exec "$pod" -- "$@"
 }
 
+# Print optional scope apps in a human-friendly way:
+# - if none -> write "OK: scope=optional apps = 0"
+dump_optional_scope_apps() {
+  local out="$1"
+  local has_any="false"
+
+  if kubectl -n argocd get applications.argoproj.io -l scope=optional --no-headers 2>/dev/null | grep -q .; then
+    has_any="true"
+  fi
+
+  if [[ "$has_any" == "true" ]]; then
+    kubectl -n argocd get applications.argoproj.io -l scope=optional -o wide \
+      | tee "$out" >/dev/null
+  else
+    echo "OK: scope=optional apps = 0" | tee "$out" >/dev/null
+  fi
+}
+
 log "1) Capture BEFORE app list"
 argocd app list | tee "$OUT_DIR/argocd_app_list_before.txt" >/dev/null
 
-log "2) Turn OFF optional: set root-optional to manual and prune children"
-if argocd app get root-optional >/dev/null 2>&1; then
-  argocd app set root-optional --sync-policy none \
-    | tee "$OUT_DIR/root_optional_set_manual.txt" >/dev/null
-  argocd app sync root-optional --prune \
-    | tee "$OUT_DIR/root_optional_sync_prune.txt" >/dev/null || true
+log "2) Turn OFF optional (standard toggle script)"
+# NOTE:
+# - optional_off.sh 자체도 docs/proof/optional_off_* 에 상세 proof를 남깁니다.
+# - 여기서는 제출/시연용 latest/core_only에 실행 로그와 요약을 남깁니다.
+if [[ -x ./ops/toggle/optional_off.sh ]]; then
+  ./ops/toggle/optional_off.sh >"$OUT_DIR/optional_off_run.txt" 2>&1 || true
 else
-  echo "root-optional not found -> skip toggle off" \
-    | tee "$OUT_DIR/root_optional_not_found.txt" >/dev/null
+  echo "WARN: ./ops/toggle/optional_off.sh not found or not executable" \
+    | tee "$OUT_DIR/optional_off_run.txt" >/dev/null
 fi
 
-log "3) Capture AFTER app list (optional should be gone or OutOfSync/Missing only)"
+# (선택이지만 강추) toggle proof_dir 추출해서 latest에 링크 남기기
+# optional_off.sh 맨 마지막에 "PROOF_DIR=..." 형태로 출력합니다.
+{
+  proof_dir="$(grep -oE 'PROOF_DIR=.*' "$OUT_DIR/optional_off_run.txt" | tail -n 1 | cut -d= -f2- || true)"
+  if [[ -n "${proof_dir:-}" ]]; then
+    echo "$proof_dir" > "$OUT_DIR/toggle_proof_dir.txt"
+  else
+    echo "WARN: toggle proof dir not found in optional_off_run.txt" > "$OUT_DIR/toggle_proof_dir.txt"
+  fi
+} || true
+
+log "3) Capture AFTER app list (optional scope should be 0)"
 argocd app list | tee "$OUT_DIR/argocd_app_list_after.txt" >/dev/null
-argocd app list | grep -E 'feast-|monitoring-|loki-|alloy-|optional-' \
-  | tee "$OUT_DIR/optional_apps_after.txt" >/dev/null || true
+dump_optional_scope_apps "$OUT_DIR/optional_scope_apps_after.txt"
 
 log "4) Core health probes"
 {
@@ -82,4 +110,3 @@ log "5) Root apps snapshot"
 argocd app get root-apps | tee "$OUT_DIR/root-apps.txt" >/dev/null || true
 
 log "DONE -> $OUT_DIR"
-
