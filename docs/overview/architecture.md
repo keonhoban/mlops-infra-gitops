@@ -1,31 +1,46 @@
-# Architecture
+# Architecture Overview
 
-이 문서는 GitOps(ArgoCD) 기반으로 운영되는 **E2E ML Platform**의 전체 구조를 설명합니다.
-
-핵심은 다음 3가지입니다.
-
-- **Core**: 모델 생명주기 E2E 자동화 (Train → Register → Deploy → Reload)
-- **Baseline**: 운영 필수 기반층 (Storage/Logging/Monitoring) — Always-on
-- **Optional**: 실험/확장 레이어 (Feature Store 등) — Attach/Detach
+이 문서는 본 ML Platform의 **전체 구조(Core / Baseline / Optional)** 와  
+**dev/prod 완전 격리**, 그리고 **Baseline Always-on** 원칙을 한 장으로 설명합니다.
 
 ---
 
-## 1. High-level Topology
+## 1) Layer Model (Core / Baseline / Optional)
 
-### GitOps Control Plane
-- 모든 변경은 Git Commit에서 시작
-- ArgoCD가 선언 상태를 강제(SelfHeal/Prune)
-- dev / prod는 **AppProject + Namespace 규칙**으로 구조적으로 격리
+### Core (E2E Model Lifecycle)
+모델 생명주기를 “운영 배포 가능한 형태”로 자동화합니다.
 
-### Runtime Data Plane (Core)
 - Airflow: 학습/평가/등록/배포/롤백 흐름 제어
 - MLflow: Tracking/Registry
-- Triton: 모델 서빙 (Load/Ready/Inference)
-- FastAPI: alias 기반 요청 라우팅 + Reload API 제공
+- Triton: 모델 서빙(Load/Ready/Inference)
+- FastAPI: Alias(A/B) 라우팅 + Reload API
+
+핵심 흐름 정의: `e2e-flow.md`
 
 ---
 
-## 2. Environment Isolation (dev / prod)
+### Baseline (Always-on Operational Foundation)
+운영 안정성에 필요한 기반층으로 **항상 활성화**됩니다.  
+Optional 토글과 무관하게 유지되며, Core-only 상태에서도 동일하게 남습니다.
+
+- Storage: MinIO(S3 compatible)
+- Logging: Loki + Alloy
+- Monitoring: kube-prometheus-stack + extra rules/monitors/secrets
+
+---
+
+### Optional (Attach/Detach Extensions)
+필요할 때만 붙였다 떼는 확장 레이어입니다.
+
+- Feature Store: Feast (+ Redis)
+
+> Optional OFF는 “비파괴 Detach”입니다.  
+> `feature-store-dev/prod` namespace는 경계/재부착 안정성을 위해 유지되며,  
+> 실제 Feast/Redis 리소스는 Optional ON에서만 생성됩니다.
+
+---
+
+## 2) Environment Isolation (dev / prod)
 
 - Namespace 규칙:
   - dev: `*-dev`
@@ -35,25 +50,13 @@
   - `dev` / `prod` 프로젝트에서 repo/destination 범위를 분리
   - 잘못된 환경 배포를 구조적으로 차단
 
----
-
-## 3. Optional Attach/Detach Boundary
-
-Optional은 “삭제”가 아니라 **비파괴 Detach**를 목표로 합니다.
-
-- Optional OFF:
-  - Optional scope 앱(root-optional, optional-envs-*, feast-*)은 제거
-  - `feature-store-dev/prod` namespace는 경계/재부착 안정성을 위해 유지
-- Optional ON:
-  - root-optional을 통해 optional 앱들이 다시 생성되고, Feast/Redis 리소스가 재생성
-
-> Optional 토글의 증거(Proof)는 `docs/proof/` 하위에 스냅샷으로 남습니다.
+경계/정책 정의: `argocd-boundary.md`
 
 ---
 
-## Monitoring & Logging (Baseline)
+## 3) Monitoring & Logging (Baseline)
 
-Monitoring과 Logging은 Baseline 레이어에 속하며 항상 활성화됩니다.
+Monitoring과 Logging은 Baseline 레이어에 속하며 항상 활성화됩니다.  
 Optional 토글과 무관하게 유지됩니다.
 
 ---

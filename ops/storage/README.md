@@ -1,10 +1,51 @@
 # ops/storage
 
-이 디렉토리는 **로컬/홈랩 환경에서만 필요한 PV/PVC 샘플**을 보관합니다.
+이 디렉토리는 홈랩/로컬 환경에서 재현 가능한
+**명시적 PV/PVC 정의 레이어**입니다.
 
-- 목적: NFS/Local-path 기반으로 Triton model repo, FastAPI logs 등 **로컬 환경에서 재현 가능한 스토리지 의존성**을 고정
-- 운영(회사) 환경에서는 보통:
-  - StorageClass 기반 동적 프로비저닝(EBS/EFS/CEPH 등)
-  - 또는 별도 IaC(Terraform) 레이어로 분리
-- 따라서 이 리포지토리의 GitOps Core는 `apps/`, `charts/`, `envs/`를 중심으로 보며,
-  `ops/storage`는 "환경 의존 샘플"로 취급합니다.
+GitOps Core는 apps/, charts/, envs/를 중심으로 동작하며,
+ops/storage는 런타임 스토리지 의존성을 고정하기 위한 구성입니다.
+
+---
+
+## Currently Used
+
+### 1) Triton Model Repository (RWX NFS)
+
+Airflow ↔ Triton 간 모델 publish/serve 경로를 공유합니다.
+
+- Dev:
+  - PV: airflow-triton-model-repo-dev-pv
+  - PVC: triton-model-repo-pvc (namespace: airflow-dev)
+  - NFS Path: /mnt/nfs_share/mlops/triton/model-repo/dev
+
+- Prod:
+  - 동일 구조 (prod 경로 분리)
+
+설계 의도:
+
+- Airflow가 `/models`에 모델을 publish
+- Triton이 동일 경로를 load/watch
+- namespace는 분리, storage는 의도적으로 공유
+
+---
+
+## Archived (Not Used in Current Design)
+
+- fastapi-logs PV/PVC
+- monitoring PV/PVC 샘플
+- legacy airflow-logs PV/PVC
+
+이들은 현재 설계에서 사용하지 않으며 `_archive/`에 보관됩니다.
+
+---
+
+## Production Note
+
+실제 운영 환경에서는:
+
+- StorageClass 기반 동적 프로비저닝 (EBS/EFS/CEPH 등)
+- 또는 Terraform 등 IaC 레이어에서 관리
+
+ops/storage는 홈랩 재현을 위한 명시적 구성입니다.
+
