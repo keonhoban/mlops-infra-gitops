@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - sealed-secrets
   - feature-store
+  - storage/triton-model-repo/pv-pvc.yaml
