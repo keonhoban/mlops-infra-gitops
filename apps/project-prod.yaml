@@ -19,6 +19,10 @@ spec:
     - namespace: '*-prod'
       server: https://kubernetes.default.svc
 
+  clusterResourceWhitelist:
+    - group: ""
+      kind: PersistentVolume
+
   orphanedResources:
     warn: true
     ignore:
