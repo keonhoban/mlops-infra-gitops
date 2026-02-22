@@ -15,10 +15,6 @@ resources:
   - prod-namespaces.yaml
   - prod-support.yaml
 
-  # 1.5) Core Storage (PV/PVC) - Triton model repo for Airflow dev/prod
-  - storage/triton-model-repo/airflow-dev/pv-pvc.yaml
-  - storage/triton-model-repo/airflow-prod/pv-pvc.yaml
-
   # 2) Core AppSet
   - appset-core.yaml
 
