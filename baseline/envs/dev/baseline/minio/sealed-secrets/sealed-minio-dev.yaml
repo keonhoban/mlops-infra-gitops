@@ -1,0 +1,27 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: minio-dev
+  namespace: baseline-dev
+spec:
+  encryptedData:
+    root-password: AgADC+v4HReQUZPgIFdrxnu+ZGXNUlNPMhuuc7Bz7d918mrfbKU3USkzF+8TyLEnL6vJaSmDsROpLf2CsT8pc/jorAdY1Om6J2naEDoz8mlTYg3ojIoi9CfnThL47KCp5B71uqcWGv776wd2Ls2n4dpQTS9i7iAzK8i/YC9omLU3tE0i4hcFnoabJT/L9c1/A+7Ft4zg96tqURgb8ysJBJWTny7+rijlmepyRPoi0yRUz7qd3UKvl2SMXR7Gs6ghBbwgnE1BEGdFdTiymvVKrnT736jyyQEgIMCm9A3+z3RXFknYL4lwmjcH57lWom0EdJ5Z/C0YrQNl2eyoJw8poqVUYT/TphZC4GoefbMrDBtKNkmKk40JPrvIxH2GOuHkhoICvQvf1StyETSkYIE9GlWnuiBXiKF0tcthh8oFGilVZYwiTcADzthc76NYOrZfiEtz+FpQQEipP7UerUv6ejQqeibR+LHgraKoXX57iDcfCBZLi6Wq1seXzGai8Y+JalKVNXaNpcmR5Ffbg+vfK/0EQY7uo1zHBydaNwSS8rmP88WkC88cGZ2H9dUYXLAUnvqciIs/ba18SN1n6rUr4Vc3uDZy6oDMo5NzdPz1UM3HZdtp5ECwqbrPSUjoLPt3KTklv9TIyepNu9S4cdEgm0XtRAesarqdPf1GDfBCMTFZt+iEIGm1o36nMPN0ZdtfcZn+HT3LOPs4qzKS
+    root-user: AgBwdvL77aFZWAP8lQAoUM7GKKbJEus/M/V2196utse/Qb2wLXPiF0JFPkjPHZ6Ue0BnqwgAW6ptumzyFg89qycLCMBjxfgDsVGBM6jYJUn+IG0wY6N3+Zj8jZOrBdv4mXzO25Suf+ZqwhmRSimpDJ0E8qzKCNUptxwBbFQlI2SsingrCt/FIoeNCH1W5O24YCkRefj+Z+7Rbivv1yOZxg6T1lQM7mCTI8bU36svTIqms3nKgHn01ZrdhWspJVfPoOXwRhBwuFtcV4Mx4RlUoQP24JyNS7hcEne4IeffpkEA2fCTDFT8YdJQvaLFy71RnhWPj2kf4638EYo4i2uVtMEjAGsn+9x/2g+Uq7bbstqHaKj4UZFOQIszGowhXhvM6U83JORn0Mpp12k7/PVarAZJP3QLq7ZwJWU1H5P45WcKaZVhnRzKZfJDB1k1g6OIKCX6wTvFgiP6iTN09A8p0wHh6Tbr0D58FW0hLxaGOJ07mOQsiRoxu6NwRrtkIqoATqBlV1zncpdpoZGKJdOAuCL2kzl2DFkOf4+gx6UkUq0NaBfr0/Iv3JX6OR1Wsd6un2lZkeWZtWJQmnh4BN+EGIwghZkCbvOT1cRHoUjUDeBoP8oexN61EiZD2MFlCuJC9b1UjteXo6SUTfLbpaBoXA2h2GLU8moy5Y9GDlemS5LHLVhebNmg5kZjzEsfzBpWgVfk4xC50ae8kzdv
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/tracking-id: minio-dev:/Secret:baseline-dev/minio-dev
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/component: minio
+        app.kubernetes.io/instance: minio-dev
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: minio
+        app.kubernetes.io/part-of: minio
+        app.kubernetes.io/version: 2025.7.23
+        helm.sh/chart: minio-17.0.21
+      name: minio-dev
+      namespace: baseline-dev
+    type: Opaque

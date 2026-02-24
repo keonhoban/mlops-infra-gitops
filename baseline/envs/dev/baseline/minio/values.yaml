@@ -6,8 +6,9 @@ minio:
     pullPolicy: IfNotPresent
 
   auth:
-    rootUser: minioadmin
-    rootPassword: minioadmin
+    existingSecret: minio-dev
+    rootUserSecretKey: root-user
+    rootPasswordSecretKey: root-password
 
   defaultBuckets: "loki-chunks,loki-ruler,loki-admin"
 
@@ -26,4 +27,3 @@ minio:
   global:
     security:
       allowInsecureImages: true
-

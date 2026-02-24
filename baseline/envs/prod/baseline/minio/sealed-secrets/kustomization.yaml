@@ -1,0 +1,2 @@
+resources:
+  - sealed-minio-prod.yaml

@@ -1,0 +1,2 @@
+resources:
+  - sealed-loki-s3-dev.yaml

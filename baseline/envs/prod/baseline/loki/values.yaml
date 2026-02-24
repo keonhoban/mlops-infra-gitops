@@ -20,6 +20,12 @@ loki:
       ruler: loki-ruler
       admin: loki-admin
 
+  extraArgs:
+    - -config.expand-env=true
+  extraEnvFrom:
+    - secretRef:
+        name: loki-s3-prod
+
   structuredConfig:
     auth_enabled: false
 
@@ -37,12 +43,11 @@ loki:
       storage:
         s3:
           endpoint: http://minio-prod.baseline-prod.svc.cluster.local:9000
-          access_key_id: minioadmin
-          secret_access_key: minioadmin
+          access_key_id: ${AWS_ACCESS_KEY_ID}
+          secret_access_key: ${AWS_SECRET_ACCESS_KEY}
           insecure: true
           s3forcepathstyle: true
 
-      # ✅ consul 기본값 차단 (localhost:8500 방지)
       ring:
         kvstore:
           store: inmemory
@@ -87,8 +92,8 @@ loki:
         s3:
           endpoint: http://minio-prod.baseline-prod.svc.cluster.local:9000
           bucketnames: loki-ruler
-          access_key_id: minioadmin
-          secret_access_key: minioadmin
+          access_key_id: ${AWS_ACCESS_KEY_ID}
+          secret_access_key: ${AWS_SECRET_ACCESS_KEY}
           insecure: true
           s3forcepathstyle: true
       wal:
@@ -96,6 +101,12 @@ loki:
 
 singleBinary:
   replicas: 1
+
+  extraArgs:
+    - -config.expand-env=true
+  extraEnvFrom:
+    - secretRef:
+        name: loki-s3-prod
 
   readinessProbe:
     initialDelaySeconds: 60
@@ -108,8 +119,6 @@ singleBinary:
     enabled: true
     size: 20Gi
     storageClass: local-path
-
-    # ✅ 핵심: optional 토글 OFF/Argo prune에도 PVC 보존
     whenDeleted: Retain
     whenScaled: Retain
     enableStatefulSetAutoDeletePVC: false
@@ -146,4 +155,3 @@ lokiCanary:
 
 gateway:
   enabled: false
-
