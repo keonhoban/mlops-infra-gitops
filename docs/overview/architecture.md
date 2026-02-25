@@ -1,6 +1,6 @@
 # Architecture Overview
 
-이 문서는 본 ML Platform의 **전체 구조(Core / Baseline / Optional)** 와  
+이 문서는 본 ML Platform의 **전체 구조(Core / Baseline / Optional)** 와
 **dev/prod 완전 격리**, 그리고 **Baseline Always-on** 원칙을 한 장으로 설명합니다.
 
 ---
@@ -20,7 +20,7 @@
 ---
 
 ### Baseline (Always-on Operational Foundation)
-운영 안정성에 필요한 기반층으로 **항상 활성화**됩니다.  
+운영 안정성에 필요한 기반층으로 **항상 활성화**됩니다.
 Optional 토글과 무관하게 유지되며, Core-only 상태에서도 동일하게 남습니다.
 
 - Storage: MinIO(S3 compatible)
@@ -34,8 +34,8 @@ Optional 토글과 무관하게 유지되며, Core-only 상태에서도 동일�
 
 - Feature Store: Feast (+ Redis)
 
-> Optional OFF는 “비파괴 Detach”입니다.  
-> `feature-store-dev/prod` namespace는 경계/재부착 안정성을 위해 유지되며,  
+> Optional OFF는 “비파괴 Detach”입니다.
+> `feature-store-dev/prod` namespace는 경계/재부착 안정성을 위해 유지되며,
 > 실제 Feast/Redis 리소스는 Optional ON에서만 생성됩니다.
 
 ---
@@ -56,17 +56,17 @@ Optional 토글과 무관하게 유지되며, Core-only 상태에서도 동일�
 
 ## 3) Monitoring & Logging (Baseline)
 
-Monitoring과 Logging은 Baseline 레이어에 속하며 항상 활성화됩니다.  
+Monitoring과 Logging은 Baseline 레이어에 속하며 항상 활성화됩니다.
 Optional 토글과 무관하게 유지됩니다.
 
 ---
 
 ### Monitoring Stack
 
-Helm Chart:
+Helm Chart (example):
 - kube-prometheus-stack (65.5.0)
 
-Ingress Endpoints:
+Ingress Endpoints (example, 환경별 상이):
 
 #### dev
 - Grafana: https://grafana-dev.local
@@ -87,6 +87,10 @@ Grafana datasource 구성:
 
 PrometheusRule / ServiceMonitor / PodMonitor는
 `baseline/envs/*/baseline/monitoring/extra` 경로에서 관리됩니다.
+
+Alerting 목적:
+- FastAPI/Triton의 readiness 실패, 오류율 증가, 응답 지연 등 “서빙 이상”을 조기에 탐지
+- Core(E2E) 파이프라인 실패 시 Slack 알림으로 운영 대응 동선 확보
 
 ---
 
@@ -116,6 +120,8 @@ Grafana (Loki datasource)
   fastapi-dev
   triton-dev
   feature-store-dev
+
+- feature-store namespace는 Optional OFF에서도 “경계”로 유지되므로, 수집 대상에는 namespace 단위로 포함될 수 있습니다(리소스는 비어있을 수 있음).
 
 Loki Push Endpoint:
 

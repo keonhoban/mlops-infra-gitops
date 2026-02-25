@@ -1,5 +1,5 @@
-.PHONY: help optional-on optional-off proof-core proof-optional audit \
-	reseal-dev reseal-prod rotate-aws-dev rotate-aws-prod rotate-ss-key
+.PHONY: help optional-on optional-off proof-core proof-optional proof-e2e audit \
+        reseal-dev reseal-prod rotate-aws-dev rotate-aws-prod rotate-ss-key
 
 help:
 	@echo "Available commands:"
@@ -7,6 +7,7 @@ help:
 	@echo "  make optional-off       - Detach Optional layer"
 	@echo "  make proof-core         - Generate Core-only proof (snapshot)"
 	@echo "  make proof-optional     - Generate Optional-on proof (snapshot)"
+	@echo "  make proof-e2e          - Generate E2E success proof (snapshot)"
 	@echo "  make audit              - Full audit dump"
 	@echo "  make reseal-dev         - Reseal SealedSecrets (dev)"
 	@echo "  make reseal-prod        - Reseal SealedSecrets (prod)"
@@ -25,6 +26,9 @@ proof-core:
 
 proof-optional:
 	./ops/proof/proof_optional_on.sh
+
+proof-e2e:
+	./ops/proof/proof_e2e_success.sh
 
 audit:
 	./ops/proof/audit_dump.sh
