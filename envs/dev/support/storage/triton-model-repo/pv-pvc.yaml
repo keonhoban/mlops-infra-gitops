@@ -29,4 +29,38 @@ spec:
       storage: 5Gi
   storageClassName: ""
   volumeName: airflow-triton-model-repo-dev-pv
-
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: triton-model-repo-dev-pv
+  annotations:
+    argocd.argoproj.io/sync-wave: "-30"
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/tracking-id: dev-support:/PersistentVolume:triton-model-repo-dev-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes: [ReadWriteMany]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.18.141
+    path: /mnt/nfs_share/mlops/triton/model-repo/dev
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: triton-model-repo-pvc
+  namespace: triton-dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "-25"
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/tracking-id: dev-support:/PersistentVolumeClaim:triton-dev/triton-model-repo-pvc
+spec:
+  accessModes: [ReadWriteMany]
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ""
+  volumeName: triton-model-repo-dev-pv
