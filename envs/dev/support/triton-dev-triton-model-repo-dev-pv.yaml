@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: "yes"
+    argocd.argoproj.io/sync-wave: "-26"
+    argocd.argoproj.io/tracking-id: dev-support:/PersistentVolume:triton-model-repo-dev-pv
+  finalizers:
+    - kubernetes.io/pv-protection
+  name: triton-model-repo-dev-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 5Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: triton-model-repo-pvc
+    namespace: triton-dev
+    resourceVersion: "5388522"
+    uid: d27b718b-89bf-404d-ab5d-dbc0dd97ce0e
+  nfs:
+    path: /mnt/nfs_share/mlops/triton/model-repo/dev
+    server: 192.168.18.141
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-core
+  volumeMode: Filesystem
