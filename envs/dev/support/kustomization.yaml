@@ -5,3 +5,5 @@ resources:
   - sealed-secrets
   - feature-store
   - storage/triton-model-repo/pv-pvc.yaml
+  - triton-dev-triton-model-repo-dev-pv.yaml
+  - triton-dev-triton-model-repo-pvc.yaml
