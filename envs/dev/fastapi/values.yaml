@@ -29,6 +29,30 @@ env:
   LOG_LEVEL: "info"
   TRITON_HTTP_URL: "http://triton.triton-dev.svc.cluster.local:8000"
   TRITON_MODEL_NAME: "best_model"
+
+env:
+  MLFLOW_TRACKING_URI: "http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000"
+  MODEL_NAME: "best_model"
+  DEFAULT_ALIAS: "B"
+  ALIAS_SELECTION_MODE: "ab_test"
+  CANARY_PERCENT: "10"
+  LOG_TO_STDOUT: "true"
+  LOG_LEVEL: "info"
+  TRITON_HTTP_URL: "http://triton.triton-dev.svc.cluster.local:8000"
+  TRITON_MODEL_NAME: "best_model"
+
+  # -----------------------------
+  # Traffic Control (dev vs shadow)
+  # -----------------------------
+  TRAFFIC_MODE: "mirror"              # off | mirror
+  TRAFFIC_SHADOW_PERCENT: "10"        # 0~100
+  TRAFFIC_STICKY_MODE: "user_hash"    # off | user_hash
+  TRAFFIC_STICKY_SALT: "dev-v1"      # (선택) sticky 재현성
+
+  # dev/shadow Triton endpoints (명시)
+  TRITON_HTTP_URL_PROD: "http://triton.triton-dev.svc.cluster.local:8000"
+  TRITON_HTTP_URL_SHADOW: "http://triton.triton-dev.svc.cluster.local:8000"
+
 envFrom:
   - secretRef:
       name: aws-credentials-secret

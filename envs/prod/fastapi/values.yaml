@@ -32,6 +32,18 @@ env:
   TRITON_HTTP_URL: "http://triton.triton-prod.svc.cluster.local:8000"
   TRITON_MODEL_NAME: "best_model"
 
+  # -----------------------------
+  # Traffic Control (prod vs shadow)
+  # -----------------------------
+  TRAFFIC_MODE: "mirror"              # off | mirror
+  TRAFFIC_SHADOW_PERCENT: "10"        # 0~100
+  TRAFFIC_STICKY_MODE: "user_hash"    # off | user_hash
+  TRAFFIC_STICKY_SALT: "prod-v1"      # (선택) sticky 재현성
+
+  # prod/shadow Triton endpoints (명시)
+  TRITON_HTTP_URL_PROD: "http://triton.triton-prod.svc.cluster.local:8000"
+  TRITON_HTTP_URL_SHADOW: "http://triton.triton-dev.svc.cluster.local:8000"
+
 envFrom:
   - secretRef:
       name: aws-credentials-secret
