@@ -1,5 +1,5 @@
 image:
-  tag: sha-976ab82
+  tag: sha-619a130
 
 service:
   name: fastapi-prod-service

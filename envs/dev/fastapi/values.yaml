@@ -1,5 +1,5 @@
 image:
-  tag: v1.4.0
+  tag: v1.4.1
   pullPolicy: Always
 service:
   name: fastapi-dev-service
