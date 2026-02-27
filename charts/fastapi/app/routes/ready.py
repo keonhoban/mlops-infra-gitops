@@ -7,24 +7,41 @@ from core.config import settings
 
 router = APIRouter()
 
-def _triton_ready(triton_http_url: str) -> bool:
-    url = triton_http_url.rstrip("/") + "/v2/health/ready"
+# readinessProbe timeoutSeconds=1이라면 0.8~0.9 권장
+_DEFAULT_TIMEOUT_SEC = 1.2
+
+def _http_ok(url: str, timeout: float = _DEFAULT_TIMEOUT_SEC) -> bool:
     try:
-        with urlopen(url, timeout=1.5) as resp:
+        with urlopen(url, timeout=timeout) as resp:
             return 200 <= resp.status < 300
     except URLError:
         return False
     except Exception:
         return False
 
+def _triton_server_ready(triton_http_url: str) -> bool:
+    url = triton_http_url.rstrip("/") + "/v2/health/ready"
+    return _http_ok(url)
+
+def _triton_model_ready(triton_http_url: str, model_name: str) -> bool:
+    base = triton_http_url.rstrip("/")
+    model = (model_name or "").strip()
+    if not model:
+        return False
+    url = f"{base}/v2/models/{model}/ready"
+    return _http_ok(url)
+
 @router.get("/ready")
 def ready(request: Request):
     """
     Readiness는 '서빙 준비'를 의미해야 합니다.
-    - 최소 1개 alias 메타가 로드되어 있어야 함 (startup 단계)
-    - Triton /v2/health/ready 가 OK 여야 함
 
-    ✅ NOT READY 시 반드시 503을 반환해야
+    조건:
+    - 최소 1개 alias 메타가 로드되어 있어야 함 (startup 단계)
+    - Triton server ready OK
+    - Triton model ready OK (✅ explicit-mode 핵심: 모델이 load되어 있어야 함)
+
+    NOT READY 시 반드시 503을 반환해야
     K8s readinessProbe가 '준비 안 됨'으로 정확히 판단합니다.
     """
     active = getattr(request.app.state, "active", {}) or {}
@@ -36,18 +53,35 @@ def ready(request: Request):
             content={"status": "not_ready", "reason": "no_alias_loaded"},
         )
 
-    triton = settings.triton_http_url or ""
+    # ✅ readiness는 prod 기준으로만 체크 (shadow 장애가 prod 트래픽을 막지 않게)
+    triton = settings.prod_triton_url()
     if not triton:
         return JSONResponse(
             status_code=503,
-            content={"status": "not_ready", "reason": "missing_triton_http_url"},
+            content={"status": "not_ready", "reason": "missing_triton_http_url_prod"},
         )
 
-    if not _triton_ready(triton):
+    if not _triton_server_ready(triton):
         return JSONResponse(
             status_code=503,
-            content={"status": "not_ready", "reason": "triton_not_ready", "triton": triton},
+            content={"status": "not_ready", "reason": "triton_server_not_ready", "triton": triton},
         )
 
-    return {"status": "ready", "loaded_aliases": loaded_aliases, "triton": triton}
+    model_name = settings.triton_model_name or settings.model_name
+    if not _triton_model_ready(triton, model_name):
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "not_ready",
+                "reason": "triton_model_not_ready",
+                "triton": triton,
+                "model": model_name,
+            },
+        )
 
+    return {
+        "status": "ready",
+        "loaded_aliases": loaded_aliases,
+        "triton": triton,
+        "model": model_name,
+    }
