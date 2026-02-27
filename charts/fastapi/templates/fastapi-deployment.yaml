@@ -5,8 +5,8 @@ metadata:
   labels:
 {{- include "fastapi.commonLabels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount | default 2 }}
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
 {{- include "fastapi.selectorLabels" . | nindent 6 }}
@@ -86,4 +86,3 @@ spec:
       volumes:
 {{ toYaml . | nindent 8 }}
 {{- end }}
-
