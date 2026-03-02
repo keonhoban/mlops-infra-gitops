@@ -12,9 +12,6 @@ class AppSettings(BaseSettings):
     # shadow 비율(0~100)
     traffic_shadow_percent: int = Field(default=10)
 
-    # user-hash 고정 라우팅(옵션) - 현재는 x_client_id가 이미 필수라 실질적으로 항상 sticky
-    traffic_sticky_enabled: bool = Field(default=True)
-
     # Triton endpoints
     # - prod는 기존 triton_http_url을 기본으로 사용
     triton_http_url: str = Field(default="http://triton.triton-dev.svc.cluster.local:8000")
