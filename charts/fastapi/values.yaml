@@ -1,7 +1,8 @@
 # FastAPI chart default values
 # 목표:
 # - RollingUpdate 기반 무중단(가까운 수준) 롤아웃
-# - readiness는 "서빙 준비" 의미를 가져야 함 (/ready)
+# - K8s probes는 "네트워크/프로세스 가용성" 보장 (/health)
+# - /ready 는 "서빙 준비" 게이트로 유지 (Airflow/운영에서 사용)
 # - 로그는 stdout 중심(옵션 A: 로그 PVC 제거 전제)
 
 replicaCount: 2
@@ -31,10 +32,8 @@ updateStrategy:
     maxSurge: 1
     maxUnavailable: 0
 
-# 종료 시 연결 드레인 시간을 조금 줌 (nginx ingress/keep-alive/요청 처리 여유)
 terminationGracePeriodSeconds: 30
 
-# 종료 직전 약간 대기 (in-flight 요청 처리)
 lifecycle:
   preStop:
     exec:
@@ -48,13 +47,15 @@ resources:
     cpu: 500m
     memory: 512Mi
 
-# probes 설계:
-# - startup/readiness: /ready (Triton ready + alias 로드 등 '서빙 준비' 보장)
-# - liveness: /health (프로세스 생존만 확인)
+# probes 설계(중요):
+# - startup/readiness: /health (라우팅/엔드포인트 보장을 위해 가벼운 체크)
+# - liveness: /health (프로세스 생존 체크)
+# - /ready 는 "서빙 준비(=Triton 모델 ready 등)" 게이트로 유지하되,
+#   K8s probe가 아니라 Airflow/운영 로직에서 사용 권장
 probes:
   startupProbe:
     httpGet:
-      path: /ready
+      path: /health
       port: 8000
     initialDelaySeconds: 3
     periodSeconds: 5
@@ -63,7 +64,7 @@ probes:
 
   readinessProbe:
     httpGet:
-      path: /ready
+      path: /health
       port: 8000
     initialDelaySeconds: 3
     periodSeconds: 5
@@ -80,7 +81,6 @@ probes:
     timeoutSeconds: 2
     failureThreshold: 5
 
-# 운영 중 노드 드레인/업데이트에서도 최소 1개는 유지되게 (replicas=2 전제)
 pdb:
   enabled: true
   minAvailable: 1
@@ -91,12 +91,8 @@ metrics:
   interval: 15s
   scrapeTimeout: 10s
 
-# 기본값에서는 volumes/volumeMounts를 두지 않습니다.
-# (옵션 A: 로그는 stdout, Loki/Alloy 수집)
 volumeMounts: []
 volumes: []
 
-# env/envFrom는 환경별(envs/*/fastapi/values.yaml)에서 주입하는 구조 유지
 env: {}
 envFrom: []
-
