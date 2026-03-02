@@ -1,3 +1,5 @@
+replicaCount: 2
+
 image:
   tag: sha-3fff9b2
 
