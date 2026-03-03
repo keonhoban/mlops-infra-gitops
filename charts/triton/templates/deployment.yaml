@@ -17,8 +17,7 @@ spec:
 {{ include "triton.labels" . | nindent 8 }}
     spec:
 {{- with .Values.podSecurityContext }}
-      SecurityContext:
-{{ toYaml . | nindent 8 }}
+      securityContext:{{ toYaml . | nindent 8 }}
 {{- end }}
       containers:
         - name: triton
