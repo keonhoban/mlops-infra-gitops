@@ -35,7 +35,7 @@ env:
   # -----------------------------
   # Traffic Control (dev vs shadow)
   # -----------------------------
-  TRAFFIC_MODE: "mirror"              # off | mirror
+  TRAFFIC_MODE: "split"              # off | mirror | split
   TRAFFIC_SHADOW_PERCENT: "10"        # 0~100
 
   # dev/shadow Triton endpoints (명시)

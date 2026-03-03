@@ -37,7 +37,7 @@ env:
   # -----------------------------
   # Traffic Control (prod vs shadow)
   # -----------------------------
-  TRAFFIC_MODE: "mirror"              # off | mirror
+  TRAFFIC_MODE: "mirror"              # off | mirror | split
   TRAFFIC_SHADOW_PERCENT: "10"        # 0~100
 
   # prod/shadow Triton endpoints (명시)
