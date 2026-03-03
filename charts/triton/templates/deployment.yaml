@@ -16,9 +16,17 @@ spec:
       labels:
 {{ include "triton.labels" . | nindent 8 }}
     spec:
+{{- with .Values.podSecurityContext }}
+      podSecurityContext:
+{{ toYaml . | nindent 8 }}
+{{- end }}
       containers:
         - name: triton
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+{{- with .Values.securityContext }}
+          securityContext:
+{{ toYaml . | nindent 12 }}
+{{- end }}
           args:
             - tritonserver
             - --model-repository={{ .Values.modelRepository.mountPath }}
@@ -42,4 +50,3 @@ spec:
         - name: model-repo
           persistentVolumeClaim:
             claimName: {{ .Values.modelRepository.pvc.name }}
-
