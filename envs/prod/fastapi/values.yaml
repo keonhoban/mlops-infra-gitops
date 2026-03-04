@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  tag: sha-3fff9b2
+  tag: sha-580f3e6
 
 service:
   name: fastapi-prod-service
