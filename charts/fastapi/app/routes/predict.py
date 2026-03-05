@@ -1,18 +1,46 @@
+# routes/predict.py
+from __future__ import annotations
+
 from fastapi import APIRouter, Header, HTTPException, Request, BackgroundTasks
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 import pandas as pd
 from loguru import logger
+import requests
 
 from services.alias_selector import decide_traffic
 from services.triton_client import infer
 from core.config import settings
 from utils.slack_alerts import slack_safe
 
+# SSOT cache helper
+from core.startup import get_ssot_served_version_cached
+
 router = APIRouter()
+
 
 class PredictInput(BaseModel):
     data: List[List[float]]
+
+
+def _triton_served_version(model_name: str) -> Optional[int]:
+    """
+    SSOT = Triton served_version
+    - /v2/models/{model} 의 versions[0] 사용 (현재 single version 정책 전제)
+    """
+    triton = settings.triton_http_url.rstrip("/")
+    try:
+        r = requests.get(f"{triton}/v2/models/{model_name}", timeout=3)
+        if r.status_code != 200:
+            return None
+        j = r.json()
+        versions = j.get("versions") or []
+        if not versions:
+            return None
+        return int(versions[0])
+    except Exception:
+        return None
+
 
 def _shadow_mirror_task(rows: list[list[float]], client_id: str):
     """
@@ -29,6 +57,7 @@ def _shadow_mirror_task(rows: list[list[float]], client_id: str):
     except Exception as e:
         logger.warning(f"[shadow_mirror] failed client_id={client_id}: {e}")
         slack_safe(f"⚠️ [FastAPI] shadow mirror failed (client_id={client_id}): {e}")
+
 
 @router.post("/predict")
 async def predict(
@@ -55,8 +84,9 @@ async def predict(
         if decision.do_shadow_mirror:
             background_tasks.add_task(_shadow_mirror_task, rows, x_client_id)
 
-        # proof: 어떤 라우팅 결정이 났는지 + active meta 같이 반환
-        # (주의) active meta는 alias(A/B) 기반이므로, prod/shadow 체계에서는 "관측용"으로만 유지
+        # ✅ evidence: 요청 시점 SSOT(운영 진실) 같이 반환
+        ssot_v = get_ssot_served_version_cached(_triton_served_version, settings.model_name)
+
         return {
             "traffic": {
                 "mode": settings.traffic_mode,
@@ -68,6 +98,7 @@ async def predict(
                 "shadow_triton": settings.shadow_triton_url(),
             },
             "client_id": x_client_id,
+            "ssot_served_version": ssot_v,
             "triton_model": resp.get("model_name"),
             "triton_model_version": resp.get("model_version"),
             "outputs": resp.get("outputs"),
@@ -77,6 +108,7 @@ async def predict(
         logger.exception("predict failed")
         slack_safe(f"❌ [FastAPI] Triton predict failed (primary={decision.primary}): {e}")
         raise HTTPException(status_code=500, detail=f"예측 실패: {e}")
+
 
 @router.post("/variant/{alias}/predict")
 async def predict_by_alias(request: Request, alias: str, input_data: PredictInput):
@@ -97,9 +129,14 @@ async def predict_by_alias(request: Request, alias: str, input_data: PredictInpu
             url = settings.prod_triton_url()
 
         resp = infer(rows, base_url=url)
+
+        # ✅ alias predict에서도 SSOT 같이 증빙
+        ssot_v = get_ssot_served_version_cached(_triton_served_version, settings.model_name)
+
         return {
             "variant": alias,
             "triton": url,
+            "ssot_served_version": ssot_v,
             "triton_model": resp.get("model_name"),
             "triton_model_version": resp.get("model_version"),
             "outputs": resp.get("outputs"),
