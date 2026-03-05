@@ -27,6 +27,10 @@ def _pod() -> str:
 
 
 def _try_get_triton_served_version(model_name: str) -> Optional[int]:
+    """
+    Triton /v2/models/{model} 응답의 versions[0]을 served_version으로 간주.
+    (현재 구성에서 Triton은 version_policy로 single version만 노출되도록 운용 중)
+    """
     triton = getattr(settings, "triton_http_url", None) or getattr(settings, "triton_url", None)
     if not triton:
         return None
@@ -45,6 +49,9 @@ def _try_get_triton_served_version(model_name: str) -> Optional[int]:
 
 
 def _meta_from_mlflow_version(version: int) -> dict[str, Any]:
+    """
+    MLflow Registry에서 특정 model version의 run_id 등을 조회해 meta 생성.
+    """
     if not settings.mlflow_tracking_uri:
         raise HTTPException(status_code=500, detail="서버 설정 오류: mlflow_tracking_uri 미설정")
     if not settings.model_name:
@@ -69,9 +76,11 @@ def reload_variant(
     body: ReloadBody | None = None,
     x_token: str = Header(...),
     run_id: str | None = Query(default=None),
-    deploy_version: int | None = Query(default=None),  # ✅ query 지원
+    deploy_version: int | None = Query(default=None),  # query 지원
 ):
+    # -----------------------------
     # auth
+    # -----------------------------
     if not settings.reload_secret_token:
         raise HTTPException(status_code=500, detail="서버 설정 오류: 인증 토큰 미설정")
     if not secrets.compare_digest(x_token, settings.reload_secret_token):
@@ -80,7 +89,7 @@ def reload_variant(
     alias = (alias or "").strip() or "A"
 
     # -----------------------------
-    # mode 0) deploy_version 지정 (Triton SSOT 동기화)
+    # mode 0) deploy_version 지정 (Triton SSOT 검증 + 해당 버전으로 cache 동기화)
     # - precedence: body > query
     # -----------------------------
     dv = None
@@ -100,8 +109,7 @@ def reload_variant(
         meta = _meta_from_mlflow_version(dv)
         meta["alias"] = alias
 
-        # ⚠️ NOTE: replicas>1이면 app.state는 pod-local
-        # 운영 진실은 Triton이며, 이 캐시는 "디버그/증거" 용도로만 사용
+        # NOTE: replicas>1이면 app.state는 pod-local
         request.app.state.active[alias] = meta
 
         slack_safe(
@@ -113,23 +121,61 @@ def reload_variant(
             "variant": alias,
             "version": meta["version"],
             "run_id": meta["run_id"],
+            "source": "deploy_version",
         }
 
     # -----------------------------
-    # mode 1) run_id 지정 (shadow/검증)
+    # mode 1) run_id 지정 (shadow/검증용)
     # -----------------------------
     if run_id:
         set_active_from_run_id(request.app, alias, run_id)
         slack_safe(f"🔁 [FastAPI] reload by run_id: pod={_pod()} alias={alias} run_id={run_id}")
-        return {"status": "success", "pod": _pod(), "variant": alias, "run_id": run_id, "version": None}
+        return {
+            "status": "success",
+            "pod": _pod(),
+            "variant": alias,
+            "run_id": run_id,
+            "version": None,
+            "source": "run_id",
+        }
 
     # -----------------------------
-    # mode 2) alias 메타 조회 (레거시 유지)
+    # default reload는 SSOT(Triton) 기준 동기화
+    # - 파라미터가 없으면 "항상 Triton served_version"으로 cache를 맞춘다.
+    # - Triton 조회 실패 시에만 레거시(MLflow alias)로 fallback
     # -----------------------------
+    served = _try_get_triton_served_version(settings.model_name)
+    if served is not None:
+        meta = _meta_from_mlflow_version(int(served))
+        meta["alias"] = alias
+
+        request.app.state.active[alias] = meta
+
+        slack_safe(
+            f"🔁 [FastAPI] reload default(ssot=triton): pod={_pod()} alias={alias} served_v{meta['version']} run_id={meta['run_id']}"
+        )
+        return {
+            "status": "success",
+            "pod": _pod(),
+            "variant": alias,
+            "version": meta["version"],
+            "run_id": meta["run_id"],
+            "source": "triton_ssot_default",
+        }
+
+    # fallback: 레거시 유지(정말 마지막 수단)
     meta = get_alias_target_safe(alias)
     if not meta:
         raise HTTPException(status_code=500, detail="MLflow alias meta load failed")
 
     request.app.state.active[alias] = meta
-    slack_safe(f"🔁 [FastAPI] reload by alias: pod={_pod()} alias={alias} v{meta['version']} run_id={meta['run_id']}")
-    return {"status": "success", "pod": _pod(), "variant": alias, "version": meta["version"], "run_id": meta["run_id"]}
+    slack_safe(f"🔁 [FastAPI] reload fallback(alias): pod={_pod()} alias={alias} v{meta['version']} run_id={meta['run_id']}")
+
+    return {
+        "status": "success",
+        "pod": _pod(),
+        "variant": alias,
+        "version": meta["version"],
+        "run_id": meta["run_id"],
+        "source": "mlflow_alias_fallback",
+    }

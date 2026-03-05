@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  tag: v1.4.3
+  tag: v1.4.5
   pullPolicy: Always
 service:
   name: fastapi-dev-service
