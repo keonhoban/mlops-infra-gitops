@@ -33,4 +33,3 @@ data:
       "feature_uri": "{{ feature_uri }}",
       "description": "Feature Store-lite generated features for training/inference"
     }
-

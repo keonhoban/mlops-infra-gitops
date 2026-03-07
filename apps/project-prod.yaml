@@ -95,4 +95,3 @@ spec:
 
       - kind: PersistentVolumeClaim
         name: fastapi-logs-pvc-prod
-

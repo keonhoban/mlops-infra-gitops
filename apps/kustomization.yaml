@@ -17,4 +17,3 @@ resources:
 
   # 2) Core AppSet
   - appset-core.yaml
-
