@@ -57,4 +57,3 @@ extraVolumes:
     hostPath:
       path: /var/lib/alloy
       type: DirectoryOrCreate
-

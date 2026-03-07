@@ -24,4 +24,3 @@ spec:
       storage: 5Gi
   storageClassName: ""
   volumeName: airflow-triton-model-repo-dev-pv
-
