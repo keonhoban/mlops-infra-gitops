@@ -24,4 +24,3 @@ spec:
       storage: 5Gi
   volumeName: triton-model-repo-prod-pv
   storageClassName: nfs-core
-

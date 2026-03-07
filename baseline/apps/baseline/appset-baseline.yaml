@@ -65,4 +65,3 @@ spec:
           - ApplyOutOfSyncOnly=true
           - PruneLast=true
           - ServerSideApply=true
-

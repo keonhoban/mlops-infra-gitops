@@ -29,4 +29,3 @@ redis:
 global:
   image:
     tag: v2.12.3
-

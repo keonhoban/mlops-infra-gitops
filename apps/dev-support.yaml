@@ -31,3 +31,5 @@ spec:
       - PrunePropagationPolicy=foreground
       - PruneLast=true
       - ServerSideApply=true
+
+# ci-trigger-test: PR action validation
