@@ -6,6 +6,9 @@ on:
       - 'charts/**'
       - 'envs/**'
       - 'apps/**'
+      - 'baseline/**'
+      - 'optional/**'
+      - 'bootstrap/**'
       - '.github/workflows/ci-helm-validate.yaml'
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch: {}
