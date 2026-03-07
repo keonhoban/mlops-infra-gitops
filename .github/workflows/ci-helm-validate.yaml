@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Lint & Render & Validate (${{ matrix.env }})
+    name: Lint & Render & Validate (${{ matrix.env }} / ${{ matrix.chart }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -32,7 +32,7 @@ jobs:
 
     env:
       KUBE_VERSION: "1.30.0"
-      # 3rd-party kinds는 스키마 검증에서 스킵(ArgoCD, cert-manager, SealedSecret 등)
+      # 3rd-party kinds는 스키마 검증에서 스킵
       SKIP_KINDS: "Application,ApplicationSet,AppProject,SealedSecret,Certificate,CertificateRequest,Issuer,ClusterIssuer,Order,Challenge"
 
     steps:
@@ -61,7 +61,13 @@ jobs:
           git ls-files -z '*.yml' '*.yaml' \
             ':!:charts/**/templates/**' \
             ':!:charts/**/charts/**' \
+            ':!:baseline/charts/**/templates/**' \
+            ':!:baseline/charts/**/charts/**' \
+            ':!:optional/charts/**/templates/**' \
+            ':!:optional/charts/**/charts/**' \
             ':!:envs/**/sealed-secrets/**' \
+            ':!:baseline/envs/**/sealed-secrets/**' \
+            ':!:optional/envs/**/sealed-secrets/**' \
             ':!:bootstrap/notifications/secret-sealed.yaml' \
           | xargs -0 -r yamllint -s
 
@@ -101,7 +107,7 @@ jobs:
           echo "out=$OUT" >> "$GITHUB_OUTPUT"
           test -s "$OUT"
 
-      - name: kubeconform (core K8s kinds only)
+      - name: kubeconform (rendered core chart manifests only)
         shell: bash
         run: |
           set -euo pipefail
@@ -117,15 +123,40 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # sealed-secrets는 제외하고 env/*.yaml만 검사
-          mapfile -t FILES < <(find "envs/${{ matrix.env }}" -type f -name '*.yaml' ! -path "*/sealed-secrets/*")
-          if (( ${#FILES[@]} )); then
-            echo "Validating ${#FILES[@]} files under envs/${{ matrix.env }}"
-            yamllint -s "${FILES[@]}"
-            kubeconform -kubernetes-version "${KUBE_VERSION}" \
-              -ignore-missing-schemas -skip "${SKIP_KINDS}" -summary "${FILES[@]}"
+
+          # 1) env 하위 YAML 스타일 검사
+          mapfile -t YAML_FILES < <(
+            find "envs/${{ matrix.env }}" -type f -name '*.yaml' \
+              ! -path "*/sealed-secrets/*" \
+              | sort
+          )
+
+          if (( ${#YAML_FILES[@]} )); then
+            echo "YAML lint: ${#YAML_FILES[@]} files under envs/${{ matrix.env }}"
+            yamllint -s "${YAML_FILES[@]}"
           else
-            echo "No env files found under envs/${{ matrix.env }}"
+            echo "No YAML files found under envs/${{ matrix.env }}"
+          fi
+
+          # 2) 실제 Kubernetes manifest만 kubeconform 검사
+          mapfile -t MANIFEST_FILES < <(
+            find "envs/${{ matrix.env }}" -type f -name '*.yaml' \
+              ! -path "*/sealed-secrets/*" \
+              ! -name 'values.yaml' \
+              ! -name 'kustomization.yaml' \
+              | sort
+          )
+
+          if (( ${#MANIFEST_FILES[@]} )); then
+            echo "Kubeconform: ${#MANIFEST_FILES[@]} manifest files under envs/${{ matrix.env }}"
+            kubeconform \
+              -kubernetes-version "${KUBE_VERSION}" \
+              -ignore-missing-schemas \
+              -skip "${SKIP_KINDS}" \
+              -summary \
+              "${MANIFEST_FILES[@]}"
+          else
+            echo "No manifest files found under envs/${{ matrix.env }}"
           fi
 
       - name: Validate apps/ (Argo CD objects etc.)
@@ -138,8 +169,12 @@ jobs:
           if (( ${#FILES[@]} )); then
             echo "Validating ${#FILES[@]} files under apps/"
             yamllint -s "${FILES[@]}"
-            kubeconform -kubernetes-version "${KUBE_VERSION}" \
-              -ignore-missing-schemas -skip "${SKIP_KINDS}" -summary "${FILES[@]}"
+            kubeconform \
+              -kubernetes-version "${KUBE_VERSION}" \
+              -ignore-missing-schemas \
+              -skip "${SKIP_KINDS}" \
+              -summary \
+              "${FILES[@]}"
           else
             echo "No files under apps/"
           fi
