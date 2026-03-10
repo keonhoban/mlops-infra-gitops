@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - fastapi-prod-sm.yaml
-  - fastapi-prod-pm.yaml
   - rules/fastapi-alerts.yaml
   - rules/triton-alerts.yaml
   - sealed-secrets
