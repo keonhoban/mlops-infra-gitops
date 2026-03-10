@@ -35,7 +35,7 @@ spec:
               sum(rate(nv_inference_request_duration_us{job="triton"}[5m]))
             /
               clamp_min(sum(rate(nv_inference_count{job="triton"}[5m])), 1)
-            ) / 1e6 > 0.000001
+            ) / 1e6 > 0.5
           for: 10s
           labels:
             severity: warning
