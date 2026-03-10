@@ -12,7 +12,7 @@ spec:
       - fastapi-prod
   selector:
     matchLabels:
-      app: fastapi-prod
+      app.kubernetes.io/instance: fastapi-prod
   endpoints:
     - port: http
       path: /metrics
