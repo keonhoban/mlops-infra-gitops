@@ -81,7 +81,7 @@ Airflow → MLflow → Triton → FastAPI
 
 ---
 
-## Proof (말이 아닌 파일)
+## Proof
 
 증거 인덱스: `docs/proof/latest/INDEX.md`
 
