@@ -7,7 +7,7 @@ from typing import Optional, Any
 import requests
 import mlflow
 from mlflow.tracking import MlflowClient
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 
 from core.config import settings
 from core.startup import get_ssot_served_version_cached
@@ -45,20 +45,15 @@ def _mlflow_meta_for_version(version: int) -> dict | None:
 
 
 @router.get("/models")
-def models(request: Request) -> dict[str, Any]:
+def models() -> dict[str, Any]:
     """
-    A안(SSOT 수렴형)
-    - SSOT = Triton served_version (replicas N개여도 일관된 진실)
-    - pod-local(active)는 'override/debug' 참고 정보로만 노출
-    - "effective"는 운영자가 보는 최종 상태(=SSOT 기준)
+    SSOT-only:
+    - SSOT = Triton served_version
+    - effective = 운영자가 보는 최종 상태 (SSOT 기준)
     """
     served = get_ssot_served_version_cached(_triton_served_version, settings.model_name)
     served_meta = _mlflow_meta_for_version(served) if served is not None else None
 
-    # pod-local cache (debug / override)
-    cache = getattr(request.app.state, "active", {}) or {}
-
-    # effective: 기본은 ssot로 수렴 (pod-local이 달라도 운영 진실은 ssot)
     effective = {}
     for alias in ["A", "B"]:
         effective[alias] = {
@@ -77,5 +72,4 @@ def models(request: Request) -> dict[str, Any]:
             "mlflow_meta": served_meta,
         },
         "effective": effective,
-        "cache_pod_local": cache,  # 이름은 유지하되 의미는 debug
     }

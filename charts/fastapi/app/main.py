@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from core.config import settings
 from core.startup import init_app_state
 from routes import predict, reload, health, models, root, ready
 
