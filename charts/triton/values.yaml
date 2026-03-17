@@ -2,7 +2,7 @@ replicaCount: 1
 
 # ✅ NFS(RWX) model-repo 권한 충돌 최소화
 # - 현재 NFS 쪽이 uid=50000, gid=root(0) 형태로 생성된 흔적이 있어서
-#   pod도 동일하게 맞추는 게 가장 덜 싸웁니다.
+#   pod도 동일하게 맞추는 게 가장 좋습니다.
 podSecurityContext:
   fsGroup: 0
   fsGroupChangePolicy: OnRootMismatch
