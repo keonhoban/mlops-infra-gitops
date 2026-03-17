@@ -1,0 +1,6 @@
+NAME                 SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+feast-dev            Synced        Healthy                                                    optional
+feast-prod           Synced        Healthy                                                    optional
+optional-envs-dev    Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   optional
+optional-envs-prod   Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   optional
+root-optional        Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap

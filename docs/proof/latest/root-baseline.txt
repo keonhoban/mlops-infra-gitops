@@ -1,0 +1,22 @@
+Name:               argocd/root-baseline
+Project:            bootstrap
+Server:             https://kubernetes.default.svc
+Namespace:          argocd
+URL:                https://argocd.local/applications/root-baseline
+Source:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             baseline/apps
+SyncWindow:         Sync Allowed
+Sync Policy:        Automated (Prune)
+Sync Status:        Synced to main (40477f0)
+Health Status:      Healthy
+
+GROUP        KIND            NAMESPACE  NAME                   STATUS  HEALTH   HOOK  MESSAGE
+argoproj.io  Application     argocd     minio-dev              Synced                 
+argoproj.io  Application     argocd     minio-prod             Synced                 
+argoproj.io  Application     argocd     monitoring-dev         Synced                 
+argoproj.io  Application     argocd     monitoring-extra-dev   Synced                 
+argoproj.io  Application     argocd     monitoring-extra-prod  Synced                 
+argoproj.io  Application     argocd     monitoring-prod        Synced                 
+argoproj.io  ApplicationSet  argocd     mlops-baseline         Synced  Healthy        
