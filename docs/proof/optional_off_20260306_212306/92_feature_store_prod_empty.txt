@@ -1,0 +1,2 @@
+NAME                         DATA   AGE
+configmap/kube-root-ca.crt   1      13d

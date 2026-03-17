@@ -1,0 +1,50 @@
+NAME                                                                     VERSION   DESIRED   READY   RECONCILED   AVAILABLE   AGE
+prometheus.monitoring.coreos.com/monitoring-dev-kube-promet-prometheus   v2.55.0   1         1       True         True        4d3h
+
+NAME                                                                         VERSION   REPLICAS   READY   RECONCILED   AVAILABLE   AGE
+alertmanager.monitoring.coreos.com/monitoring-dev-kube-promet-alertmanager   v0.27.0   1          1       True         True        4d3h
+
+NAME                                                                           AGE
+servicemonitor.monitoring.coreos.com/fastapi-dev-sm                            4d3h
+servicemonitor.monitoring.coreos.com/monitoring-dev-grafana                    4d3h
+servicemonitor.monitoring.coreos.com/monitoring-dev-kube-promet-alertmanager   4d3h
+servicemonitor.monitoring.coreos.com/monitoring-dev-kube-promet-apiserver      4d3h
+servicemonitor.monitoring.coreos.com/monitoring-dev-kube-promet-kubelet        4d3h
+servicemonitor.monitoring.coreos.com/monitoring-dev-kube-promet-operator       4d3h
+servicemonitor.monitoring.coreos.com/monitoring-dev-kube-promet-prometheus     4d3h
+servicemonitor.monitoring.coreos.com/monitoring-dev-kube-state-metrics         4d3h
+servicemonitor.monitoring.coreos.com/monitoring-dev-prometheus-node-exporter   4d3h
+
+NAME                                                                                                   AGE
+prometheusrule.monitoring.coreos.com/fastapi-alerts                                                    4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-alertmanager.rules                     4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-config-reloaders                       4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-general.rules                          4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-k8s.rules.container-cpu-usage-second   4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-k8s.rules.container-memory-cache       4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-k8s.rules.container-memory-rss         4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-k8s.rules.container-memory-swap        4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-k8s.rules.container-memory-working-s   4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-k8s.rules.container-resource           4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-k8s.rules.pod-owner                    4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kube-apiserver-availability.rules      4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kube-apiserver-burnrate.rules          4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kube-apiserver-histogram.rules         4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kube-apiserver-slos                    4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kube-prometheus-general.rules          4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kube-prometheus-node-recording.rules   4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kube-state-metrics                     4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kubelet.rules                          4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kubernetes-apps                        4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kubernetes-resources                   4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kubernetes-storage                     4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kubernetes-system                      4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kubernetes-system-apiserver            4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-kubernetes-system-kubelet              4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-node-exporter                          4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-node-exporter.rules                    4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-node-network                           4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-node.rules                             4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-prometheus                             4d3h
+prometheusrule.monitoring.coreos.com/monitoring-dev-kube-promet-prometheus-operator                    4d3h
+prometheusrule.monitoring.coreos.com/triton-alerts                                                     4d3h

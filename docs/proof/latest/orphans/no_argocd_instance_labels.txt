@@ -1,0 +1,53 @@
+### airflow-dev
+NAME                                TYPE                DATA   AGE     LABELS
+secret/airflow-db-dev-secret        Opaque              1      175d    <none>
+secret/airflow-dev-api-secret-key   Opaque              1      175d    <none>
+secret/airflow-dev-broker-url       Opaque              1      3h14m   chart=airflow,component=redis,heritage=Helm,release=airflow-dev,tier=airflow
+secret/airflow-dev-jwt-secret       Opaque              1      175d    <none>
+secret/airflow-dev-redis-password   Opaque              1      3h14m   chart=airflow-1.18.0,component=redis,heritage=Helm,release=airflow-dev,tier=airflow
+secret/airflow-dev-tls              kubernetes.io/tls   3      13d     controller.cert-manager.io/fao=true
+secret/airflow-fernet-dev-secret    Opaque              1      175d    <none>
+secret/airflow-git-ssh-secret       Opaque              1      175d    <none>
+secret/aws-credentials-secret       Opaque              1      9d      <none>
+secret/fastapi-token-dev-secret     Opaque              1      175d    <none>
+secret/slack-webhook-dev-secret     Opaque              1      175d    <none>
+
+NAME                                DATA   AGE    LABELS
+configmap/airflow-dev-config        3      21d    chart=airflow-1.18.0,component=config,heritage=Helm,release=airflow-dev,tier=airflow
+configmap/airflow-dev-statsd        1      21d    chart=airflow-1.18.0,component=config,heritage=Helm,release=airflow-dev,tier=airflow
+configmap/feature-store-resources   2      10d    app.kubernetes.io/component=feature-store-resources,app.kubernetes.io/part-of=mlops-platform,mlops.keonho.io/env=dev,mlops.keonho.io/owner-app=dev-namespaces
+configmap/kube-root-ca.crt          1      197d   <none>
+
+NAME                                          STATUS   VOLUME                             CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE    LABELS
+persistentvolumeclaim/triton-model-repo-pvc   Bound    airflow-triton-model-repo-dev-pv   5Gi        RWX                           <unset>                 2d2h   <none>
+
+### mlflow-dev
+NAME                            TYPE                DATA   AGE    LABELS
+secret/aws-credentials-secret   Opaque              4      175d   <none>
+secret/mlflow-db-dev-secret     Opaque              2      175d   <none>
+secret/mlflow-dev-tls           kubernetes.io/tls   3      13d    controller.cert-manager.io/fao=true
+
+NAME                             DATA   AGE    LABELS
+configmap/kube-root-ca.crt       1      197d   <none>
+configmap/mlflow-db-dev-config   3      21d    <none>
+
+### fastapi-dev
+NAME                              TYPE                DATA   AGE    LABELS
+secret/aws-credentials-secret     Opaque              4      175d   <none>
+secret/fastapi-dev-tls            kubernetes.io/tls   3      13d    controller.cert-manager.io/fao=true
+secret/fastapi-token-dev-secret   Opaque              1      175d   <none>
+secret/slack-webhook-dev-secret   Opaque              1      175d   <none>
+
+NAME                         DATA   AGE    LABELS
+configmap/kube-root-ca.crt   1      197d   <none>
+
+### triton-dev
+NAME                            TYPE     DATA   AGE    LABELS
+secret/aws-credentials-secret   Opaque   1      2d5h   <none>
+
+NAME                         DATA   AGE   LABELS
+configmap/kube-root-ca.crt   1      63d   <none>
+
+NAME                                          STATUS   VOLUME                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   LABELS
+persistentvolumeclaim/triton-model-repo-pvc   Bound    triton-model-repo-dev-pv   5Gi        RWX            nfs-core       <unset>                 18d   <none>
+

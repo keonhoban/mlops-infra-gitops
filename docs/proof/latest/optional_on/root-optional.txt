@@ -1,0 +1,19 @@
+Name:               argocd/root-optional
+Project:            bootstrap
+Server:             https://kubernetes.default.svc
+Namespace:          argocd
+URL:                https://argocd.local/applications/root-optional
+Source:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             optional/apps
+SyncWindow:         Sync Allowed
+Sync Policy:        Manual
+Sync Status:        Synced to main (40477f0)
+Health Status:      Healthy
+
+GROUP        KIND         NAMESPACE  NAME                STATUS  HEALTH  HOOK  MESSAGE
+argoproj.io  Application  argocd     optional-envs-dev   Synced                application.argoproj.io/optional-envs-dev serverside-applied
+argoproj.io  Application  argocd     optional-envs-prod  Synced                application.argoproj.io/optional-envs-prod serverside-applied
+argoproj.io  Application  argocd     feast-prod          Synced                application.argoproj.io/feast-prod serverside-applied
+argoproj.io  Application  argocd     feast-dev           Synced                application.argoproj.io/feast-dev serverside-applied

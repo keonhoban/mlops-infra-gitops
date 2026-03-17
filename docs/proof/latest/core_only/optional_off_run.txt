@@ -1,0 +1,111 @@
+[2026-02-25 17:10:11] [OFF] proof dir: docs/proof/optional_off_20260225_171011
+[2026-02-25 17:10:11] RUN: 00_before_argocd_apps
+NAME                    SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+airflow-dev             Synced        Healthy                                                    dev
+airflow-prod            Synced        Healthy                                                    prod
+alloy-dev               Synced        Healthy                                                    baseline
+alloy-prod              Synced        Healthy                                                    baseline
+dev-namespaces          Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+dev-support             Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   dev
+fastapi-dev             Synced        Healthy                                                    dev
+fastapi-prod            Synced        Healthy                                                    prod
+feast-dev               Synced        Healthy                                                    optional
+feast-prod              Synced        Healthy                                                    optional
+loki-dev                Synced        Healthy                                                    baseline
+loki-prod               Synced        Healthy                                                    baseline
+minio-dev               Synced        Healthy                                                    baseline
+minio-prod              Synced        Healthy                                                    baseline
+mlflow-dev              Synced        Healthy                                                    dev
+mlflow-prod             Synced        Healthy                                                    prod
+monitoring-dev          Synced        Healthy                                                    baseline
+monitoring-extra-dev    Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   baseline
+monitoring-extra-prod   Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   baseline
+monitoring-prod         Synced        Healthy                                                    baseline
+optional-envs-dev       Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   optional
+optional-envs-prod      Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   optional
+prod-namespaces         Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+prod-support            Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   prod
+root-apps               Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+root-baseline           Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+root-optional           Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+triton-dev              Synced        Healthy                                                    dev
+triton-prod             Synced        Healthy                                                    prod
+[2026-02-25 17:10:11] RUN: 00_before_argocd_appsets
+NAME             AGE
+mlops-baseline   14d
+mlops-core       22d
+[2026-02-25 17:10:11] RUN: 00_before_optional_scope
+NAME                 SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+feast-dev            Synced        Healthy                                                    optional
+feast-prod           Synced        Healthy                                                    optional
+optional-envs-dev    Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   optional
+optional-envs-prod   Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   optional
+root-optional        Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+[2026-02-25 17:10:11] RUN: 00_before_feature_store_ns
+feature-store-dev    Active   4d17h
+feature-store-prod   Active   4d17h
+[2026-02-25 17:10:11] [OFF] delete optional child apps (explicit list)
+[2026-02-25 17:10:12] [OFF] deleting app=feast-dev (prefer: argocd app delete --cascade)
+[2026-02-25 17:10:12] RUN: 10_argocd_delete_feast-dev
+[2026-02-25 17:10:12] [OFF] deleting app=feast-prod (prefer: argocd app delete --cascade)
+[2026-02-25 17:10:12] RUN: 10_argocd_delete_feast-prod
+[2026-02-25 17:10:12] [OFF] deleting app=optional-envs-dev (prefer: argocd app delete --cascade)
+[2026-02-25 17:10:12] RUN: 11_argocd_delete_optional-envs-dev
+[2026-02-25 17:10:12] [OFF] deleting app=optional-envs-prod (prefer: argocd app delete --cascade)
+[2026-02-25 17:10:12] RUN: 11_argocd_delete_optional-envs-prod
+[2026-02-25 17:10:13] [OFF] delete root-optional (detach optional/apps management)
+[2026-02-25 17:10:13] [OFF] deleting app=root-optional (prefer: argocd app delete --cascade)
+[2026-02-25 17:10:13] RUN: 12_argocd_delete_root-optional
+[2026-02-25 17:10:13] [OFF] WAIT=true -> waiting optional apps to be gone (timeout=900s)
+[2026-02-25 17:10:13] [OFF] still waiting... remaining optional apps=5
+[2026-02-25 17:10:18] [OFF] still waiting... remaining optional apps=3
+[2026-02-25 17:10:23] [OFF] still waiting... remaining optional apps=3
+[2026-02-25 17:10:29] [OFF] still waiting... remaining optional apps=3
+[2026-02-25 17:10:34] [OFF] still waiting... remaining optional apps=3
+[2026-02-25 17:10:39] [OFF] still waiting... remaining optional apps=3
+[2026-02-25 17:10:44] [OFF] still waiting... remaining optional apps=2
+[2026-02-25 17:10:49] [OFF] optional apps are removed (scope=optional=0)
+[2026-02-25 17:10:49] [OFF] proof
+[2026-02-25 17:10:49] RUN: 90_after_argocd_apps
+NAME                    SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+airflow-dev             Synced        Healthy                                                    dev
+airflow-prod            Synced        Healthy                                                    prod
+alloy-dev               Synced        Healthy                                                    baseline
+alloy-prod              Synced        Healthy                                                    baseline
+dev-namespaces          Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+dev-support             Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   dev
+fastapi-dev             Synced        Healthy                                                    dev
+fastapi-prod            Synced        Healthy                                                    prod
+loki-dev                Synced        Healthy                                                    baseline
+loki-prod               Synced        Healthy                                                    baseline
+minio-dev               Synced        Healthy                                                    baseline
+minio-prod              Synced        Healthy                                                    baseline
+mlflow-dev              Synced        Healthy                                                    dev
+mlflow-prod             Synced        Healthy                                                    prod
+monitoring-dev          Synced        Healthy                                                    baseline
+monitoring-extra-dev    Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   baseline
+monitoring-extra-prod   Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   baseline
+monitoring-prod         Synced        Healthy                                                    baseline
+prod-namespaces         Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+prod-support            Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   prod
+root-apps               Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+root-baseline           Synced        Healthy         40477f0a101d3fff2a98bfc938248610c63f54bf   bootstrap
+triton-dev              Synced        Healthy                                                    dev
+triton-prod             Synced        Healthy                                                    prod
+[2026-02-25 17:10:49] RUN: 90_after_argocd_appsets
+NAME             AGE
+mlops-baseline   14d
+mlops-core       22d
+[2026-02-25 17:10:49] RUN: 90_optional_scope_remaining
+No resources found in argocd namespace.
+[2026-02-25 17:10:50] RUN: 90_feature_store_ns
+feature-store-dev    Active   4d17h
+feature-store-prod   Active   4d17h
+[2026-02-25 17:10:50] RUN: 91_feature_store_dev_empty
+NAME                         DATA   AGE
+configmap/kube-root-ca.crt   1      4d17h
+[2026-02-25 17:10:50] RUN: 92_feature_store_prod_empty
+NAME                         DATA   AGE
+configmap/kube-root-ca.crt   1      4d17h
+[2026-02-25 17:10:50] RUN: 95_grep_optional_left
+[2026-02-25 17:10:50] PROOF_DIR=docs/proof/optional_off_20260225_171011

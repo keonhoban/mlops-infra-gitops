@@ -1,0 +1,1 @@
+kube-system          sealed-secrets-7595cd99b6-ll9pr                                   1/1     Running     0              123m

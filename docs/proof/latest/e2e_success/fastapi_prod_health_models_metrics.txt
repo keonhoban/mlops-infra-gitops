@@ -1,0 +1,66 @@
+### /health
+{"status":"ok","loaded_aliases":["A","B"]}
+### /models
+{"active":{"A":{"model_name":"best_model","alias":"A","version":8,"run_id":"29fc995f201945099eea2720fb3bff66"},"B":{"model_name":"best_model","alias":"B","version":4,"run_id":"7f9c2fee669d4371b32b332418fd8a94"}}}
+### /metrics (head)
+# HELP python_gc_objects_collected_total Objects collected during gc
+# TYPE python_gc_objects_collected_total counter
+python_gc_objects_collected_total{generation="0"} 9977.0
+python_gc_objects_collected_total{generation="1"} 6690.0
+python_gc_objects_collected_total{generation="2"} 294.0
+# HELP python_gc_objects_uncollectable_total Uncollectable objects found during GC
+# TYPE python_gc_objects_uncollectable_total counter
+python_gc_objects_uncollectable_total{generation="0"} 0.0
+python_gc_objects_uncollectable_total{generation="1"} 0.0
+python_gc_objects_uncollectable_total{generation="2"} 0.0
+# HELP python_gc_collections_total Number of times this generation was collected
+# TYPE python_gc_collections_total counter
+python_gc_collections_total{generation="0"} 343.0
+python_gc_collections_total{generation="1"} 31.0
+python_gc_collections_total{generation="2"} 2.0
+# HELP python_info Python platform information
+# TYPE python_info gauge
+python_info{implementation="CPython",major="3",minor="12",patchlevel="12",version="3.12.12"} 1.0
+# HELP process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE process_virtual_memory_bytes gauge
+process_virtual_memory_bytes 7.58505472e+08
+# HELP process_resident_memory_bytes Resident memory size in bytes.
+# TYPE process_resident_memory_bytes gauge
+process_resident_memory_bytes 1.70745856e+08
+# HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1.77200504465e+09
+# HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
+# TYPE process_cpu_seconds_total counter
+process_cpu_seconds_total 12.489999999999998
+# HELP process_open_fds Number of open file descriptors.
+# TYPE process_open_fds gauge
+process_open_fds 9.0
+# HELP process_max_fds Maximum number of open file descriptors.
+# TYPE process_max_fds gauge
+process_max_fds 1024.0
+# HELP http_requests_total Total number of requests by method, status and handler.
+# TYPE http_requests_total counter
+http_requests_total{handler="/ready",method="GET",status="2xx"} 876.0
+http_requests_total{handler="/health",method="GET",status="2xx"} 441.0
+http_requests_total{handler="/metrics",method="GET",status="2xx"} 293.0
+http_requests_total{handler="/models",method="GET",status="2xx"} 3.0
+# HELP http_requests_created Total number of requests by method, status and handler.
+# TYPE http_requests_created gauge
+http_requests_created{handler="/ready",method="GET",status="2xx"} 1.7720050574753757e+09
+http_requests_created{handler="/health",method="GET",status="2xx"} 1.7720050670202441e+09
+http_requests_created{handler="/metrics",method="GET",status="2xx"} 1.7720050759481697e+09
+http_requests_created{handler="/models",method="GET",status="2xx"} 1.7720086152316892e+09
+# HELP http_request_size_bytes Content length of incoming requests by handler. Only value of header is respected. Otherwise ignored. No percentile calculated. 
+# TYPE http_request_size_bytes summary
+http_request_size_bytes_count{handler="/ready"} 876.0
+http_request_size_bytes_sum{handler="/ready"} 0.0
+http_request_size_bytes_count{handler="/health"} 441.0
+http_request_size_bytes_sum{handler="/health"} 0.0
+http_request_size_bytes_count{handler="/metrics"} 293.0
+http_request_size_bytes_sum{handler="/metrics"} 0.0
+http_request_size_bytes_count{handler="/models"} 3.0
+http_request_size_bytes_sum{handler="/models"} 0.0
+# HELP http_request_size_bytes_created Content length of incoming requests by handler. Only value of header is respected. Otherwise ignored. No percentile calculated. 
+# TYPE http_request_size_bytes_created gauge
+
