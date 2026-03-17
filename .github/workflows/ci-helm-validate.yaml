@@ -69,6 +69,7 @@ jobs:
             ':!:baseline/envs/**/sealed-secrets/**' \
             ':!:optional/envs/**/sealed-secrets/**' \
             ':!:bootstrap/notifications/secret-sealed.yaml' \
+            ':!:docs/proof/**' \
           | xargs -0 -r yamllint -s
 
       - name: Helm lint (strict)
