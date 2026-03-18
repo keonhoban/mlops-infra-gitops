@@ -81,11 +81,21 @@
 
 ---
 
-## Load Test (TBD)
+## Load Test (완료 — 2026-03-18)
 
-k6 시나리오: N VU, 60s, 목표 RPS X, 실행 예정
+k6 v0.55.0 / 3-node bare-metal / FastAPI 2 replicas + Triton 1 replica (CPU-only)
 
-- 대상 엔드포인트: `POST /predict` (FastAPI → Triton 추론 경로)
-- 측정 항목: RPS, P50/P95/P99 latency, error rate, Triton inference queue depth
-- 스크립트 위치: `ops/load-test/` (작성 예정)
-- 결과 위치: `docs/proof/latest/load_test/` (실행 후 스냅샷 추가 예정)
+| 지표 | 값 |
+|------|-----|
+| 총 요청 | 20,553 건 |
+| RPS | 136.98 |
+| 에러율 | **0.00%** |
+| Checks | **100%** (41,106 / 41,106) |
+| p50 | 126 ms |
+| p90 | 456 ms |
+| p95 | 553 ms |
+| max | 1,510 ms |
+| 최대 VU | 100 |
+
+상세 결과 및 분석: [`docs/proof/load-test/README.md`](../load-test/README.md)
+수치 원본 JSON: [`docs/proof/load-test/results.json`](../load-test/results.json)

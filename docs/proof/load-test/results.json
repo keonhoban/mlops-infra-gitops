@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "tool": "k6",
+    "version": "v0.55.0",
+    "date": "2026-03-18",
+    "environment": {
+      "cluster": "3-node bare-metal",
+      "fastapi_replicas": 2,
+      "triton_replicas": 1,
+      "triton_mode": "CPU-only"
+    },
+    "scenario": {
+      "target_endpoint": "POST /predict",
+      "max_vus": 100,
+      "duration_seconds": 150,
+      "stages": [
+        { "duration": "30s", "target": 50 },
+        { "duration": "90s", "target": 100 },
+        { "duration": "30s", "target": 0 }
+      ]
+    }
+  },
+  "summary": {
+    "total_requests": 20553,
+    "rps": 136.98,
+    "error_rate_pct": 0.0,
+    "checks_passed": 41106,
+    "checks_total": 41106,
+    "checks_pass_rate_pct": 100.0
+  },
+  "latency_ms": {
+    "p50": 126,
+    "p90": 456,
+    "p95": 553,
+    "p99": null,
+    "max": 1510,
+    "min": null,
+    "avg": null
+  },
+  "thresholds": {
+    "http_req_failed": { "condition": "rate < 0.01", "passed": true },
+    "http_req_duration_p95": { "condition": "< 2000ms", "passed": true }
+  }
+}
