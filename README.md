@@ -35,6 +35,12 @@ Production-grade ML Platform 설계/구현 프로젝트
 - 환경 충돌 방지: **dev/prod AppProject + Namespace 격리**
 - 변경 이력 추적: **Proof 스냅샷으로 감사 가능**
 
+설계 결정 효과:
+
+- **KubernetesExecutor**: Task마다 독립 Pod을 생성/제거하여 Scheduler CPU 경합을 제거하고, 실패 Task가 다른 Task 또는 Scheduler에 영향을 주지 않는 완전 격리를 보장합니다.
+- **ArgoCD sync-wave(mlflow:10 → airflow:20 → triton:30 → fastapi:40)**: 서비스 기동 순서를 선언적으로 강제하여 "MLflow 없이 Airflow가 먼저 뜨는" 의존성 위반을 구조적으로 차단합니다.
+- **Triton explicit model-control-mode**: Airflow DAG이 검증을 완료한 후 명시적으로 load API를 호출하기 전까지 모델이 서빙되지 않아, partial write 중 자동 로드를 원천 차단합니다.
+
 ---
 
 ## Architecture

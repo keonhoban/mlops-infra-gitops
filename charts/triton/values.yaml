@@ -49,6 +49,12 @@ gpu:
   count: 1
 
 # -----------------------------------------------------------------------
+# TODO: GPU 노드 확보 후 아래 주석 해제
+#   활성화 전제 조건:
+#     1) NVIDIA device plugin DaemonSet 설치 완료 (nvidia.com/gpu 리소스 등록)
+#     2) GPU 노드에 label 부여: kubectl label node <node> accelerator=nvidia-gpu
+#     3) GPU 노드에 taint 부여: kubectl taint node <node> nvidia.com/gpu=present:NoSchedule
+# -----------------------------------------------------------------------
 # GPU 서빙 활성화 섹션 (현재 비활성 — cpu-only 환경)
 #
 # GPU 노드에 Triton을 배포할 경우 아래 설정을 values.yaml에 추가하고

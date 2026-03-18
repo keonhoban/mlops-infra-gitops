@@ -78,3 +78,14 @@
 - `observability/monitoring_dev_objects.txt`
 - `observability/monitoring_prod_objects.txt`
 - `observability/metrics_server_deploy.yaml`
+
+---
+
+## Load Test (TBD)
+
+k6 시나리오: N VU, 60s, 목표 RPS X, 실행 예정
+
+- 대상 엔드포인트: `POST /predict` (FastAPI → Triton 추론 경로)
+- 측정 항목: RPS, P50/P95/P99 latency, error rate, Triton inference queue depth
+- 스크립트 위치: `ops/load-test/` (작성 예정)
+- 결과 위치: `docs/proof/latest/load_test/` (실행 후 스냅샷 추가 예정)
