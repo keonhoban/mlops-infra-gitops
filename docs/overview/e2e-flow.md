@@ -81,6 +81,53 @@ Airflow와 Triton은 동일 NFS 경로를 공유합니다.
 운영 환경에서는 StorageClass 기반 동적 프로비저닝으로 대체 가능하지만,
 본 프로젝트는 “운영 데이터 보호”를 위해 정적 PV/PVC로 고정합니다.
 
+---
+
+### 3-3) Triton Model Control: `--model-control-mode=explicit`
+
+#### 선택 이유
+
+Triton은 기본적으로 `poll` 모드(주기적 디렉토리 스캔)를 사용하지만, 본 프로젝트는
+`explicit` 모드를 채택한다.
+
+| 모드 | 동작 | 문제점 |
+|------|------|--------|
+| `poll` | 주기적으로 model-repository 스캔, 변경 감지 시 자동 로드 | Airflow publish 중 partial read 가능. 검증 전 모델이 자동 서빙될 위험 |
+| `explicit` | API 호출 시에만 로드/언로드 | Airflow DAG이 명시적으로 제어 → 검증 완료 후에만 서빙 |
+
+`explicit` 모드는 “검증된 변경만 운영에 반영”하는 플랫폼 원칙과 직접 대응한다.
+
+#### 모델 로드 흐름 (호출 주체: Airflow DAG)
+
+```
+[Airflow DAG - mlops_pipeline]
+  1. MLflow에서 READY alias 모델 파일을 NFS PVC(/models)에 publish
+  2. 서빙 준비 확인:
+       GET  http://triton.<ns>.svc:8000/v2/health/ready        → 200 확인
+       GET  http://triton.<ns>.svc:8000/v2/models/{name}/ready → 404 (아직 미로드)
+  3. 모델 로드 API 호출:
+       POST http://triton.<ns>.svc:8000/v2/repository/models/{name}/load
+  4. 로드 완료 확인:
+       GET  http://triton.<ns>.svc:8000/v2/models/{name}/ready → 200
+  5. FastAPI reload 호출:
+       POST http://fastapi.<ns>.svc/variant/A/reload
+            Header: x-token: <RELOAD_SECRET_TOKEN>
+  6. Slack 알림 (운영 흔적)
+```
+
+언로드가 필요한 경우(롤백, 버전 교체):
+```
+POST http://triton.<ns>.svc:8000/v2/repository/models/{name}/unload
+```
+
+#### NFS 공유와 Recreate 전략의 관계
+
+Triton Pod 배포 시 `strategy: Recreate`를 사용한다.
+NFS RWX 환경에서 복수 Pod이 동시에 동일 model-repository를 마운트하면
+Airflow의 write 작업과 충돌할 수 있기 때문이다.
+기존 Pod을 완전히 종료 후 새 Pod이 기동하면, 신규 Pod은
+Airflow가 배치한 최신 모델 파일을 일관된 상태로 읽고 explicit load를 수행한다.
+
 #### Static PV/PVC (운영 데이터 보호)
 
 - PVC:

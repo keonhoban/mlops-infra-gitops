@@ -1,5 +1,10 @@
 replicaCount: 1
 
+# 배포 전략: Recreate (RollingUpdate 미사용)
+# - NFS RWX 공유 model-repository에 복수 Pod 동시 접근 시 partial read 위험
+# - explicit model-control-mode에서 중복 load API 호출 방지
+# - 배포 중 단기 다운타임은 Airflow의 serving_ready_sensor가 흡수
+
 # ✅ NFS(RWX) model-repo 권한 충돌 최소화
 # - 현재 NFS 쪽이 uid=50000, gid=root(0) 형태로 생성된 흔적이 있어서
 #   pod도 동일하게 맞추는 게 가장 좋습니다.

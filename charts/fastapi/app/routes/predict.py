@@ -6,6 +6,8 @@ from pydantic import BaseModel
 import pandas as pd
 from loguru import logger
 
+from prometheus_client import Counter
+
 from services.alias_selector import decide_traffic
 from services.triton_client import infer, get_served_version
 from core.config import settings
@@ -13,6 +15,11 @@ from utils.slack_alerts import slack_safe
 
 # SSOT cache helper
 from core.startup import get_ssot_served_version_cached
+
+_SHADOW_MIRROR_FAILURES = Counter(
+    "fastapi_shadow_mirror_failures_total",
+    "Total number of shadow mirror task failures",
+)
 
 router = APIRouter()
 
@@ -34,6 +41,7 @@ def _shadow_mirror_task(rows: list[list[float]], client_id: str):
             timeout_sec=settings.traffic_shadow_timeout_sec,
         )
     except Exception as e:
+        _SHADOW_MIRROR_FAILURES.inc()
         logger.warning(f"[shadow_mirror] failed client_id={client_id}: {e}")
         slack_safe(f"⚠️ [FastAPI] shadow mirror failed (client_id={client_id}): {e}")
 
@@ -64,7 +72,9 @@ async def predict(
             background_tasks.add_task(_shadow_mirror_task, rows, x_client_id)
 
         # ✅ evidence: 요청 시점 SSOT(운영 진실) 같이 반환
+        # prod: SSOT cache 경유 (짧은 TTL), shadow: 직접 조회 (캐시 불필요)
         ssot_v = get_ssot_served_version_cached(get_served_version, settings.model_name)
+        shadow_v = get_served_version(settings.model_name, triton_url=settings.shadow_triton_url())
 
         return {
             "traffic": {
@@ -75,6 +85,8 @@ async def predict(
                 "reason": decision.reason,
                 "prod_triton": settings.prod_triton_url(),
                 "shadow_triton": settings.shadow_triton_url(),
+                "prod_served_version": ssot_v,
+                "shadow_served_version": shadow_v,
             },
             "client_id": x_client_id,
             "ssot_served_version": ssot_v,

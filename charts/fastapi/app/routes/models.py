@@ -35,6 +35,7 @@ def models() -> dict[str, Any]:
     - effective = 운영자가 보는 최종 상태 (SSOT 기준)
     """
     served = get_ssot_served_version_cached(get_served_version, settings.model_name)
+    shadow_served = get_served_version(settings.model_name, triton_url=settings.shadow_triton_url())
     served_meta = _mlflow_meta_for_version(served) if served is not None else None
 
     effective = {}
@@ -49,9 +50,11 @@ def models() -> dict[str, Any]:
         "pod": _pod(),
         "ssot": {
             "type": "triton",
-            "triton_http_url": settings.triton_http_url,
+            "prod_triton_url": settings.prod_triton_url(),
+            "shadow_triton_url": settings.shadow_triton_url(),
             "model_name": settings.model_name,
-            "served_version": served,
+            "prod_served_version": served,
+            "shadow_served_version": shadow_served,
             "mlflow_meta": served_meta,
         },
         "effective": effective,

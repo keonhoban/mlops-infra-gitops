@@ -8,13 +8,16 @@ from core.config import settings
 _TRANSIENT_HTTP = {409, 425, 429, 500, 502, 503, 504}
 
 
-def get_served_version(model_name: str) -> int | None:
+def get_served_version(model_name: str, triton_url: str | None = None) -> int | None:
     """
     Triton served_version 조회 (SSOT).
     /v2/models/{model} 의 versions[0] 사용 (single version 정책 전제).
-    triton_http_url 미설정 시 None 반환.
+
+    triton_url: 조회할 Triton 엔드포인트.
+      - None(기본값) → settings.triton_http_url (prod)
+      - 명시 시 해당 URL 사용 (shadow Triton 조회 가능)
     """
-    triton = settings.triton_http_url
+    triton = triton_url or settings.triton_http_url
     if not triton:
         return None
     try:
