@@ -1,6 +1,6 @@
 import mlflow.pyfunc
 from mlflow.tracking import MlflowClient
-from utils.slack_alerts import send_slack_alert
+from utils.slack_alerts import slack_safe
 from loguru import logger
 from core.config import settings
 
@@ -25,5 +25,5 @@ def load_model_by_alias(alias: str):
         }
     except Exception as e:
         logger.error(f"❌ 모델 로딩 실패: {e}")
-        send_slack_alert(f"❌ 모델 로딩 실패: alias={alias}, {e}")
+        slack_safe(f"❌ 모델 로딩 실패: alias={alias}, {e}")
         return None

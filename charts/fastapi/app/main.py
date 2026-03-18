@@ -3,6 +3,9 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 from core.startup import init_app_state
 from routes import predict, reload, health, models, root, ready
+from utils.logger import setup_logger
+
+setup_logger()
 
 app = FastAPI(title="FastAPI Triton Gateway", version="2.0.0")
 
