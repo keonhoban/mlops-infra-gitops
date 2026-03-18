@@ -1,6 +1,5 @@
 import random
 import time
-from typing import Optional
 
 import requests
 
@@ -9,7 +8,7 @@ from core.config import settings
 _TRANSIENT_HTTP = {409, 425, 429, 500, 502, 503, 504}
 
 
-def get_served_version(model_name: str) -> Optional[int]:
+def get_served_version(model_name: str) -> int | None:
     """
     Triton served_version 조회 (SSOT).
     /v2/models/{model} 의 versions[0] 사용 (single version 정책 전제).

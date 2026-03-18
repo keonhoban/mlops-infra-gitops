@@ -21,13 +21,6 @@ class AppSettings(BaseSettings):
     # shadow 미러링 요청 timeout (짧게)
     traffic_shadow_timeout_sec: float = Field(default=1.0)
 
-    # -------------------------
-    # Legacy alias routing (유지)
-    # -------------------------
-    alias_selection_mode: str = Field(default="blue_green")  # ab_test / canary / blue_green (레거시)
-    default_alias: str = Field(default="B")
-    canary_percent: int = Field(default=20)
-
     # Control plane (MLflow)
     mlflow_tracking_uri: str = Field(...)
     model_name: str = Field(default="best_model")
@@ -41,6 +34,9 @@ class AppSettings(BaseSettings):
     triton_retry_attempts: int = Field(default=5)
     triton_retry_backoff_ms: int = Field(default=120)
     triton_retry_max_backoff_ms: int = Field(default=800)
+
+    # SSOT cache TTL (초) — 환경 변수 SSOT_CACHE_TTL_SEC 으로 조정 가능
+    ssot_cache_ttl_sec: int = Field(default=2)
 
     class Config:
         case_sensitive = False

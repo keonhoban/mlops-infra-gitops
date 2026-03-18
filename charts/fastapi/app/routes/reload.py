@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 import secrets
-from typing import Optional, Any
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, Header, Query
 from pydantic import BaseModel
@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 class ReloadBody(BaseModel):
-    deploy_version: Optional[int] = None
+    deploy_version: int | None = None
 
 
 def _pod() -> str:

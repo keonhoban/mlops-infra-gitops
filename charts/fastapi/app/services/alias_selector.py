@@ -1,10 +1,12 @@
 import hashlib
 from dataclasses import dataclass
+from typing import Literal
+
 from core.config import settings
 
 @dataclass(frozen=True)
 class TrafficDecision:
-    primary: str          # "prod" or "shadow"
+    primary: Literal["prod", "shadow"]
     do_shadow_mirror: bool
     reason: str
 

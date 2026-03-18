@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Header, HTTPException, Request, BackgroundTasks
 from pydantic import BaseModel
-from typing import List
 import pandas as pd
 from loguru import logger
 
@@ -19,7 +18,7 @@ router = APIRouter()
 
 
 class PredictInput(BaseModel):
-    data: List[List[float]]
+    data: list[list[float]]
 
 
 def _shadow_mirror_task(rows: list[list[float]], client_id: str):
