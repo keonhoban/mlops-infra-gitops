@@ -5,14 +5,13 @@ import os
 import secrets
 from typing import Optional, Any
 
-import requests
-import mlflow
 from fastapi import APIRouter, HTTPException, Header, Query
-from mlflow.tracking import MlflowClient
 from pydantic import BaseModel
 
 from core.config import settings
 from core.startup import get_ssot_served_version_cached
+from services.triton_client import get_served_version
+from services.mlflow_meta import get_mlflow_client
 from utils.slack_alerts import slack_safe
 
 router = APIRouter()
@@ -26,32 +25,13 @@ def _pod() -> str:
     return os.environ.get("HOSTNAME", "unknown")
 
 
-def _try_get_triton_served_version(model_name: str) -> Optional[int]:
-    triton = getattr(settings, "triton_http_url", None) or getattr(settings, "triton_url", None)
-    if not triton:
-        return None
-
-    try:
-        r = requests.get(f"{triton.rstrip('/')}/v2/models/{model_name}", timeout=3)
-        if r.status_code != 200:
-            return None
-        j = r.json()
-        versions = j.get("versions") or []
-        if not versions:
-            return None
-        return int(versions[0])
-    except Exception:
-        return None
-
-
 def _meta_from_mlflow_version(version: int) -> dict[str, Any]:
     if not settings.mlflow_tracking_uri:
         raise HTTPException(status_code=500, detail="서버 설정 오류: mlflow_tracking_uri 미설정")
     if not settings.model_name:
         raise HTTPException(status_code=500, detail="서버 설정 오류: model_name 미설정")
 
-    mlflow.set_tracking_uri(settings.mlflow_tracking_uri)
-    c = MlflowClient()
+    c = get_mlflow_client()
 
     mv = c.get_model_version(settings.model_name, str(int(version)))
     return {
@@ -83,7 +63,7 @@ def reload_variant(
         dv = int(deploy_version)
 
     if dv is not None:
-        served = get_ssot_served_version_cached(_try_get_triton_served_version, settings.model_name)
+        served = get_ssot_served_version_cached(get_served_version, settings.model_name)
         if served is not None and int(served) != int(dv):
             raise HTTPException(status_code=409, detail=f"Triton served_version({served}) != deploy_version({dv})")
 
@@ -103,7 +83,7 @@ def reload_variant(
             "source": "deploy_version_ssot_verified",
         }
 
-    served = get_ssot_served_version_cached(_try_get_triton_served_version, settings.model_name)
+    served = get_ssot_served_version_cached(get_served_version, settings.model_name)
     if served is None:
         raise HTTPException(status_code=503, detail="Triton served_version 조회 실패")
 

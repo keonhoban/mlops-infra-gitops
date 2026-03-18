@@ -1,10 +1,33 @@
 import random
 import time
+from typing import Optional
+
 import requests
 
 from core.config import settings
 
 _TRANSIENT_HTTP = {409, 425, 429, 500, 502, 503, 504}
+
+
+def get_served_version(model_name: str) -> Optional[int]:
+    """
+    Triton served_version 조회 (SSOT).
+    /v2/models/{model} 의 versions[0] 사용 (single version 정책 전제).
+    triton_http_url 미설정 시 None 반환.
+    """
+    triton = settings.triton_http_url
+    if not triton:
+        return None
+    try:
+        r = requests.get(f"{triton.rstrip('/')}/v2/models/{model_name}", timeout=3)
+        if r.status_code != 200:
+            return None
+        versions = r.json().get("versions") or []
+        if not versions:
+            return None
+        return int(versions[0])
+    except Exception:
+        return None
 
 def _sleep_backoff(attempt_idx: int):
     base = max(10, int(getattr(settings, "triton_retry_backoff_ms", 120)))

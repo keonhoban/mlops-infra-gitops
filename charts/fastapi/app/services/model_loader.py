@@ -1,13 +1,12 @@
 import mlflow.pyfunc
-from mlflow.tracking import MlflowClient
 from utils.slack_alerts import slack_safe
 from loguru import logger
 from core.config import settings
+from services.mlflow_meta import get_mlflow_client
 
 def load_model_by_alias(alias: str):
     try:
-        mlflow.set_tracking_uri(settings.mlflow_tracking_uri)
-        client = MlflowClient()
+        client = get_mlflow_client()
         model_uri = f"models:/{settings.model_name}@{alias}"
         model = mlflow.pyfunc.load_model(model_uri)
         version_info = client.get_model_version_by_alias(settings.model_name, alias)

@@ -5,7 +5,7 @@ from mlflow.tracking import MlflowClient
 from core.config import settings
 from utils.slack_alerts import slack_safe
 
-def _client():
+def get_mlflow_client() -> MlflowClient:
     mlflow.set_tracking_uri(settings.mlflow_tracking_uri)
     return MlflowClient()
 
@@ -15,7 +15,7 @@ def get_alias_target_safe(alias: str) -> dict | None:
     아티팩트 download는 하지 않는다. (다운로드 실패=서비스 장애로 번지기 때문)
     """
     try:
-        c = _client()
+        c = get_mlflow_client()
         v = c.get_model_version_by_alias(settings.model_name, alias)
         return {
             "model_name": settings.model_name,
