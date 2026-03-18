@@ -8,7 +8,7 @@ metadata:
   labels:
 {{ include "mlflow.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
 {{ include "mlflow.selectorLabels" . | nindent 6 }}
@@ -61,6 +61,11 @@ spec:
           envFrom:
             - secretRef:
                 name: aws-credentials-secret
+
+          {{- if .Values.readinessProbe }}
+          readinessProbe:
+{{ toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
 
           {{- if .Values.livenessProbe }}
           livenessProbe:

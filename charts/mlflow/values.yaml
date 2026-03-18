@@ -1,3 +1,5 @@
+replicaCount: 1
+
 image:
   repository: hoizz/mlflow-custom
   pullPolicy: IfNotPresent
@@ -12,6 +14,14 @@ resources:
   limits:
     cpu: "1"
     memory: "2Gi"
+readinessProbe:
+  httpGet:
+    path: /
+    port: 5000
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
 livenessProbe:
   httpGet:
     path: /
