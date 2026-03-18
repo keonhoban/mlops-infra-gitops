@@ -87,7 +87,7 @@ async def predict(
     except Exception as e:
         logger.exception("predict failed")
         slack_safe(f"❌ [FastAPI] Triton predict failed (primary={decision.primary}): {e}")
-        raise HTTPException(status_code=500, detail=f"예측 실패: {e}")
+        raise HTTPException(status_code=500, detail="예측 요청 처리 중 오류가 발생했습니다.")
 
 
 @router.post("/variant/{alias}/predict")
@@ -124,4 +124,4 @@ async def predict_by_alias(request: Request, alias: str, input_data: PredictInpu
     except Exception as e:
         logger.exception("predict_by_alias failed")
         slack_safe(f"❌ [FastAPI] Triton predict failed (alias={alias}): {e}")
-        raise HTTPException(status_code=500, detail=f"예측 실패: {e}")
+        raise HTTPException(status_code=500, detail="예측 요청 처리 중 오류가 발생했습니다.")

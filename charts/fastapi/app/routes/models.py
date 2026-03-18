@@ -41,7 +41,7 @@ def models() -> dict[str, Any]:
     for alias in ["A", "B"]:
         effective[alias] = {
             "mode": "ssot",
-            "version": served_meta["version"] if served_meta else served,
+            "version": served_meta.get("version") if served_meta else served,
             "run_id": (served_meta.get("run_id") if served_meta else None),
         }
 
