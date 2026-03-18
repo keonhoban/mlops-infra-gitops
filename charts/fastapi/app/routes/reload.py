@@ -26,11 +26,9 @@ def _pod() -> str:
 
 
 def _meta_from_mlflow_version(version: int) -> dict[str, Any]:
-    if not settings.mlflow_tracking_uri:
-        raise HTTPException(status_code=500, detail="서버 설정 오류: mlflow_tracking_uri 미설정")
-    if not settings.model_name:
-        raise HTTPException(status_code=500, detail="서버 설정 오류: model_name 미설정")
-
+    # mlflow_tracking_uri: Field(...) required → 앱 시작 시 미설정이면 crash
+    # model_name: Field(default=...) → 항상 값 존재
+    # 두 필드 모두 Pydantic AppSettings에서 보장되므로 런타임 재확인 불필요
     c = get_mlflow_client()
 
     mv = c.get_model_version(settings.model_name, str(int(version)))
