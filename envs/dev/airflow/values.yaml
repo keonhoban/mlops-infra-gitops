@@ -63,7 +63,7 @@ airflow:
         value: "http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000"
 
       - name: FASTAPI_BASE_URL
-        value: "http://fastapi-dev-service.fastapi-dev.svc.cluster.local:8000"
+        value: "http://fastapi-dev-service.fastapi-dev.svc.cluster.local"
 
       # -----------------------
       # Remote logging (S3/MinIO)
@@ -79,6 +79,9 @@ airflow:
         value: ap-northeast-2
       - name: AWS_DEFAULT_REGION
         value: ap-northeast-2
+
+      - name: AIRFLOW_CONN_AWS_DEFAULT
+        value: "aws:///?region_name=ap-northeast-2"
 
     resources:
       requests:
