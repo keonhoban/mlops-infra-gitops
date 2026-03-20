@@ -50,8 +50,8 @@ Object Storage + Shared Model Repository 의존 구조 위에서 동작합니다
 ### 3-1) Airflow Logs (Remote Logging)
 
 - `AIRFLOW__LOGGING__REMOTE_LOGGING=True`
-- `REMOTE_BASE_LOG_FOLDER=s3://mlflow-artifacts-keonho/<env>/airflow-logs`
-- Connection: `aws_default (region: ap-northeast-2)`
+- `REMOTE_BASE_LOG_FOLDER=s3://<S3_BUCKET>/<env>/airflow-logs`  *(dev 환경 예시: `mlflow-artifacts-keonho`)*
+- Connection: `aws_default (region: <AWS_REGION>)`  *(dev 환경 예시: `ap-northeast-2`)*
 
 의도:
 - Pod 재시작과 무관한 로그 보존
@@ -68,7 +68,7 @@ Object Storage + Shared Model Repository 의존 구조 위에서 동작합니다
 
 Airflow와 Triton은 동일 NFS 경로를 공유합니다.
 
-- NFS Server: `192.168.18.141`
+- NFS Server: `<NFS_SERVER_IP>`  *(dev 환경 예시: `192.168.18.141`)*
 - Dev Path: `/mnt/nfs_share/mlops/triton/model-repo/dev`
 - Prod Path: `/mnt/nfs_share/mlops/triton/model-repo/prod`
 - Airflow Mount: `/models`

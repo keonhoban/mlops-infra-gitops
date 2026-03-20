@@ -49,8 +49,9 @@ gpu:
   count: 1
 
 # -----------------------------------------------------------------------
-# TODO: GPU 노드 확보 후 아래 주석 해제
-#   활성화 전제 조건:
+# Design Decision: CPU-only 배포
+#   현재 클러스터는 CPU 전용 환경이며, GPU 전환은 아래 전제 조건 충족 후 진행.
+#   전환 전제 조건:
 #     1) NVIDIA device plugin DaemonSet 설치 완료 (nvidia.com/gpu 리소스 등록)
 #     2) GPU 노드에 label 부여: kubectl label node <node> accelerator=nvidia-gpu
 #     3) GPU 노드에 taint 부여: kubectl taint node <node> nvidia.com/gpu=present:NoSchedule

@@ -156,7 +156,7 @@ Scheduler Pod은 DAG 실행 시 아래 환경변수로 서비스를 호출합니
 | `feature-store-resources` ConfigMap | `/opt/airflow/feature-store` | Feature schema 참조 |
 
 원격 로그:
-- `AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER=s3://mlflow-artifacts-keonho/dev/airflow-logs`
+- `AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER=s3://<S3_BUCKET>/dev/airflow-logs`  *(dev 환경 예시: `mlflow-artifacts-keonho`)*
 - Pod 재시작과 무관하게 로그 보존 (PVC 의존성 없음)
 
 ---
