@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: hoizz/mlflow-custom
   pullPolicy: IfNotPresent
-  tag: latest
+  tag: "v2.14.0"
 service:
   type: ClusterIP
   port: 5000

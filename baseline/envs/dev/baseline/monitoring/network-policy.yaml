@@ -1,0 +1,39 @@
+# NetworkPolicy: monitoring 네임스페이스 인그레스 제한
+# W7: 내부 서비스(Prometheus, Grafana 등)에 대한 최소 접근 정책
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: monitoring-allow-internal
+  namespace: monitoring-dev
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+  ingress:
+    # 같은 네임스페이스 내 통신 허용
+    - from:
+        - podSelector: {}
+    # Airflow에서 Prometheus 쿼리 허용 (auto_rollback observe)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: airflow-dev
+      ports:
+        - protocol: TCP
+          port: 9090
+    # FastAPI/Triton ServiceMonitor 스크랩 허용
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: fastapi-dev
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: triton-dev
+    # Ingress controller에서 Grafana 접근 허용
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 3000

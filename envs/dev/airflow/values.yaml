@@ -24,6 +24,11 @@ airflow:
   config:
     AIRFLOW__WEBSERVER__WEB_SERVER_BASE_URL:
       value: "http://airflow.local"  # ⬅️ global.airflowHost 기준값
+    # W8: webserver 인증 명시적 설정 — 기본값에 의존하지 않음
+    AIRFLOW__WEBSERVER__AUTH_BACKEND:
+      value: "airflow.api.auth.backend.basic_auth"
+    AIRFLOW__API__AUTH_BACKENDS:
+      value: "airflow.api.auth.backend.basic_auth"
 
   apiSecretKeySecretName: airflow-dev-api-secret-key
   jwtSecretName: airflow-dev-jwt-secret

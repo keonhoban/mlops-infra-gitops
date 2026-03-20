@@ -88,6 +88,22 @@ gpu:
 #     effect: "NoSchedule"      # GPU taint 허용
 # -----------------------------------------------------------------------
 
+livenessProbe:
+  httpGet:
+    path: /v2/health/live
+    port: 8000
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /v2/health/ready
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 3
+
 monitoring:
   enabled: true
   scrapeInterval: 30s

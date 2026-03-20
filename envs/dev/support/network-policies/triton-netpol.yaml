@@ -1,0 +1,40 @@
+# NetworkPolicy: Triton 서비스 인그레스 제한
+# W7: Triton은 FastAPI와 Airflow에서만 접근 가능
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: triton-allow-internal
+  namespace: triton-dev
+spec:
+  podSelector:
+    matchLabels:
+      app: triton
+  policyTypes:
+    - Ingress
+  ingress:
+    # FastAPI → Triton gRPC/HTTP 추론 요청
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: fastapi-dev
+      ports:
+        - protocol: TCP
+          port: 8000
+        - protocol: TCP
+          port: 8001
+    # Airflow → Triton model control API (load/unload/ready)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: airflow-dev
+      ports:
+        - protocol: TCP
+          port: 8000
+    # Prometheus → Triton metrics 스크랩
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring-dev
+      ports:
+        - protocol: TCP
+          port: 8002

@@ -48,6 +48,14 @@ spec:
               containerPort: 8001
             - name: metrics
               containerPort: 8002
+{{- with .Values.livenessProbe }}
+          livenessProbe:
+{{ toYaml . | nindent 12 }}
+{{- end }}
+{{- with .Values.readinessProbe }}
+          readinessProbe:
+{{ toYaml . | nindent 12 }}
+{{- end }}
           resources:
 {{ toYaml .Values.resources | nindent 12 }}
           # GPU 활성화 시 values.yaml에서 resources.limits.nvidia.com/gpu 설정
