@@ -78,9 +78,9 @@ if [[ "$USE_AWS_API" -eq 1 ]]; then
   fi
 
   NEW_JSON="$("${AWS_CLI[@]}" iam create-access-key --user-name "$TARGET_USER")"
-  NEW_ID="0 0echo "" | jq -r .AccessKey.AccessKeyId)"
+  NEW_ID="$(echo "$NEW_JSON" | jq -r .AccessKey.AccessKeyId)"
   export NEW_ID
-  NEW_SECRET="0 0echo "" | jq -r .AccessKey.SecretAccessKey)"
+  NEW_SECRET="$(echo "$NEW_JSON" | jq -r .AccessKey.SecretAccessKey)"
   export NEW_SECRET
   info "Created new key: ${NEW_ID:0:4}********${NEW_ID: -4}"
 
