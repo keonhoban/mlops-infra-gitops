@@ -118,7 +118,7 @@ Scheduler Pod은 DAG 실행 시 아래 환경변수로 서비스를 호출합니
 | 환경변수 | 값 | 출처 |
 |----------|----|------|
 | `MLFLOW_TRACKING_URI` | `http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000` | values.yaml 직접 주입 |
-| `FASTAPI_BASE_URL` | `http://fastapi-dev-service.fastapi-dev.svc.cluster.local` | values.yaml 직접 주입 |
+| `FASTAPI_BASE_URL` | `http://fastapi-dev-service.fastapi-dev.svc.cluster.local:8000` | values.yaml 직접 주입 |
 | `RELOAD_SECRET_TOKEN` | (비공개) | SealedSecret `fastapi-token-dev-secret` |
 | `SLACK_WEBHOOK_URL` | (비공개) | SealedSecret `slack-webhook-dev-secret` |
 

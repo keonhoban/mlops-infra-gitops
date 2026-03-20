@@ -63,7 +63,7 @@ airflow:
         value: "http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000"
 
       - name: FASTAPI_BASE_URL
-        value: "http://fastapi-dev-service.fastapi-dev.svc.cluster.local"
+        value: "http://fastapi-dev-service.fastapi-dev.svc.cluster.local:8000"
 
       # -----------------------
       # Remote logging (S3/MinIO)
