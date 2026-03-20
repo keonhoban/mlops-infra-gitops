@@ -24,6 +24,10 @@ airflow:
   config:
     AIRFLOW__WEBSERVER__WEB_SERVER_BASE_URL:
       value: "http://airflow.prod"  # ⬅️ global.airflowHost 기준값
+    AIRFLOW__WEBSERVER__AUTH_BACKEND:
+      value: "airflow.api.auth.backend.basic_auth"
+    AIRFLOW__API__AUTH_BACKENDS:
+      value: "airflow.api.auth.backend.basic_auth"
 
   apiSecretKeySecretName: airflow-prod-api-secret-key
   jwtSecretName: airflow-prod-jwt-secret
@@ -58,7 +62,7 @@ airflow:
         value: "http://mlflow-prod-service.mlflow-prod.svc.cluster.local:5000"
 
       - name: FASTAPI_BASE_URL
-        value: "http://fastapi-prod-service.fastapi-prod.svc.cluster.local:8000"
+        value: "http://fastapi-prod-service.fastapi-prod.svc.cluster.local"
 
       # -----------------------
       # Remote logging (S3/MinIO)
@@ -74,6 +78,9 @@ airflow:
         value: ap-northeast-2
       - name: AWS_DEFAULT_REGION
         value: ap-northeast-2
+
+      - name: AIRFLOW_CONN_AWS_DEFAULT
+        value: "aws:///?region_name=ap-northeast-2"
 
     resources:
       requests:
