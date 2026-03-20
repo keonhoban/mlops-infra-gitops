@@ -27,4 +27,4 @@ Optional은 Core E2E에 필수인 구성요소가 아니라,
 ## 다음으로 볼 곳
 
 - 스위치 문서: docs/runbook/optional-toggle.md
-- 토글 스크립트: ops/toggle_optional_on.sh, ops/toggle_optional_off.sh
+- 토글 스크립트: ops/toggle/optional_on.sh, ops/toggle/optional_off.sh

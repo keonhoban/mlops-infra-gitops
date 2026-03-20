@@ -22,19 +22,6 @@
 
 ---
 
-## 읽는 순서
-
-1) Optional 토글
-- `runbook/optional-toggle.md`
-
-2) 관측/장애 대응
-- `runbook/observability.md`
-
-3) 보안/키 운영
-- `security/secrets.md`
-
----
-
 ## Proof (증거)
 
 - `proof/latest/` : 최신 스냅샷 인덱스
