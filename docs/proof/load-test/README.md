@@ -13,7 +13,20 @@
 | 클러스터 | 3-node bare-metal |
 | FastAPI replicas | 2 |
 | Triton replicas | 1 (CPU-only) |
+| Triton 모델 제어 모드 | `explicit` |
 | 대상 엔드포인트 | `POST /predict` |
+
+### Triton config.pbtxt 설정
+
+테스트 시점의 Triton 모델 설정 (Airflow Variable 오버라이드 적용):
+
+```protobuf
+instance_group [{ count: 2, kind: KIND_CPU }]
+dynamic_batching { max_queue_delay_microseconds: 100 }
+```
+
+- `instance_group count: 2` — Airflow Variable `triton_instance_group_count`를 `2`로 설정 (코드 기본값은 `1`, `policy.py` 참조)
+- `dynamic_batching` — 최대 100μs 큐 대기 후 배치 추론 실행
 
 ---
 
