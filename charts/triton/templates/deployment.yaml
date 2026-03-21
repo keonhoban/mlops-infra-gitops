@@ -57,19 +57,20 @@ spec:
 {{ toYaml . | nindent 12 }}
 {{- end }}
           resources:
+{{- if .Values.gpu.enabled }}
+{{ toYaml .Values.gpu.resources | nindent 12 }}
+{{- else }}
 {{ toYaml .Values.resources | nindent 12 }}
-          # GPU 활성화 시 values.yaml에서 resources.limits.nvidia.com/gpu 설정
-          # (NVIDIA device plugin이 nvidia.com/gpu 리소스를 노드에 등록해야 함)
+{{- end }}
           volumeMounts:
             - name: model-repo
               mountPath: {{ .Values.modelRepository.mountPath }}
-      # GPU 활성화 시 주석 해제:
-      # nodeSelector:
-      #   accelerator: nvidia-gpu
-      # tolerations:
-      #   - key: "nvidia.com/gpu"
-      #     operator: "Exists"
-      #     effect: "NoSchedule"
+{{- if .Values.gpu.enabled }}
+      nodeSelector:
+{{ toYaml .Values.gpu.nodeSelector | nindent 8 }}
+      tolerations:
+{{ toYaml .Values.gpu.tolerations | nindent 8 }}
+{{- end }}
       volumes:
         - name: model-repo
           persistentVolumeClaim:

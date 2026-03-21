@@ -15,9 +15,18 @@ data:
     offline_store:
       type: file
 
+{{- if eq .Values.onlineStore.type "scylladb" }}
+    online_store:
+      type: cassandra
+      hosts:
+        - scylladb.{{ .Release.Namespace }}.svc.cluster.local:9042
+      keyspace: feast_online_{{ .Values.env }}
+      protocol_version: 4
+{{- else }}
     online_store:
       type: redis
       connection_string: redis.{{ .Release.Namespace }}.svc.cluster.local:6379
+{{- end }}
 
     entity_key_serialization_version: 2
 

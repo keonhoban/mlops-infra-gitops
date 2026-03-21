@@ -12,6 +12,23 @@ redis:
   image: redis:7.2-alpine
   persistence: true
 
+onlineStore:
+  type: redis    # redis | scylladb
+
+scylladb:
+  enabled: false
+  image: scylladb/scylla:5.4
+  replicas: 1
+  resources:
+    requests:
+      cpu: "1"
+      memory: "2Gi"
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+  storage:
+    size: 10Gi
+
 feastServer:
   image: hoizz/feast-server:0.40.1-s3fs
   port: 6566

@@ -1,0 +1,57 @@
+{{- if .Values.scylladb.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: scylladb
+  labels:
+    app: scylladb
+spec:
+  serviceName: scylladb
+  replicas: {{ .Values.scylladb.replicas }}
+  selector:
+    matchLabels:
+      app: scylladb
+  template:
+    metadata:
+      labels:
+        app: scylladb
+    spec:
+      containers:
+        - name: scylladb
+          image: {{ .Values.scylladb.image }}
+          args:
+            - --smp
+            - "1"
+            - --memory
+            - "1G"
+            - --overprovisioned
+            - "1"
+          ports:
+            - name: cql
+              containerPort: 9042
+            - name: inter-node
+              containerPort: 7000
+          resources:
+{{ toYaml .Values.scylladb.resources | nindent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: 9042
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9042
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          volumeMounts:
+            - name: scylladb-data
+              mountPath: /var/lib/scylla
+  volumeClaimTemplates:
+    - metadata:
+        name: scylladb-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.scylladb.storage.size }}
+{{- end }}

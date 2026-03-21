@@ -45,49 +45,27 @@ modelRepository:
     name: triton-model-repo-pvc
 
 gpu:
-  enabled: false    # CPU only (GPU 활성화 시 아래 섹션 주석 해제)
+  enabled: false    # CPU only — true로 전환 시 아래 전제 조건 필요
+  # 전제 조건:
+  #   1) NVIDIA device plugin DaemonSet 설치 (nvidia.com/gpu 리소스 등록)
+  #   2) GPU 노드에 label: kubectl label node <node> accelerator=nvidia-gpu
+  #   3) GPU 노드에 taint: kubectl taint node <node> nvidia.com/gpu=present:NoSchedule
   count: 1
-
-# -----------------------------------------------------------------------
-# Design Decision: CPU-only 배포
-#   현재 클러스터는 CPU 전용 환경이며, GPU 전환은 아래 전제 조건 충족 후 진행.
-#   전환 전제 조건:
-#     1) NVIDIA device plugin DaemonSet 설치 완료 (nvidia.com/gpu 리소스 등록)
-#     2) GPU 노드에 label 부여: kubectl label node <node> accelerator=nvidia-gpu
-#     3) GPU 노드에 taint 부여: kubectl taint node <node> nvidia.com/gpu=present:NoSchedule
-# -----------------------------------------------------------------------
-# GPU 서빙 활성화 섹션 (현재 비활성 — cpu-only 환경)
-#
-# GPU 노드에 Triton을 배포할 경우 아래 설정을 values.yaml에 추가하고
-# deployment.yaml의 resources/nodeSelector/tolerations 블록을 활성화한다.
-#
-# 전제 조건:
-#   - NVIDIA device plugin DaemonSet 설치 (nvidia.com/gpu 리소스 등록)
-#   - GPU 노드에 label: accelerator=nvidia-gpu
-#   - GPU 노드에 taint: nvidia.com/gpu=present:NoSchedule
-#
-# gpu:
-#   enabled: true
-#   count: 1                    # Pod당 요청할 GPU 수
-#
-# resources:
-#   requests:
-#     cpu: "4"
-#     memory: "16Gi"
-#     nvidia.com/gpu: "1"       # GPU 요청 (device plugin 필수)
-#   limits:
-#     cpu: "8"
-#     memory: "32Gi"
-#     nvidia.com/gpu: "1"       # requests == limits 권장 (GPU 공유 미지원)
-#
-# nodeSelector:
-#   accelerator: nvidia-gpu     # GPU 노드 선택
-#
-# tolerations:
-#   - key: "nvidia.com/gpu"
-#     operator: "Exists"
-#     effect: "NoSchedule"      # GPU taint 허용
-# -----------------------------------------------------------------------
+  resources:
+    requests:
+      cpu: "4"
+      memory: "16Gi"
+      nvidia.com/gpu: "1"
+    limits:
+      cpu: "8"
+      memory: "32Gi"
+      nvidia.com/gpu: "1"
+  nodeSelector:
+    accelerator: nvidia-gpu
+  tolerations:
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
 
 livenessProbe:
   httpGet:

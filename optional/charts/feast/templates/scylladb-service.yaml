@@ -1,0 +1,16 @@
+{{- if .Values.scylladb.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: scylladb
+  labels:
+    app: scylladb
+spec:
+  type: ClusterIP
+  ports:
+    - name: cql
+      port: 9042
+      targetPort: 9042
+  selector:
+    app: scylladb
+{{- end }}
