@@ -1,6 +1,6 @@
 # ResourceQuota: triton-dev
 # Triton CPU-only: requests 2CPU/4Gi, limits 4CPU/8Gi (1 replica)
-# Headroom x1.5 for rolling updates and short-lived debug pods
+# Headroom x2 for rolling updates and short-lived debug pods
 apiVersion: v1
 kind: ResourceQuota
 metadata:

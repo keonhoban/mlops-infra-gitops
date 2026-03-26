@@ -35,7 +35,7 @@ spec:
 
         - alert: FastAPIScrapingFailure
           expr: |
-            up{job=~"fastapi-.*"} == 0
+            count(up{job=~"fastapi-.*"} == 0) > 0
           for: 15m
           labels:
             severity: critical
