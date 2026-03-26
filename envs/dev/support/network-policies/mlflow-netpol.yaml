@@ -1,5 +1,5 @@
 # NetworkPolicy: MLflow 서비스 인그레스 제한
-# W7: MLflow는 Airflow와 Ingress에서만 접근 가능
+# MLflow는 Airflow, FastAPI, Ingress에서 접근 가능
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -17,6 +17,14 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: airflow-dev
+      ports:
+        - protocol: TCP
+          port: 5000
+    # FastAPI → MLflow metadata lookup (reload endpoint)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: fastapi-dev
       ports:
         - protocol: TCP
           port: 5000

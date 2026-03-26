@@ -38,8 +38,16 @@ def _meta_from_mlflow_version(version: int) -> dict[str, Any] | None:
         def _call():
             return c.get_model_version(settings.model_name, str(int(version)))
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            mv = executor.submit(_call).result(timeout=_MLFLOW_TIMEOUT_SEC)
+        # with 문 사용 금지: __exit__의 shutdown(wait=True)가 timeout 후에도 블로킹됨
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+        future = executor.submit(_call)
+        try:
+            mv = future.result(timeout=_MLFLOW_TIMEOUT_SEC)
+        except (concurrent.futures.TimeoutError, Exception):
+            future.cancel()
+            executor.shutdown(wait=False, cancel_futures=True)
+            return None
+        executor.shutdown(wait=False)
 
         return {
             "model_name": settings.model_name,
@@ -47,8 +55,6 @@ def _meta_from_mlflow_version(version: int) -> dict[str, Any] | None:
             "version": int(mv.version),
             "run_id": str(mv.run_id),
         }
-    except concurrent.futures.TimeoutError:
-        return None
     except Exception:
         return None
 

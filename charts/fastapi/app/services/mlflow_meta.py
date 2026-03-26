@@ -24,8 +24,22 @@ def get_alias_target_safe(alias: str) -> dict | None:
         def _call():
             return c.get_model_version_by_alias(settings.model_name, alias)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            v = executor.submit(_call).result(timeout=_MLFLOW_TIMEOUT_SEC)
+        # with 문 사용 금지: __exit__의 shutdown(wait=True)가 timeout 후에도 블로킹됨
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+        future = executor.submit(_call)
+        try:
+            v = future.result(timeout=_MLFLOW_TIMEOUT_SEC)
+        except concurrent.futures.TimeoutError:
+            future.cancel()
+            executor.shutdown(wait=False, cancel_futures=True)
+            logger.warning(f"[mlflow] alias meta load timed out alias={alias}")
+            slack_safe(f"⚠️ [FastAPI] MLflow alias meta timed out: alias={alias}")
+            return None
+        except Exception as e:
+            future.cancel()
+            executor.shutdown(wait=False, cancel_futures=True)
+            raise
+        executor.shutdown(wait=False)
 
         return {
             "model_name": settings.model_name,
@@ -33,10 +47,6 @@ def get_alias_target_safe(alias: str) -> dict | None:
             "version": int(v.version),
             "run_id": v.run_id,
         }
-    except concurrent.futures.TimeoutError:
-        logger.warning(f"[mlflow] alias meta load timed out alias={alias}")
-        slack_safe(f"⚠️ [FastAPI] MLflow alias meta timed out: alias={alias}")
-        return None
     except Exception as e:
         logger.warning(f"[mlflow] alias meta load failed alias={alias}: {e}")
         slack_safe(f"⚠️ [FastAPI] MLflow alias meta load failed: alias={alias}, {e}")
