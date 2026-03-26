@@ -1,5 +1,5 @@
 # ResourceQuota: mlflow-dev
-# MLflow: requests 500m/1Gi, limits 1CPU/2Gi (1 replica)
+# MLflow: requests 500m/2Gi, limits 1CPU/4Gi (1 replica)
 apiVersion: v1
 kind: ResourceQuota
 metadata:

@@ -1,6 +1,17 @@
 image:
   tag: v1.3.0
 
+resources:
+  requests:
+    cpu: "500m"
+    memory: "2Gi"
+  limits:
+    cpu: "1"
+    memory: "4Gi"
+
+extraEnv:
+  GUNICORN_CMD_ARGS: "--workers=2 --timeout=120"
+
 env:
   defaultArtifactRoot: s3://mlflow-artifacts-keonho/dev
 

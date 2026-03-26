@@ -44,5 +44,7 @@ ingress:
     secretName: ""
     issuerName: ""
     createCertificate: false
+extraEnv: {}
+
 env:
   defaultArtifactRoot: ""

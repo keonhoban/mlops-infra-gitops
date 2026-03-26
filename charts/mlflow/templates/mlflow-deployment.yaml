@@ -58,6 +58,13 @@ spec:
                   name: {{ .Values.dbConfig.configMapName }}
                   key: dbname
 
+{{- if .Values.extraEnv }}
+{{- range $k, $v := .Values.extraEnv }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+{{- end }}
+{{- end }}
+
           envFrom:
             - secretRef:
                 name: aws-credentials-secret
