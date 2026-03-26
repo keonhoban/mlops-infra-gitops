@@ -8,7 +8,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: triton
+      app.kubernetes.io/name: triton
   policyTypes:
     - Ingress
   ingress:

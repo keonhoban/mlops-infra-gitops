@@ -1,5 +1,5 @@
 # NetworkPolicy: Airflow 웹서버 인그레스 제한
-# Airflow UI는 Ingress와 Prometheus에서만 접근 가능
+# W7: Airflow UI는 Ingress와 Prometheus에서만 접근 가능
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:

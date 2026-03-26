@@ -1,5 +1,5 @@
 # NetworkPolicy: FastAPI 서비스 인그레스 제한
-# FastAPI는 Ingress와 Prometheus에서만 접근 가능
+# W7: FastAPI는 Ingress, Airflow, Prometheus에서만 접근 가능
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -8,7 +8,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: fastapi
+      app.kubernetes.io/name: fastapi
   policyTypes:
     - Ingress
   ingress:
