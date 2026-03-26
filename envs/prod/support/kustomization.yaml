@@ -6,3 +6,5 @@ resources:
   - storage/triton-model-repo/pv-pvc.yaml
   - network-policies/triton-netpol.yaml
   - network-policies/mlflow-netpol.yaml
+  - network-policies/fastapi-netpol.yaml
+  - network-policies/airflow-netpol.yaml
