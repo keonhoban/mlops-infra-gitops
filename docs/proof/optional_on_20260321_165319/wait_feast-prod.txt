@@ -1,0 +1,26 @@
+
+Name:               argocd/feast-prod
+Project:            optional
+Server:             https://kubernetes.default.svc
+Namespace:          feature-store-prod
+URL:                https://argocd.local/applications/feast-prod
+Sources:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             optional/charts/feast
+  Helm Values:      values.yaml,$values/optional/envs/prod/feast/values.yaml
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Ref:              values
+SyncWindow:         Sync Allowed
+Sync Policy:        Manual
+Sync Status:        Synced to main
+Health Status:      Healthy
+
+
+GROUP  KIND        NAMESPACE           NAME          STATUS  HEALTH   HOOK  MESSAGE
+       ConfigMap   feature-store-prod  feast-repo    Synced                 configmap/feast-repo serverside-applied
+       Service     feature-store-prod  feast-server  Synced  Healthy        
+       Service     feature-store-prod  redis         Synced  Healthy        
+apps   Deployment  feature-store-prod  feast-server  Synced  Healthy        
+apps   Deployment  feature-store-prod  redis         Synced  Healthy        

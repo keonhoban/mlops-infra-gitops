@@ -1,0 +1,22 @@
+NAME                                READY   STATUS    RESTARTS        AGE   IP               NODE          NOMINATED NODE   READINESS GATES
+pod/feast-server-55c945df4d-mvrb2   1/1     Running   13 (4h2m ago)   14d   192.168.126.46   k8s-worker2   <none>           <none>
+pod/redis-5bb674fc46-pfspf          1/1     Running   13 (4h2m ago)   14d   192.168.126.31   k8s-worker2   <none>           <none>
+
+NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE   SELECTOR
+service/feast-server   ClusterIP   10.102.202.191   <none>        6566/TCP   14d   app=feast-server
+service/redis          ClusterIP   10.105.129.8     <none>        6379/TCP   14d   app=redis
+
+NAME                           READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS     IMAGES                           SELECTOR
+deployment.apps/feast-server   1/1     1            1           14d   feast-server   hoizz/feast-server:0.40.1-s3fs   app=feast-server
+deployment.apps/redis          1/1     1            1           14d   redis          redis:7.2-alpine                 app=redis
+
+NAME                                      DESIRED   CURRENT   READY   AGE   CONTAINERS     IMAGES                           SELECTOR
+replicaset.apps/feast-server-55c945df4d   1         1         1       14d   feast-server   hoizz/feast-server:0.40.1-s3fs   app=feast-server,pod-template-hash=55c945df4d
+replicaset.apps/redis-5bb674fc46          1         1         1       14d   redis          redis:7.2-alpine                 app=redis,pod-template-hash=5bb674fc46
+
+NAME                         DATA   AGE
+configmap/feast-repo         2      14d
+configmap/kube-root-ca.crt   1      28d
+
+NAME                            TYPE     DATA   AGE
+secret/aws-credentials-secret   Opaque   1      14d
