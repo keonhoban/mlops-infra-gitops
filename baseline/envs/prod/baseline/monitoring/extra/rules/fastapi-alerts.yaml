@@ -24,7 +24,7 @@ spec:
           expr: |
             histogram_quantile(
               0.95,
-              sum by (le) (rate(http_request_duration_seconds_bucket[5m]))
+              sum by (le) (rate(http_request_duration_highres_seconds_bucket[5m]))
             ) > 0.5
           for: 10m
           labels:
