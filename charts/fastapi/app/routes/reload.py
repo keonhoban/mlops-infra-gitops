@@ -1,6 +1,7 @@
 # routes/reload.py
 from __future__ import annotations
 
+import concurrent.futures
 import os
 import secrets
 from typing import Any
@@ -15,6 +16,8 @@ from services.mlflow_meta import get_mlflow_client
 from utils.slack_alerts import slack_safe
 
 router = APIRouter()
+
+_MLFLOW_TIMEOUT_SEC = 10
 
 
 class ReloadBody(BaseModel):
@@ -31,13 +34,21 @@ def _meta_from_mlflow_version(version: int) -> dict[str, Any] | None:
     # 두 필드 모두 Pydantic AppSettings에서 보장되므로 런타임 재확인 불필요
     try:
         c = get_mlflow_client()
-        mv = c.get_model_version(settings.model_name, str(int(version)))
+
+        def _call():
+            return c.get_model_version(settings.model_name, str(int(version)))
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            mv = executor.submit(_call).result(timeout=_MLFLOW_TIMEOUT_SEC)
+
         return {
             "model_name": settings.model_name,
             "alias": None,
             "version": int(mv.version),
             "run_id": str(mv.run_id),
         }
+    except concurrent.futures.TimeoutError:
+        return None
     except Exception:
         return None
 

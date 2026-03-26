@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  tag: v1.5.0
+  tag: v1.5.1
   pullPolicy: Always
 service:
   name: fastapi-dev-service
@@ -22,6 +22,7 @@ ingresses:
       createCertificate: true
     excludeMetrics: true
 env:
+  MLFLOW_HTTP_REQUEST_TIMEOUT: "10"
   MLFLOW_TRACKING_URI: "http://mlflow-dev-service.mlflow-dev.svc.cluster.local:5000"
   MODEL_NAME: "best_model"
   LOG_TO_STDOUT: "true"
@@ -38,7 +39,6 @@ env:
   # dev/shadow Triton endpoints (명시)
   TRITON_HTTP_URL_PROD: "http://triton.triton-dev.svc.cluster.local:8000"
   TRITON_HTTP_URL_SHADOW: "http://triton.triton-dev.svc.cluster.local:8000"
-  MLFLOW_HTTP_REQUEST_TIMEOUT: "10"
 
 envFrom:
   - secretRef:

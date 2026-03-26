@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  tag: sha-df22e9d
+  tag: sha-902853e
 
 service:
   name: fastapi-prod-service
@@ -24,6 +24,7 @@ ingresses:
     excludeMetrics: true
 
 env:
+  MLFLOW_HTTP_REQUEST_TIMEOUT: "10"
   MLFLOW_TRACKING_URI: "http://mlflow-prod-service.mlflow-prod.svc.cluster.local:5000"
   MODEL_NAME: "best_model"
   LOG_TO_STDOUT: "true"
@@ -40,7 +41,6 @@ env:
   # prod/shadow Triton endpoints (명시)
   TRITON_HTTP_URL_PROD: "http://triton.triton-prod.svc.cluster.local:8000"
   TRITON_HTTP_URL_SHADOW: "http://triton.triton-dev.svc.cluster.local:8000"
-  MLFLOW_HTTP_REQUEST_TIMEOUT: "10"
 
 envFrom:
   - secretRef:
