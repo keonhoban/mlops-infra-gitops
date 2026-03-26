@@ -1,0 +1,20 @@
+
+Name:               argocd/optional-envs-prod
+Project:            optional
+Server:             https://kubernetes.default.svc
+Namespace:          bootstrap-prod
+URL:                https://argocd.local/applications/optional-envs-prod
+Source:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             optional/envs/prod
+SyncWindow:         Sync Allowed
+Sync Policy:        Manual
+Sync Status:        Synced to main (6dd0c8b)
+Health Status:      Healthy
+
+
+GROUP                      KIND          NAMESPACE           NAME                          STATUS  HEALTH   HOOK  MESSAGE
+bitnami.com                SealedSecret  feature-store-prod  aws-credentials-secret        Synced  Healthy        
+rbac.authorization.k8s.io  Role          feature-store-prod  airflow-pod-launcher          Synced                 
+rbac.authorization.k8s.io  RoleBinding   feature-store-prod  airflow-pod-launcher-binding  Synced                 

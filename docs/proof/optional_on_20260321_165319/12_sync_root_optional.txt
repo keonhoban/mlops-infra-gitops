@@ -1,0 +1,33 @@
+TIMESTAMP                  GROUP              KIND    NAMESPACE                  NAME    STATUS   HEALTH        HOOK  MESSAGE
+2026-03-21T16:53:21+09:00  argoproj.io  Application      argocd             feast-dev    Synced                       
+2026-03-21T16:53:21+09:00  argoproj.io  Application      argocd            feast-prod    Synced                       
+2026-03-21T16:53:21+09:00  argoproj.io  Application      argocd     optional-envs-dev    Synced                       
+2026-03-21T16:53:21+09:00  argoproj.io  Application      argocd    optional-envs-prod    Synced                       
+
+Name:               argocd/root-optional
+Project:            bootstrap
+Server:             https://kubernetes.default.svc
+Namespace:          argocd
+URL:                https://argocd.local/applications/root-optional
+Source:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             optional/apps
+SyncWindow:         Sync Allowed
+Sync Policy:        Manual
+Sync Status:        Synced to main (6dd0c8b)
+Health Status:      Healthy
+
+Operation:          Sync
+Sync Revision:      6dd0c8be8c3ecafd40cc8e1ff33218dfdf728435
+Phase:              Succeeded
+Start:              2026-03-21 16:53:21 +0900 KST
+Finished:           2026-03-21 16:53:21 +0900 KST
+Duration:           0s
+Message:            successfully synced (no more tasks)
+
+GROUP        KIND         NAMESPACE  NAME                STATUS  HEALTH  HOOK  MESSAGE
+argoproj.io  Application  argocd     feast-dev           Synced                
+argoproj.io  Application  argocd     feast-prod          Synced                
+argoproj.io  Application  argocd     optional-envs-dev   Synced                
+argoproj.io  Application  argocd     optional-envs-prod  Synced                
