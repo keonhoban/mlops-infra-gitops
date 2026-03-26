@@ -9,8 +9,7 @@ resources:
     cpu: "1"
     memory: "4Gi"
 
-extraEnv:
-  GUNICORN_CMD_ARGS: "--workers=2 --timeout=120"
+gunicornOpts: "--workers=2 --timeout=120"
 
 env:
   defaultArtifactRoot: s3://mlflow-artifacts-keonho/dev

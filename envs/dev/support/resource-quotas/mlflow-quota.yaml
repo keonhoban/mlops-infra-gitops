@@ -1,5 +1,6 @@
 # ResourceQuota: mlflow-dev
 # MLflow: requests 500m/2Gi, limits 1CPU/4Gi (1 replica)
+# Headroom x2 for rolling updates and short-lived debug pods
 apiVersion: v1
 kind: ResourceQuota
 metadata:
@@ -8,9 +9,9 @@ metadata:
 spec:
   hard:
     requests.cpu: "2"
-    requests.memory: 4Gi
+    requests.memory: 8Gi
     limits.cpu: "3"
-    limits.memory: 6Gi
+    limits.memory: 12Gi
     pods: "4"
     persistentvolumeclaims: "2"
 ---
@@ -24,7 +25,7 @@ spec:
     - type: Container
       default:
         cpu: "1"
-        memory: 2Gi
+        memory: 4Gi
       defaultRequest:
         cpu: 500m
-        memory: 1Gi
+        memory: 2Gi

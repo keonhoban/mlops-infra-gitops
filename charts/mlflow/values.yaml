@@ -45,6 +45,7 @@ ingress:
     issuerName: ""
     createCertificate: false
 extraEnv: {}
+gunicornOpts: ""
 
 env:
   defaultArtifactRoot: ""
