@@ -5,4 +5,5 @@ resources:
   - fastapi-dev-sm.yaml
   - rules/fastapi-alerts.yaml
   - rules/triton-alerts.yaml
+  - rules/secret-rotation-alerts.yaml
   - sealed-secrets

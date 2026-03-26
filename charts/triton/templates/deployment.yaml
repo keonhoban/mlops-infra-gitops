@@ -5,16 +5,17 @@ metadata:
   labels:
 {{ include "triton.labels" . | nindent 4 }}
 spec:
-  # strategy: Recreate (RollingUpdate 불가 이유)
-  # Triton은 NFS RWX PVC를 model-repository로 마운트한다.
-  # NFS는 파일 잠금(lock) 보장이 약해, 복수 Pod이 동시에 동일 경로를
-  # 읽으면서 Airflow가 쓰기 작업(publish) 중일 경우 partial read가 발생할 수 있다.
-  # 또한 --model-control-mode=explicit 아래에서 신규 Pod이 기존 Pod과
-  # 동시에 model load API를 호출하면 중복 로드 상태가 생긴다.
-  # 따라서 기존 Pod을 완전히 종료한 뒤 새 Pod을 시작하는 Recreate를 선택한다.
-  # (배포 중 단기 다운타임은 Airflow DAG의 serving_ready_sensor로 흡수)
+  # strategy: RollingUpdate (zero-downtime)
+  # --model-control-mode=explicit에서는 Triton이 NFS 디렉토리를 자동 폴링하지 않으므로
+  # pod restart 중 NFS partial-read 위험이 없다. 모델 로딩은 Airflow DAG가
+  # 명시적으로 Triton API를 호출할 때만 발생한다.
+  # maxSurge=1: 새 Pod이 먼저 뜬 후 readinessProbe 통과 후 트래픽 전환
+  # maxUnavailable=0: 기존 Pod은 새 Pod 준비 완료까지 유지
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
