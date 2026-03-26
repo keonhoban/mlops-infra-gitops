@@ -40,6 +40,7 @@ env:
   # prod/shadow Triton endpoints (명시)
   TRITON_HTTP_URL_PROD: "http://triton.triton-prod.svc.cluster.local:8000"
   TRITON_HTTP_URL_SHADOW: "http://triton.triton-dev.svc.cluster.local:8000"
+  MLFLOW_HTTP_REQUEST_TIMEOUT: "10"
 
 envFrom:
   - secretRef:

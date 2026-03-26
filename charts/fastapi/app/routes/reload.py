@@ -25,19 +25,21 @@ def _pod() -> str:
     return os.environ.get("HOSTNAME", "unknown")
 
 
-def _meta_from_mlflow_version(version: int) -> dict[str, Any]:
+def _meta_from_mlflow_version(version: int) -> dict[str, Any] | None:
     # mlflow_tracking_uri: Field(...) required → 앱 시작 시 미설정이면 crash
     # model_name: Field(default=...) → 항상 값 존재
     # 두 필드 모두 Pydantic AppSettings에서 보장되므로 런타임 재확인 불필요
-    c = get_mlflow_client()
-
-    mv = c.get_model_version(settings.model_name, str(int(version)))
-    return {
-        "model_name": settings.model_name,
-        "alias": None,
-        "version": int(mv.version),
-        "run_id": str(mv.run_id),
-    }
+    try:
+        c = get_mlflow_client()
+        mv = c.get_model_version(settings.model_name, str(int(version)))
+        return {
+            "model_name": settings.model_name,
+            "alias": None,
+            "version": int(mv.version),
+            "run_id": str(mv.run_id),
+        }
+    except Exception:
+        return None
 
 
 @router.post("/variant/{alias}/reload")
@@ -66,6 +68,8 @@ def reload_variant(
             raise HTTPException(status_code=409, detail=f"Triton served_version({served}) != deploy_version({dv})")
 
         meta = _meta_from_mlflow_version(dv)
+        if meta is None:
+            raise HTTPException(status_code=503, detail=f"MLflow 메타데이터 조회 실패: version={dv}")
         meta["alias"] = alias
 
         slack_safe(
@@ -86,6 +90,8 @@ def reload_variant(
         raise HTTPException(status_code=503, detail="Triton served_version 조회 실패")
 
     meta = _meta_from_mlflow_version(int(served))
+    if meta is None:
+        raise HTTPException(status_code=503, detail=f"MLflow 메타데이터 조회 실패: version={served}")
     meta["alias"] = alias
 
     slack_safe(

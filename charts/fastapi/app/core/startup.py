@@ -1,6 +1,7 @@
 # core/startup.py
 from __future__ import annotations
 
+import os
 import time
 
 from fastapi import FastAPI
@@ -12,12 +13,23 @@ from core.config import settings
 _SSOT_CACHE = {"served_version": None, "fetched_at": 0.0}
 
 
+_MLFLOW_TIMEOUT_DEFAULT = "10"
+
+
+def _ensure_mlflow_timeout():
+    """MLflow SDK 내부 HTTP 타임아웃 보장. 환경 변수 MLFLOW_HTTP_REQUEST_TIMEOUT 미설정 시 기본값 주입."""
+    if not os.environ.get("MLFLOW_HTTP_REQUEST_TIMEOUT"):
+        os.environ["MLFLOW_HTTP_REQUEST_TIMEOUT"] = _MLFLOW_TIMEOUT_DEFAULT
+        logger.info(f"[startup] MLFLOW_HTTP_REQUEST_TIMEOUT={_MLFLOW_TIMEOUT_DEFAULT}s (default)")
+
+
 def init_app_state(app: FastAPI):
     """
     SSOT-only 구조:
     - pod-local alias cache를 유지하지 않는다.
     - 운영 진실은 Triton served_version
     """
+    _ensure_mlflow_timeout()
     logger.info(
         f"[startup] ssot_only=true triton_model={settings.triton_model_name} "
         f"ssot_ttl={settings.ssot_cache_ttl_sec}s"
