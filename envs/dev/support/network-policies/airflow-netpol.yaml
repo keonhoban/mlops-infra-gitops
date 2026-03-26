@@ -1,0 +1,30 @@
+# NetworkPolicy: Airflow 웹서버 인그레스 제한
+# W7: Airflow UI는 Ingress와 Prometheus에서만 접근 가능
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: airflow-webserver-allow-internal
+  namespace: airflow-dev
+spec:
+  podSelector:
+    matchLabels:
+      component: webserver
+  policyTypes:
+    - Ingress
+  ingress:
+    # Ingress controller → Airflow Web UI
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8080
+    # Prometheus → Airflow metrics 스크랩
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring-dev
+      ports:
+        - protocol: TCP
+          port: 8080
