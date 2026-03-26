@@ -11,6 +11,8 @@ on:
       - 'bootstrap/**'
       - '.github/workflows/ci-helm-validate.yaml'
     types: [opened, synchronize, reopened, ready_for_review]
+  schedule:
+    - cron: '0 9 * * 1'  # 매주 월요일 09:00 UTC — Helm/K8s 스키마 드리프트 감지
   workflow_dispatch: {}
 
 permissions:
