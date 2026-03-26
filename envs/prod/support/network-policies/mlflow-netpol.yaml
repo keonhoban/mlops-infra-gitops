@@ -1,0 +1,30 @@
+# NetworkPolicy: MLflow 서비스 인그레스 제한
+# MLflow는 Airflow와 Ingress에서만 접근 가능
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mlflow-allow-internal
+  namespace: mlflow-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: mlflow
+  policyTypes:
+    - Ingress
+  ingress:
+    # Airflow → MLflow tracking/registry API
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: airflow-prod
+      ports:
+        - protocol: TCP
+          port: 5000
+    # Ingress controller → MLflow UI
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 5000

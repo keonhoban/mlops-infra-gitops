@@ -4,3 +4,5 @@ resources:
   - sealed-secrets
   - feature-store
   - storage/triton-model-repo/pv-pvc.yaml
+  - network-policies/triton-netpol.yaml
+  - network-policies/mlflow-netpol.yaml
