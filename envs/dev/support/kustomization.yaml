@@ -8,3 +8,6 @@ resources:
   - network-policies/mlflow-netpol.yaml
   - network-policies/fastapi-netpol.yaml
   - network-policies/airflow-netpol.yaml
+  - resource-quotas/triton-quota.yaml
+  - resource-quotas/fastapi-quota.yaml
+  - resource-quotas/mlflow-quota.yaml

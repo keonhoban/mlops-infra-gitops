@@ -1,0 +1,31 @@
+# ResourceQuota: triton-prod
+# Triton CPU-only: requests 2CPU/4Gi, limits 4CPU/8Gi (1 replica)
+# Headroom x1.5 for rolling updates and short-lived debug pods
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: triton-quota
+  namespace: triton-prod
+spec:
+  hard:
+    requests.cpu: "6"
+    requests.memory: 12Gi
+    limits.cpu: "8"
+    limits.memory: 16Gi
+    pods: "4"
+    persistentvolumeclaims: "3"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: triton-limits
+  namespace: triton-prod
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: "4"
+        memory: 8Gi
+      defaultRequest:
+        cpu: "2"
+        memory: 4Gi

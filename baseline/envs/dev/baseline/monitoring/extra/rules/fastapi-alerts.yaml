@@ -32,3 +32,13 @@ spec:
           annotations:
             summary: "FastAPI p95 latency > 500ms (10m)"
             description: "p95 latency: {{ $value | printf \"%.3f\" }}s"
+
+        - alert: FastAPIScrapingFailure
+          expr: |
+            up{job=~"fastapi-.*"} == 0
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: "FastAPI scraping failed for 15m — auto-rollback observability degraded"
+            description: "Prometheus cannot reach FastAPI ServiceMonitor. Deployments proceed without observability validation."

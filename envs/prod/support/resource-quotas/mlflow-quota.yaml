@@ -1,0 +1,30 @@
+# ResourceQuota: mlflow-prod
+# MLflow: requests 500m/1Gi, limits 1CPU/2Gi (1 replica)
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: mlflow-quota
+  namespace: mlflow-prod
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: 4Gi
+    limits.cpu: "3"
+    limits.memory: 6Gi
+    pods: "4"
+    persistentvolumeclaims: "2"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mlflow-limits
+  namespace: mlflow-prod
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: "1"
+        memory: 2Gi
+      defaultRequest:
+        cpu: 500m
+        memory: 1Gi

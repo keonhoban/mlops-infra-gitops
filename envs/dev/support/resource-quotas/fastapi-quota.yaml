@@ -1,0 +1,30 @@
+# ResourceQuota: fastapi-dev
+# FastAPI: requests 100m/256Mi, limits 500m/512Mi (2 replicas + HPA headroom)
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: fastapi-quota
+  namespace: fastapi-dev
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: 4Gi
+    limits.cpu: "4"
+    limits.memory: 8Gi
+    pods: "8"
+    persistentvolumeclaims: "3"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: fastapi-limits
+  namespace: fastapi-dev
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: 500m
+        memory: 512Mi
+      defaultRequest:
+        cpu: 100m
+        memory: 256Mi
