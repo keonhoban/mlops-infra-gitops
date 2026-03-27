@@ -22,6 +22,16 @@ spec:
           port: 8000
         - protocol: TCP
           port: 8001
+    # FastAPI-prod → Triton-dev shadow/canary 쿼리 (mirror 모드)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: fastapi-prod
+      ports:
+        - protocol: TCP
+          port: 8000
+        - protocol: TCP
+          port: 8001
     # Airflow → Triton model control API (load/unload/ready)
     - from:
         - namespaceSelector:
