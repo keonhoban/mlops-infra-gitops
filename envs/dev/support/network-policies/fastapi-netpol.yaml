@@ -13,13 +13,16 @@ spec:
     - Ingress
   ingress:
     # Ingress controller → FastAPI HTTP 요청
-    # namespaceSelector는 hostNetwork Pod에 적용되지 않으므로 ipBlock 필요
+    # ingress-nginx는 hostNetwork 사용 → namespaceSelector 미적용
+    # IPIP 터널에서 소스 IP는 tunl0 주소(Pod CIDR 게이트웨이)이므로 ipBlock으로 허용
     - from:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: ingress-nginx
         - ipBlock:
-            cidr: 192.168.18.0/24
+            cidr: 192.168.194.64/32
+        - ipBlock:
+            cidr: 192.168.126.0/32
       ports:
         - protocol: TCP
           port: 8000
