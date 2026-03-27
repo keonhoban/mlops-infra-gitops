@@ -44,7 +44,10 @@ class AppSettings(BaseSettings):
         default="http://feast-server.feature-store-dev.svc.cluster.local:6566",
     )
     feast_timeout_sec: float = Field(default=1.0)
-    feast_feature_service: str = Field(default="iris_features")
+    feast_entity_key: str = Field(default="user_id")
+    feast_features: str = Field(
+        default="user_features:f_total_events_7d,user_features:f_avg_session_sec_7d,user_features:f_last_event_age_sec",
+    )
 
     class Config:
         case_sensitive = False

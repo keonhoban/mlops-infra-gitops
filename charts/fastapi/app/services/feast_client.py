@@ -22,9 +22,17 @@ def _fetch_online_features(
     entity_ids: list[str],
 ) -> list[list[float]]:
     """동기 HTTP 호출 — asyncio.to_thread 로 감싸서 사용."""
+    features = [f.strip() for f in settings.feast_features.split(",") if f.strip()]
+    # Feast entity schema에 맞춰 int 변환 시도 (user_id 등 Int64 entity 대응)
+    coerced = []
+    for eid in entity_ids:
+        try:
+            coerced.append(int(eid))
+        except (ValueError, TypeError):
+            coerced.append(eid)
     payload: dict[str, Any] = {
-        "feature_service": settings.feast_feature_service,
-        "entities": {"entity_id": entity_ids},
+        "features": features,
+        "entities": {settings.feast_entity_key: coerced},
     }
     resp = requests.post(
         f"{settings.feast_url.rstrip('/')}/get-online-features",
