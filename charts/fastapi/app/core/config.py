@@ -38,17 +38,6 @@ class AppSettings(BaseSettings):
     # SSOT cache TTL (초) — 환경 변수 SSOT_CACHE_TTL_SEC 으로 조정 가능
     ssot_cache_ttl_sec: int = Field(default=2)
 
-    # Feature Store (Optional 레이어 — Feast Feature Server HTTP)
-    feast_enabled: bool = Field(default=False)
-    feast_url: str = Field(
-        default="http://feast-server.feature-store-dev.svc.cluster.local:6566",
-    )
-    feast_timeout_sec: float = Field(default=1.0)
-    feast_entity_key: str = Field(default="user_id")
-    feast_features: str = Field(
-        default="user_features:f_total_events_7d,user_features:f_avg_session_sec_7d,user_features:f_last_event_age_sec",
-    )
-
     class Config:
         case_sensitive = False
 
