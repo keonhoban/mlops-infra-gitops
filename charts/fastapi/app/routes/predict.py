@@ -10,7 +10,6 @@ from prometheus_client import Counter
 
 from services.alias_selector import decide_traffic
 from services.triton_client import infer, get_served_version
-from services.feast_client import get_online_features
 from core.config import settings
 from utils.slack_alerts import slack_safe
 
@@ -57,13 +56,8 @@ async def predict(
     decision = decide_traffic(x_client_id)
 
     try:
-        # Feature Store 조건부 조회 (Optional 레이어)
-        feast_features = await get_online_features([x_client_id])
-        if feast_features is not None:
-            rows = feast_features
-        else:
-            df = pd.DataFrame(input_data.data)
-            rows = df.astype("float32").values.tolist()
+        df = pd.DataFrame(input_data.data)
+        rows = df.astype("float32").values.tolist()
 
         # primary routing
         if decision.primary == "shadow":
