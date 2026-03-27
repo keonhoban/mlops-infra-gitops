@@ -10,10 +10,29 @@ from __future__ import annotations
 
 from typing import Any
 
-import httpx
+import asyncio
+
+import requests
 from loguru import logger
 
 from core.config import settings
+
+
+def _fetch_online_features(
+    entity_ids: list[str],
+) -> list[list[float]]:
+    """동기 HTTP 호출 — asyncio.to_thread 로 감싸서 사용."""
+    payload: dict[str, Any] = {
+        "feature_service": settings.feast_feature_service,
+        "entities": {"entity_id": entity_ids},
+    }
+    resp = requests.post(
+        f"{settings.feast_url.rstrip('/')}/get-online-features",
+        json=payload,
+        timeout=settings.feast_timeout_sec,
+    )
+    resp.raise_for_status()
+    return _parse_feature_vectors(resp.json(), len(entity_ids))
 
 
 async def get_online_features(
@@ -30,17 +49,7 @@ async def get_online_features(
         return None
 
     try:
-        payload: dict[str, Any] = {
-            "feature_service": settings.feast_feature_service,
-            "entities": {"entity_id": entity_ids},
-        }
-        async with httpx.AsyncClient(timeout=settings.feast_timeout_sec) as client:
-            resp = await client.post(
-                f"{settings.feast_url.rstrip('/')}/get-online-features",
-                json=payload,
-            )
-            resp.raise_for_status()
-            return _parse_feature_vectors(resp.json(), len(entity_ids))
+        return await asyncio.to_thread(_fetch_online_features, entity_ids)
     except Exception as e:
         logger.warning(f"[feast_client] fallback to payload: {e}")
         return None
