@@ -13,10 +13,13 @@ spec:
     - Ingress
   ingress:
     # Ingress controller → Airflow Web UI
+    # namespaceSelector는 hostNetwork Pod에 적용되지 않으므로 ipBlock 필요
     - from:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: ingress-nginx
+        - ipBlock:
+            cidr: 192.168.18.0/24
       ports:
         - protocol: TCP
           port: 8080
