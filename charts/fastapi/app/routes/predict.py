@@ -114,7 +114,7 @@ async def predict_by_alias(request: Request, alias: str, input_data: PredictInpu
         rows = df.astype("float32").values.tolist()
 
         a = (alias or "").strip().lower()
-        if a in ("shadow", "canary", "b"):
+        if a in ("shadow", "b"):
             url = settings.shadow_triton_url()
         else:
             url = settings.prod_triton_url()

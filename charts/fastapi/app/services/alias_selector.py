@@ -26,13 +26,11 @@ def decide_traffic(client_id: str) -> TrafficDecision:
     mode = (settings.traffic_mode or "mirror").strip().lower()
 
     if mode == "split":
-        # 응답 자체를 분기
         if pct < shadow_p:
             return TrafficDecision(primary="shadow", do_shadow_mirror=False, reason=f"split:pct={pct}<shadow_p={shadow_p}")
         return TrafficDecision(primary="prod", do_shadow_mirror=False, reason=f"split:pct={pct}>=shadow_p={shadow_p}")
 
     # default: mirror
-    # 응답은 항상 prod, shadow는 확률적으로 미러링
     do_shadow = pct < shadow_p
     return TrafficDecision(primary="prod", do_shadow_mirror=do_shadow, reason=f"mirror:pct={pct},shadow_p={shadow_p},do_shadow={do_shadow}")
 
