@@ -1,0 +1,25 @@
+NAME                    SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+airflow-dev             Synced        Healthy                                                    dev
+airflow-prod            Synced        Healthy                                                    prod
+alloy-dev               Synced        Healthy                                                    baseline
+alloy-prod              Synced        Healthy                                                    baseline
+dev-namespaces          Synced        Healthy         9baec2a20688df00cb3f435909477388e350c07f   bootstrap
+dev-support             Synced        Healthy         9baec2a20688df00cb3f435909477388e350c07f   dev
+fastapi-dev             Synced        Healthy                                                    dev
+fastapi-prod            Synced        Healthy                                                    prod
+loki-dev                Synced        Healthy                                                    baseline
+loki-prod               Synced        Healthy                                                    baseline
+minio-dev               Synced        Healthy                                                    baseline
+minio-prod              Synced        Healthy                                                    baseline
+mlflow-dev              Synced        Healthy                                                    dev
+mlflow-prod             Synced        Healthy                                                    prod
+monitoring-dev          Synced        Healthy                                                    baseline
+monitoring-extra-dev    Synced        Healthy         9baec2a20688df00cb3f435909477388e350c07f   baseline
+monitoring-extra-prod   Synced        Healthy         9baec2a20688df00cb3f435909477388e350c07f   baseline
+monitoring-prod         Synced        Healthy                                                    baseline
+prod-namespaces         Synced        Healthy         9baec2a20688df00cb3f435909477388e350c07f   bootstrap
+prod-support            Synced        Healthy         9baec2a20688df00cb3f435909477388e350c07f   prod
+root-apps               Synced        Healthy         9baec2a20688df00cb3f435909477388e350c07f   bootstrap
+root-baseline           Synced        Healthy         9baec2a20688df00cb3f435909477388e350c07f   bootstrap
+triton-dev              Synced        Healthy                                                    dev
+triton-prod             Synced        Healthy                                                    prod

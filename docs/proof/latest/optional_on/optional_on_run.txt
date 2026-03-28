@@ -1,6 +1,6 @@
-[2026-02-24 19:58:21] [ON] proof dir: docs/proof/optional_on_20260224_195821
-[2026-02-24 19:58:26] [ON] OK: optional-envs-dev (sync_rc=0, wait_rc=0)
-[2026-02-24 19:58:27] [ON] OK: optional-envs-prod (sync_rc=0, wait_rc=0)
-[2026-02-24 19:58:34] [ON] OK: feast-dev (sync_rc=0, wait_rc=0)
-[2026-02-24 19:58:41] [ON] OK: feast-prod (sync_rc=0, wait_rc=0)
-[2026-02-24 19:58:42] [ON] DONE (proof_dir=docs/proof/optional_on_20260224_195821)
+[2026-03-28 15:38:02] [ON] proof dir: docs/proof/optional_on_20260328_153802
+[2026-03-28 15:38:07] [ON] OK: optional-envs-dev (sync_rc=0, wait_rc=0)
+[2026-03-28 15:38:09] [ON] OK: optional-envs-prod (sync_rc=0, wait_rc=0)
+[2026-03-28 15:38:15] [ON] OK: feast-dev (sync_rc=0, wait_rc=0)
+[2026-03-28 15:38:23] [ON] OK: feast-prod (sync_rc=0, wait_rc=0)
+[2026-03-28 15:38:23] [ON] DONE (proof_dir=docs/proof/optional_on_20260328_153802)

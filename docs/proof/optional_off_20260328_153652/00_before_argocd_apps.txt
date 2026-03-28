@@ -1,0 +1,30 @@
+NAME                    SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+airflow-dev             Synced        Healthy                                                    dev
+airflow-prod            Synced        Healthy                                                    prod
+alloy-dev               Synced        Healthy                                                    baseline
+alloy-prod              Synced        Healthy                                                    baseline
+dev-namespaces          Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   bootstrap
+dev-support             Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   dev
+fastapi-dev             Synced        Healthy                                                    dev
+fastapi-prod            Synced        Healthy                                                    prod
+feast-dev               Synced        Healthy                                                    optional
+feast-prod              Synced        Healthy                                                    optional
+loki-dev                Synced        Healthy                                                    baseline
+loki-prod               Synced        Healthy                                                    baseline
+minio-dev               Synced        Healthy                                                    baseline
+minio-prod              Synced        Healthy                                                    baseline
+mlflow-dev              Synced        Healthy                                                    dev
+mlflow-prod             Synced        Healthy                                                    prod
+monitoring-dev          Synced        Healthy                                                    baseline
+monitoring-extra-dev    Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   baseline
+monitoring-extra-prod   Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   baseline
+monitoring-prod         Synced        Healthy                                                    baseline
+optional-envs-dev       Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   optional
+optional-envs-prod      Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   optional
+prod-namespaces         Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   bootstrap
+prod-support            Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   prod
+root-apps               Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   bootstrap
+root-baseline           Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   bootstrap
+root-optional           Synced        Healthy         a2b6dd39ed30391d9a63b48f26c5b225c48af236   bootstrap
+triton-dev              Synced        Healthy                                                    dev
+triton-prod             Synced        Healthy                                                    prod

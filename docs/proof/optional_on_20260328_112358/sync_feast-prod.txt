@@ -1,0 +1,49 @@
+TIMESTAMP                  GROUP        KIND   NAMESPACE                          NAME    STATUS    HEALTH        HOOK  MESSAGE
+2026-03-28T11:24:12+09:00          ConfigMap  feature-store-prod            feast-repo  OutOfSync  Missing              
+2026-03-28T11:24:12+09:00            Service  feature-store-prod          feast-server  OutOfSync  Missing              
+2026-03-28T11:24:12+09:00            Service  feature-store-prod                 redis  OutOfSync  Missing              
+2026-03-28T11:24:12+09:00   apps  Deployment  feature-store-prod          feast-server  OutOfSync  Missing              
+2026-03-28T11:24:12+09:00   apps  Deployment  feature-store-prod                 redis  OutOfSync  Missing              
+2026-03-28T11:24:12+09:00          ConfigMap  feature-store-prod            feast-repo    Synced  Missing              
+2026-03-28T11:24:12+09:00            Service  feature-store-prod          feast-server    Synced  Healthy              
+2026-03-28T11:24:12+09:00            Service  feature-store-prod                 redis    Synced  Healthy              
+2026-03-28T11:24:12+09:00   apps  Deployment  feature-store-prod                 redis    Synced  Progressing              
+2026-03-28T11:24:12+09:00   apps  Deployment  feature-store-prod                 redis    Synced   Progressing              deployment.apps/redis serverside-applied
+2026-03-28T11:24:12+09:00   apps  Deployment  feature-store-prod          feast-server  OutOfSync  Missing                  deployment.apps/feast-server serverside-applied
+2026-03-28T11:24:12+09:00          ConfigMap  feature-store-prod            feast-repo    Synced   Missing                  configmap/feast-repo serverside-applied
+2026-03-28T11:24:12+09:00            Service  feature-store-prod          feast-server    Synced   Healthy                  service/feast-server serverside-applied
+2026-03-28T11:24:12+09:00            Service  feature-store-prod                 redis    Synced   Healthy                  service/redis serverside-applied
+2026-03-28T11:24:12+09:00   apps  Deployment  feature-store-prod          feast-server    Synced  Progressing              deployment.apps/feast-server serverside-applied
+
+Name:               argocd/feast-prod
+Project:            optional
+Server:             https://kubernetes.default.svc
+Namespace:          feature-store-prod
+URL:                https://argocd.local/applications/feast-prod
+Sources:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             optional/charts/feast
+  Helm Values:      values.yaml,$values/optional/envs/prod/feast/values.yaml
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Ref:              values
+SyncWindow:         Sync Allowed
+Sync Policy:        Manual
+Sync Status:        Synced to main
+Health Status:      Progressing
+
+Operation:          Sync
+Sync Revision:      9baec2a20688df00cb3f435909477388e350c07f, 9baec2a20688df00cb3f435909477388e350c07f
+Phase:              Succeeded
+Start:              2026-03-28 11:24:12 +0900 KST
+Finished:           2026-03-28 11:24:12 +0900 KST
+Duration:           0s
+Message:            successfully synced (all tasks run)
+
+GROUP  KIND        NAMESPACE           NAME          STATUS  HEALTH       HOOK  MESSAGE
+       ConfigMap   feature-store-prod  feast-repo    Synced                     configmap/feast-repo serverside-applied
+       Service     feature-store-prod  feast-server  Synced  Healthy            service/feast-server serverside-applied
+       Service     feature-store-prod  redis         Synced  Healthy            service/redis serverside-applied
+apps   Deployment  feature-store-prod  redis         Synced  Progressing        deployment.apps/redis serverside-applied
+apps   Deployment  feature-store-prod  feast-server  Synced  Healthy            deployment.apps/feast-server serverside-applied

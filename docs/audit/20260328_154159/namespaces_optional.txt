@@ -1,0 +1,4 @@
+feature-store-dev    Active   35d
+feature-store-prod   Active   35d
+monitoring-dev       Active   35d
+monitoring-prod      Active   35d

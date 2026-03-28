@@ -1,0 +1,51 @@
+TIMESTAMP                  GROUP                            KIND     NAMESPACE                          NAME            STATUS    HEALTH        HOOK  MESSAGE
+2026-03-28T11:24:04+09:00  bitnami.com                SealedSecret  feature-store-prod  aws-credentials-secret        OutOfSync  Missing              
+2026-03-28T11:24:04+09:00  rbac.authorization.k8s.io        Role    feature-store-prod  airflow-pod-launcher          OutOfSync  Missing              
+2026-03-28T11:24:04+09:00  rbac.authorization.k8s.io  RoleBinding   feature-store-prod  airflow-pod-launcher-binding  OutOfSync  Missing              
+2026-03-28T11:24:04+09:00  rbac.authorization.k8s.io        Role  feature-store-prod  airflow-pod-launcher    Synced  Missing              
+2026-03-28T11:24:04+09:00  rbac.authorization.k8s.io        Role  feature-store-prod  airflow-pod-launcher    Synced  Missing              role.rbac.authorization.k8s.io/airflow-pod-launcher reconciled. reconciliation required create
+                           missing rules added:
+                                                      {Verbs:[create list get patch watch delete] APIGroups:[] Resources:[pods] ResourceNames:[] NonResourceURLs:[]}
+                                                      {Verbs:[get] APIGroups:[] Resources:[pods/log] ResourceNames:[] NonResourceURLs:[]}
+                                                      {Verbs:[list get watch] APIGroups:[] Resources:[events] ResourceNames:[] NonResourceURLs:[]}. role.rbac.authorization.k8s.io/airflow-pod-launcher serverside-applied
+2026-03-28T11:24:04+09:00  rbac.authorization.k8s.io  RoleBinding  feature-store-prod  airflow-pod-launcher-binding  OutOfSync  Missing              rolebinding.rbac.authorization.k8s.io/airflow-pod-launcher-binding reconciled. reconciliation required create
+                           missing subjects added:
+                                        {Kind:ServiceAccount APIGroup: Name:airflow-prod-worker Namespace:airflow-prod}. rolebinding.rbac.authorization.k8s.io/airflow-pod-launcher-binding serverside-applied
+2026-03-28T11:24:04+09:00  bitnami.com  SealedSecret  feature-store-prod  aws-credentials-secret  OutOfSync  Missing              sealedsecret.bitnami.com/aws-credentials-secret serverside-applied
+2026-03-28T11:24:04+09:00  rbac.authorization.k8s.io  RoleBinding  feature-store-prod  airflow-pod-launcher-binding    Synced  Missing              rolebinding.rbac.authorization.k8s.io/airflow-pod-launcher-binding reconciled. reconciliation required create
+                           missing subjects added:
+                                        {Kind:ServiceAccount APIGroup: Name:airflow-prod-worker Namespace:airflow-prod}. rolebinding.rbac.authorization.k8s.io/airflow-pod-launcher-binding serverside-applied
+2026-03-28T11:24:04+09:00  bitnami.com  SealedSecret  feature-store-prod  aws-credentials-secret    Synced  Progressing              sealedsecret.bitnami.com/aws-credentials-secret serverside-applied
+
+Name:               argocd/optional-envs-prod
+Project:            optional
+Server:             https://kubernetes.default.svc
+Namespace:          bootstrap-prod
+URL:                https://argocd.local/applications/optional-envs-prod
+Source:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             optional/envs/prod
+SyncWindow:         Sync Allowed
+Sync Policy:        Manual
+Sync Status:        Synced to main (9baec2a)
+Health Status:      Healthy
+
+Operation:          Sync
+Sync Revision:      9baec2a20688df00cb3f435909477388e350c07f
+Phase:              Succeeded
+Start:              2026-03-28 11:24:04 +0900 KST
+Finished:           2026-03-28 11:24:04 +0900 KST
+Duration:           0s
+Message:            successfully synced (all tasks run)
+
+GROUP                      KIND  NAMESPACE           NAME                  STATUS  HEALTH  HOOK  MESSAGE
+rbac.authorization.k8s.io  Role  feature-store-prod  airflow-pod-launcher  Synced                role.rbac.authorization.k8s.io/airflow-pod-launcher reconciled. reconciliation required create
+                           missing rules added:
+                                        {Verbs:[create list get patch watch delete] APIGroups:[] Resources:[pods] ResourceNames:[] NonResourceURLs:[]}
+                                        {Verbs:[get] APIGroups:[] Resources:[pods/log] ResourceNames:[] NonResourceURLs:[]}
+                                        {Verbs:[list get watch] APIGroups:[] Resources:[events] ResourceNames:[] NonResourceURLs:[]}. role.rbac.authorization.k8s.io/airflow-pod-launcher serverside-applied
+rbac.authorization.k8s.io  RoleBinding  feature-store-prod  airflow-pod-launcher-binding  Synced      rolebinding.rbac.authorization.k8s.io/airflow-pod-launcher-binding reconciled. reconciliation required create
+                           missing subjects added:
+                                         {Kind:ServiceAccount APIGroup: Name:airflow-prod-worker Namespace:airflow-prod}. rolebinding.rbac.authorization.k8s.io/airflow-pod-launcher-binding serverside-applied
+bitnami.com                SealedSecret  feature-store-prod  aws-credentials-secret  Synced  Healthy    sealedsecret.bitnami.com/aws-credentials-secret serverside-applied

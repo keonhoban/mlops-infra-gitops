@@ -1,8 +1,10 @@
-### triton ready
-HTTP/1.1 200 OK
-Content-Length: 0
-Content-Type: text/plain
+### triton-prod ready
+HTTP/1.1 200 OK
+Content-Length: 0
+Content-Type: text/plain
+
 
-
-### triton repository index (ready=true)
-[{"name":"best_model","version":"8","state":"READY"}]
+### triton-prod repository index (no filter)
+[{"name":"best_model"}]
+### triton-prod repository index (ready=true)
+[]

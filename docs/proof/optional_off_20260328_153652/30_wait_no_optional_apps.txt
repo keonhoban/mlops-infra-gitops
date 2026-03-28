@@ -1,0 +1,9 @@
+[2026-03-28 15:36:54] [OFF] WAIT=true -> waiting optional apps to be gone (timeout=900s)
+[2026-03-28 15:36:54] [OFF] still waiting... remaining optional apps=5
+[2026-03-28 15:36:59] [OFF] still waiting... remaining optional apps=3
+[2026-03-28 15:37:05] [OFF] still waiting... remaining optional apps=3
+[2026-03-28 15:37:10] [OFF] still waiting... remaining optional apps=3
+[2026-03-28 15:37:15] [OFF] still waiting... remaining optional apps=3
+[2026-03-28 15:37:20] [OFF] still waiting... remaining optional apps=3
+[2026-03-28 15:37:25] [OFF] still waiting... remaining optional apps=2
+[2026-03-28 15:37:31] [OFF] optional apps are removed (scope=optional=0)

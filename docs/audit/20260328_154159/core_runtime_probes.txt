@@ -1,0 +1,15 @@
+### fastapi-dev /health
+
+### fastapi-dev /models
+
+### fastapi-prod /health
+
+### fastapi-prod /models
+
+### triton-dev ready
+
+### triton-prod ready
+
+### mlflow-dev runtime env (top + env grep)
+
+### mlflow-prod runtime env (top + env grep)

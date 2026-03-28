@@ -1,0 +1,32 @@
+TIMESTAMP                  GROUP        KIND   NAMESPACE                          NAME    STATUS   HEALTH            HOOK  MESSAGE
+2026-03-28T11:24:14+09:00            Service  feature-store-prod          feast-server    Synced  Healthy                  service/feast-server serverside-applied
+2026-03-28T11:24:14+09:00            Service  feature-store-prod                 redis    Synced  Healthy                  service/redis serverside-applied
+2026-03-28T11:24:14+09:00   apps  Deployment  feature-store-prod                 redis    Synced  Progressing              deployment.apps/redis serverside-applied
+2026-03-28T11:24:14+09:00   apps  Deployment  feature-store-prod          feast-server    Synced  Healthy                  deployment.apps/feast-server serverside-applied
+2026-03-28T11:24:14+09:00          ConfigMap  feature-store-prod            feast-repo    Synced                           configmap/feast-repo serverside-applied
+
+Name:               argocd/feast-prod
+Project:            optional
+Server:             https://kubernetes.default.svc
+Namespace:          feature-store-prod
+URL:                https://argocd.local/applications/feast-prod
+Sources:
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Path:             optional/charts/feast
+  Helm Values:      values.yaml,$values/optional/envs/prod/feast/values.yaml
+- Repo:             https://github.com/keonhoban/mlops-infra-gitops
+  Target:           main
+  Ref:              values
+SyncWindow:         Sync Allowed
+Sync Policy:        Manual
+Sync Status:        Synced to main
+Health Status:      Healthy
+
+
+GROUP  KIND        NAMESPACE           NAME          STATUS  HEALTH   HOOK  MESSAGE
+       ConfigMap   feature-store-prod  feast-repo    Synced                 configmap/feast-repo serverside-applied
+       Service     feature-store-prod  feast-server  Synced  Healthy        service/feast-server serverside-applied
+       Service     feature-store-prod  redis         Synced  Healthy        service/redis serverside-applied
+apps   Deployment  feature-store-prod  redis         Synced  Healthy        deployment.apps/redis serverside-applied
+apps   Deployment  feature-store-prod  feast-server  Synced  Healthy        deployment.apps/feast-server serverside-applied

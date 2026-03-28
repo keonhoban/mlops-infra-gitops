@@ -1,3 +1,0 @@
-NAME             AGE
-mlops-baseline   23d
-mlops-core       31d

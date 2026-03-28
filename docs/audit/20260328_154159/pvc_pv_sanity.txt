@@ -1,0 +1,28 @@
+### airflow-dev pvc
+  name: triton-model-repo-pvc
+  namespace: airflow-dev
+  storageClassName: ""
+  volumeName: airflow-triton-model-repo-dev-pv
+
+### triton-dev pvc
+  name: triton-model-repo-pvc
+  namespace: triton-dev
+  storageClassName: nfs-core
+  volumeName: triton-model-repo-dev-pv
+
+### triton-prod pvc
+  name: triton-model-repo-pvc
+  namespace: triton-prod
+  storageClassName: nfs-core
+  volumeName: triton-model-repo-prod-pv
+
+### pv triton-model-repo-dev-pv
+    path: /mnt/nfs_share/mlops/triton/model-repo/dev
+    server: 192.168.18.141
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-core
+
+### pv airflow-triton-model-repo-dev-pv
+    path: /mnt/nfs_share/mlops/triton/model-repo/dev
+    server: 192.168.18.141
+  persistentVolumeReclaimPolicy: Retain
